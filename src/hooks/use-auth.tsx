@@ -41,7 +41,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = useCallback(async (email: string, pass: string) => {
     setIsAuthenticating(true);
-    setError(null);
     try {
       await signInWithEmailAndPassword(auth, email, pass);
       setIsAuthenticating(false);
@@ -53,6 +52,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       switch (error.code) {
         case 'auth/user-not-found':
         case 'auth/wrong-password':
+        case 'auth/invalid-credential':
           errorMessage = 'Invalid email or password.';
           break;
         case 'auth/invalid-email':
