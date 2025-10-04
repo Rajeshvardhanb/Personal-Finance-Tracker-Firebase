@@ -79,9 +79,9 @@ export function AppLogo(props: SVGProps<SVGSVGElement>) {
         fontSize="10"
         fill="url(#logoGradient)"
         fontWeight="700"
-        letterSpacing="4"
+        letterSpacing="2.7"
       >
-        LABS
+        CLOUD LABS
       </text>
     </svg>
   );

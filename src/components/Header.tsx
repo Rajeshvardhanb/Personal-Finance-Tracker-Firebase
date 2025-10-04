@@ -104,36 +104,39 @@ export default function Header() {
         )}
       </div>
       
-      <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
-        <div className="ml-auto flex-1 sm:flex-initial">
-          <MonthSelector />
+      <div className="flex w-full items-center gap-4">
+        <div className="hidden sm:block">
+            <h1 className="text-xl font-semibold font-headline text-muted-foreground/80">FINANCE TRACKER</h1>
         </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="outline"
-              size="icon"
-              className="overflow-hidden rounded-full"
-            >
-              <Image
-                src="https://picsum.photos/seed/user-avatar/36/36"
-                width={36}
-                height={36}
-                alt="Avatar"
+        <div className="ml-auto flex items-center gap-4 md:gap-2 lg:gap-4">
+            <MonthSelector />
+            <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button
+                variant="outline"
+                size="icon"
                 className="overflow-hidden rounded-full"
-                data-ai-hint="person portrait"
-              />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Rajesh's Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Settings</DropdownMenuItem>
-            <DropdownMenuItem>Support</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>Logout</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+                >
+                <Image
+                    src="https://picsum.photos/seed/user-avatar/36/36"
+                    width={36}
+                    height={36}
+                    alt="Avatar"
+                    className="overflow-hidden rounded-full"
+                    data-ai-hint="person portrait"
+                />
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Rajesh's Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>Settings</DropdownMenuItem>
+                <DropdownMenuItem>Support</DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>Logout</DropdownMenuItem>
+            </DropdownMenuContent>
+            </DropdownMenu>
+        </div>
       </div>
     </header>
   );
