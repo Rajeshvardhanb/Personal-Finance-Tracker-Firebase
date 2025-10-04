@@ -18,6 +18,22 @@ const generateHistory = () => {
   return history;
 }
 
+export const getDefaultData = (): FinanceData => ({
+  incomes: [],
+  expenses: [],
+  creditCards: [],
+  masterExpenses: [],
+  assets: [],
+  liabilities: [],
+  notes: [],
+  categoryBudgets: {
+    'Groceries': 15000,
+    'Dining Out': 5000,
+    'Shopping': 10000,
+    'Vacation': 50000,
+  },
+  netWorthHistory: [],
+});
 
 export const initialData: FinanceData = {
   incomes: [
@@ -47,22 +63,6 @@ export const initialData: FinanceData = {
       name: 'ICICI Amazon Pay',
       creditLimit: 150000,
       upcomingBillDueDate: new Date(new Date().setMonth(new Date().getMonth() + 1, 10)).toISOString(),
-      transactions: [],
-    },
-    {
-      id: 'cc3',
-      name: 'Axis Bank Magnus',
-      creditLimit: 250000,
-      upcomingBillDueDate: new Date(new Date().setMonth(new Date().getMonth() + 1, 15)).toISOString(),
-      transactions: [
-        { id: 'cct3', description: 'Flight Tickets', amount: 12000, date: new Date(new Date().setDate(2)).toISOString() }
-      ],
-    },
-    {
-      id: 'cc4',
-      name: 'SBI Cashback Card',
-      creditLimit: 75000,
-      upcomingBillDueDate: new Date(new Date().setMonth(new Date().getMonth() + 1, 20)).toISOString(),
       transactions: [],
     },
   ],

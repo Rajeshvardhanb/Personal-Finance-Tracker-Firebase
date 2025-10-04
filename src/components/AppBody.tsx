@@ -5,9 +5,23 @@ import { useSidebar } from '@/hooks/use-sidebar-provider';
 import Header from '@/components/Header';
 import AppSidebar from '@/components/AppSidebar';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/hooks/use-auth';
+import { usePathname } from 'next/navigation';
 
 export default function AppBody({ children }: { children: React.ReactNode }) {
   const { state } = useSidebar();
+  const { user } = useAuth();
+  const pathname = usePathname();
+
+  if (!user && pathname !== '/login') {
+    // Render nothing or a loading spinner while redirecting
+    return null;
+  }
+  
+  if (pathname === '/login') {
+    return <main>{children}</main>;
+  }
+
   return (
     <div className="relative flex min-h-screen w-full flex-col">
       <Header />

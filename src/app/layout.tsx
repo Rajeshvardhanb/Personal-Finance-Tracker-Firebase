@@ -1,3 +1,4 @@
+
 import type { Metadata } from 'next';
 import './globals.css';
 import { cn } from '@/lib/utils';
@@ -6,6 +7,7 @@ import { FinanceProvider } from '@/hooks/use-finances';
 import { SidebarProvider } from '@/hooks/use-sidebar-provider';
 import { Inter } from "next/font/google";
 import AppBody from '@/components/AppBody';
+import { AuthProvider } from '@/hooks/use-auth';
 
 const fontSans = Inter({
   subsets: ["latin"],
@@ -30,13 +32,15 @@ export default function RootLayout({
           fontSans.variable
         )}
       >
-        <FinanceProvider>
-          <SidebarProvider>
-            <AppBody>
-              {children}
-            </AppBody>
-          </SidebarProvider>
-        </FinanceProvider>
+        <AuthProvider>
+          <FinanceProvider>
+            <SidebarProvider>
+              <AppBody>
+                {children}
+              </AppBody>
+            </SidebarProvider>
+          </FinanceProvider>
+        </AuthProvider>
         <Toaster />
       </body>
     </html>

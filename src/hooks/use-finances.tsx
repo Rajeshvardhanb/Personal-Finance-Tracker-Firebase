@@ -2,9 +2,10 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback } from 'react';
-import { FinanceData, initialData } from '@/lib/data';
+import { FinanceData, getDefaultData } from '@/lib/data';
 import type { Income, Expense, Note, Asset, Liability, CreditCard, CreditCardTransaction, MasterExpense, MasterExpenseTransaction, ExpenseStatus } from '@/lib/types';
 import { startOfMonth, getMonth, getYear, format, subMonths, isEqual, parse } from 'date-fns';
+import { useAuth } from './use-auth';
 
 interface FinanceContextType {
   data: FinanceData;
@@ -57,36 +58,49 @@ interface FinanceContextType {
 const FinanceContext = createContext<FinanceContextType | undefined>(undefined);
 
 export function FinanceProvider({ children }: { children: ReactNode }) {
-  const [data, setDataState] = useState<FinanceData>(initialData);
+  const { user } = useAuth();
+  const [data, setDataState] = useState<FinanceData>(getDefaultData());
   const [selectedDate, setSelectedDate] = useState<Date>(startOfMonth(new Date()));
   const [isInitialized, setIsInitialized] = useState(false);
 
-  useEffect(() => {
-    try {
-      const storedData = localStorage.getItem('financeData');
-      if (storedData) {
-        const parsedData = JSON.parse(storedData);
-        // Ensure masterExpenses is an array
-        if (!Array.isArray(parsedData.masterExpenses)) {
-          parsedData.masterExpenses = [];
-        }
-        setDataState(parsedData);
-      }
-    } catch (error) {
-      console.error('Failed to load data from localStorage', error);
-    }
-    setIsInitialized(true);
-  }, []);
+  const financeDataKey = useMemo(() => user ? `financeData_${user.username}` : null, [user]);
 
   useEffect(() => {
-    if (isInitialized) {
+    if (financeDataKey) {
       try {
-        localStorage.setItem('financeData', JSON.stringify(data));
+        const storedData = localStorage.getItem(financeDataKey);
+        if (storedData) {
+          const parsedData = JSON.parse(storedData);
+          // Ensure masterExpenses is an array
+          if (!Array.isArray(parsedData.masterExpenses)) {
+            parsedData.masterExpenses = [];
+          }
+           // Ensure creditCards is an array
+          if (!Array.isArray(parsedData.creditCards)) {
+            parsedData.creditCards = [];
+          }
+          setDataState(parsedData);
+        } else {
+          // If no data for this user, start with default
+          setDataState(getDefaultData());
+        }
+      } catch (error) {
+        console.error('Failed to load data from localStorage', error);
+        setDataState(getDefaultData());
+      }
+    }
+    setIsInitialized(true);
+  }, [financeDataKey]);
+
+  useEffect(() => {
+    if (isInitialized && financeDataKey) {
+      try {
+        localStorage.setItem(financeDataKey, JSON.stringify(data));
       } catch (error) {
         console.error('Failed to save data to localStorage', error);
       }
     }
-  }, [data, isInitialized]);
+  }, [data, isInitialized, financeDataKey]);
 
   const setData = (newData: FinanceData) => {
     setDataState(newData);
@@ -477,7 +491,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     getFinancialDataForPastMonths,
     addAsset,
     updateAsset,
-    deleteAsset,
+deleteAsset,
     addLiability,
     updateLiability,
     deleteLiability,
