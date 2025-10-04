@@ -32,7 +32,7 @@ export default function AppSidebar() {
       <nav className="flex flex-col items-stretch gap-4 px-4 sm:py-5">
         <Link
           href="/"
-          className="group flex h-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:text-base"
+          className="group flex h-9 shrink-0 items-center justify-start gap-2 rounded-lg bg-primary px-3 text-base font-semibold text-primary-foreground"
         >
           <AppLogo className="h-5 w-5 transition-all group-hover:scale-110" />
           <span className="">Personal Finance Tracker</span>
@@ -56,7 +56,7 @@ export default function AppSidebar() {
       <nav className="mt-auto flex flex-col items-stretch gap-4 px-4 sm:py-5">
         <Link
           href="#"
-          className="flex h-9 items-center justify-start rounded-lg px-3 text-muted-foreground transition-colors hover:text-foreground md:h-8"
+          className="flex h-9 items-center justify-start rounded-lg px-3 text-muted-foreground transition-colors hover:text-foreground"
         >
           <Settings className="h-5 w-5 mr-3" />
           <span className="">Settings</span>

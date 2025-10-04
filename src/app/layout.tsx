@@ -5,7 +5,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { FinanceProvider } from '@/hooks/use-finances';
 import AppSidebar from '@/components/AppSidebar';
 import Header from '@/components/Header';
-import { SidebarProvider } from '@/components/ui/sidebar';
+import { SidebarProvider } from '@/hooks/use-sidebar-provider';
 
 export const metadata: Metadata = {
   title: 'Personal Finance Tracker',
@@ -37,12 +37,12 @@ export default function RootLayout({
       </head>
       <body className={cn('font-body antialiased')}>
         <FinanceProvider>
-          <SidebarProvider defaultOpen={true}>
-            <div className="flex min-h-screen w-full flex-col bg-muted/40">
+          <SidebarProvider>
+            <div className="relative flex min-h-screen w-full">
               <AppSidebar />
-              <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-64">
+              <div className="flex-1">
                 <Header />
-                <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
+                <main className="p-4 sm:px-6 sm:py-0">
                   {children}
                 </main>
               </div>
