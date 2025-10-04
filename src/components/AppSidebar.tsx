@@ -28,11 +28,8 @@ export default function AppSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-20 hidden w-64 flex-col border-r bg-secondary sm:flex">
+    <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r bg-secondary sm:flex">
       <div className="flex h-14 items-center border-b border-secondary-foreground/10 px-4 lg:h-[60px] lg:px-6">
-        <Link href="/" className="flex items-center gap-2 font-semibold text-primary-foreground">
-          <AppLogo className="font-bold text-lg" />
-        </Link>
       </div>
       <nav className="flex flex-col gap-2 p-2 sm:py-3">
         {navItems.map((item) => (
@@ -42,7 +39,7 @@ export default function AppSidebar() {
             className={cn(
               "flex items-center justify-start gap-3 rounded-lg px-3 py-2 transition-all duration-300",
               pathname === item.href
-                ? "bg-primary text-primary-foreground"
+                ? "bg-primary text-primary-foreground shadow-lg"
                 : "text-muted-foreground/80 hover:bg-secondary-foreground/10 hover:text-primary-foreground"
             )}
           >

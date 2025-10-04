@@ -51,12 +51,58 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-card px-4 sm:h-[60px] sm:px-6">
+    <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-secondary px-4 sm:h-[60px] sm:px-6">
+      <div className="flex items-center gap-4">
+        <Link
+          href="/"
+          className="flex items-center gap-2 font-semibold text-primary-foreground"
+        >
+          <AppLogo className="font-bold text-lg" />
+        </Link>
+      </div>
+
+      <div className="h-8 border-l border-secondary-foreground/20"></div>
+
+      <div className="flex w-full items-center gap-4">
+        <div className="hidden sm:block">
+            <h1 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground/80">FINANCE TRACKER</h1>
+        </div>
+        <div className="ml-auto flex items-center gap-4 md:gap-2 lg:gap-4">
+            <MonthSelector />
+            <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button
+                variant="outline"
+                size="icon"
+                className="overflow-hidden rounded-full border-2 border-secondary-foreground/20"
+                >
+                <Image
+                    src="https://picsum.photos/seed/user-avatar/36/36"
+                    width={36}
+                    height={36}
+                    alt="Avatar"
+                    className="overflow-hidden rounded-full"
+                    data-ai-hint="person portrait"
+                />
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Rajesh's Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>Settings</DropdownMenuItem>
+                <DropdownMenuItem>Support</DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>Logout</DropdownMenuItem>
+            </DropdownMenuContent>
+            </DropdownMenu>
+        </div>
+      </div>
+      
       <div className="flex items-center gap-2 sm:hidden">
         {isClient ? (
           <Sheet>
             <SheetTrigger asChild>
-              <Button size="icon" variant="outline">
+              <Button size="icon" variant="ghost" className="text-primary-foreground">
                 <PanelLeft className="h-5 w-5" />
                 <span className="sr-only">Toggle Menu</span>
               </Button>
@@ -102,41 +148,6 @@ export default function Header() {
         ) : (
           <div className="h-10 w-10" />
         )}
-      </div>
-      
-      <div className="flex w-full items-center gap-4">
-        <div className="hidden sm:block">
-            <h1 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground/80">FINANCE TRACKER</h1>
-        </div>
-        <div className="ml-auto flex items-center gap-4 md:gap-2 lg:gap-4">
-            <MonthSelector />
-            <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button
-                variant="outline"
-                size="icon"
-                className="overflow-hidden rounded-full"
-                >
-                <Image
-                    src="https://picsum.photos/seed/user-avatar/36/36"
-                    width={36}
-                    height={36}
-                    alt="Avatar"
-                    className="overflow-hidden rounded-full"
-                    data-ai-hint="person portrait"
-                />
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Rajesh's Account</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Settings</DropdownMenuItem>
-                <DropdownMenuItem>Support</DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Logout</DropdownMenuItem>
-            </DropdownMenuContent>
-            </DropdownMenu>
-        </div>
       </div>
     </header>
   );
