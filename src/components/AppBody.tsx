@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useSidebar } from '@/hooks/use-sidebar-provider';
@@ -15,7 +16,7 @@ export default function AppBody({ children }: { children: React.ReactNode }) {
         <main
           className={cn(
             'flex-1 p-4 transition-all duration-300 ease-in-out sm:px-6 sm:py-4',
-            state === 'expanded' ? 'sm:ml-72' : 'sm:ml-[78px]'
+            state === 'expanded' ? 'sm:ml-56' : 'sm:ml-[78px]'
           )}
         >
           {children}
