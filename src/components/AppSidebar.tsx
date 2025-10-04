@@ -24,12 +24,12 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: "/", label: "Dashboard" },
-  { href: "/income", label: "Income" },
-  { href: "/expenses", label: "Expenses" },
-  { href: "/credit-cards", label: "Credit Cards" },
-  { href: "/net-worth", label: "Net Worth" },
-  { href: "/reports", label: "Reports" },
+    { href: "/", icon: Home, label: "Dashboard" },
+    { href: "/income", icon: Landmark, label: "Income" },
+    { href: "/expenses", icon: Wallet, label: "Expenses" },
+    { href: "/credit-cards", icon: CreditCard, label: "Credit Cards" },
+    { href: "/net-worth", icon: PiggyBank, label: "Net Worth" },
+    { href: "/reports", icon: BookText, label: "Reports" },
 ];
 
 export default function AppSidebar() {
@@ -50,12 +50,13 @@ export default function AppSidebar() {
             key={item.href}
             href={item.href}
             className={cn(
-              "flex h-9 items-center justify-start rounded-lg px-3 transition-colors",
+              "flex h-9 items-center justify-start gap-3 rounded-lg px-3 transition-colors",
               pathname === item.href
                 ? "bg-accent text-accent-foreground"
                 : "text-muted-foreground hover:text-foreground"
             )}
           >
+            <item.icon className="h-5 w-5" />
             <span className="">{item.label}</span>
           </Link>
         ))}
