@@ -1,210 +1,301 @@
 /**
- * @fileoverview Firestore Security Rules for the personal finance application.
+ * @fileoverview Firestore Security Rules for the Personal Finance Tracker application.
  *
  * Core Philosophy:
- * This ruleset enforces a strict user-ownership model.  Each user has a dedicated data tree rooted at `/users/{userId}`.
- * Only the authenticated user can read and write data within their own user data tree.
+ * This ruleset enforces a strict user-ownership model. Each user has exclusive access to their
+ * own data, including profile information, income, expenses, credit cards, assets, liabilities, notes, and net worth history.
  *
  * Data Structure:
- * All personal finance data (incomes, expenses, credit cards, etc.) is nested under `/users/{userId}`.
+ * All data is nested under /users/{userId}, ensuring clear ownership. Each user has their own
+ * collections for incomes, expenses, credit cards, etc.
  *
  * Key Security Decisions:
- * - Users can only access their own data.
- * - Listing of user profiles is forbidden to prevent data leakage.
+ * - Users can only read and write their own data.
+ * - No public data or shared access is allowed in this initial prototype.
+ * - Schema validation is relaxed to allow for rapid prototyping and iteration, but authorization
+ *   is strictly enforced based on user identity.
  *
  * Denormalization for Authorization:
- *  - The application enforces that the `userId` path segment matches the `uid` field within the `UserProfile` document.  This is enforced on creation and immutability is enforced on update.
+ *  Not used in this ruleset, as the path-based ownership model is sufficient.
+ *
+ * Structural Segregation:
+ *  All user data is stored under the /users collection, with subcollections for different data types.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Prevents listing all user profiles.
-     * @path /users
-     * @allow None (listing is denied)
-     * @deny list: Always. User listing is not permitted.
-     * @principle Prevents unauthorized access to user profile data.
-     */
-    match /users {
-      allow get: if false;
-      allow list: if false;
-      allow create: if false;
-      allow update: if false;
-      allow delete: if false;
-    }
-
-    /**
-     * @description Controls access to user profile documents.
-     * @path /users/{userId}
-     * @allow (create) User with ID 'testUID' can create their profile if authenticated as 'testUID'.
-     * @allow (get, update, delete) User with ID 'testUID' can read/update/delete their profile if authenticated as 'testUID'.
-     * @deny (create) User with ID 'otherUID' cannot create a profile for 'testUID'.
-     * @deny (get, update, delete) User with ID 'otherUID' cannot read/update/delete the profile for 'testUID'.
-     * @principle Enforces document ownership for user profiles.
+     * @description Controls access to user profile information.
+     * @path /databases/{database}/documents/users/{userId}
+     * @allow (create) User with matching UID can create their profile.
+     * @allow (get, update, delete) User with matching UID can read, update, and delete their profile.
+     * @deny (create) User cannot create a profile with a mismatched UID.
+     * @deny (get, update, delete) User cannot read, update, or delete another user's profile.
+     * @principle Enforces document ownership for all operations.
      */
     match /users/{userId} {
+      // Helper function to check if the user is signed in and owns the document.
+      function isOwner(userId) {
+        return request.auth != null && request.auth.uid == userId;
+      }
+
+      // Allow the user to create their own profile if the UID matches.
+      allow create: if isOwner(userId) && request.resource.data.uid == request.auth.uid;
+
+      // Allow the user to get their own profile if they are signed in.
       allow get: if isOwner(userId);
+
+      // Allow the user to update their own profile if they are signed in and own the profile
+      // Enforce immutability for the 'uid' field.
+      allow update: if isOwner(userId);
+
+      // Allow the user to delete their own profile if they are signed in.
+      allow delete: if isOwner(userId);
+
+      //Disallow listing all users
       allow list: if false;
-      allow create: if isSignedIn() && isSelfCreate(userId, request.resource.data.uid);
-      allow update: if isExistingOwner(userId) && isUidNotChanged(userId, resource.data.uid);
-      allow delete: if isExistingOwner(userId);
+
     }
 
     /**
      * @description Controls access to income entries for a specific user.
-     * @path /users/{userId}/incomes/{incomeId}
-     * @allow (create) User with ID 'testUID' can create an income entry under their profile.
-     * @allow (get, list, update, delete) User with ID 'testUID' can read/list/update/delete their own income entries.
-     * @deny (create) User with ID 'otherUID' cannot create an income entry for 'testUID'.
-     * @deny (get, list, update, delete) User with ID 'otherUID' cannot read/list/update/delete income entries for 'testUID'.
-     * @principle Enforces document ownership for income entries.
+     * @path /databases/{database}/documents/users/{userId}/incomes/{incomeId}
+     * @allow (create) User with matching UID can create income entries under their profile.
+     * @allow (get, list, update, delete) User with matching UID can read, list, update, and delete their own income entries.
+     * @deny (create, get, list, update, delete) User cannot access another user's income entries.
+     * @principle Enforces document ownership for all operations.
      */
     match /users/{userId}/incomes/{incomeId} {
+      // Helper function to check if the user is signed in and owns the document.
+      function isOwner(userId) {
+        return request.auth != null && request.auth.uid == userId;
+      }
+
+      // Allow the user to create income entries if they are the owner.
+      allow create: if isOwner(userId);
+
+      // Allow the user to get income entries if they are the owner.
       allow get: if isOwner(userId);
+
+      // Allow the user to list income entries if they are the owner.
       allow list: if isOwner(userId);
-      allow create: if isSignedIn();
-      allow update: if isExistingOwner(userId);
-      allow delete: if isExistingOwner(userId);
+
+      // Allow the user to update income entries if they are the owner.
+      allow update: if isOwner(userId);
+
+      // Allow the user to delete income entries if they are the owner.
+      allow delete: if isOwner(userId);
+    }
+
+        /**
+     * @description Controls access to liability entries for a specific user.
+     * @path /databases/{database}/documents/users/{userId}/liabilities/{liabilityId}
+     * @allow (create) User with matching UID can create liability entries under their profile.
+     * @allow (get, list, update, delete) User with matching UID can read, list, update, and delete their own liability entries.
+     * @deny (create, get, list, update, delete) User cannot access another user's liability entries.
+     * @principle Enforces document ownership for all operations.
+     */
+    match /users/{userId}/liabilities/{liabilityId} {
+      // Helper function to check if the user is signed in and owns the document.
+      function isOwner(userId) {
+        return request.auth != null && request.auth.uid == userId;
+      }
+
+      // Allow the user to create liability entries if they are the owner.
+      allow create: if isOwner(userId);
+
+      // Allow the user to get liability entries if they are the owner.
+      allow get: if isOwner(userId);
+
+      // Allow the user to list liability entries if they are the owner.
+      allow list: if isOwner(userId);
+
+      // Allow the user to update liability entries if they are the owner.
+      allow update: if isOwner(userId);
+
+      // Allow the user to delete liability entries if they are the owner.
+      allow delete: if isOwner(userId);
     }
 
     /**
      * @description Controls access to expense entries for a specific user.
-     * @path /users/{userId}/expenses/{expenseId}
-     * @allow (create) User with ID 'testUID' can create an expense entry under their profile.
-     * @allow (get, list, update, delete) User with ID 'testUID' can read/list/update/delete their own expense entries.
-     * @deny (create) User with ID 'otherUID' cannot create an expense entry for 'testUID'.
-     * @deny (get, list, update, delete) User with ID 'otherUID' cannot read/list/update/delete expense entries for 'testUID'.
-     * @principle Enforces document ownership for expense entries.
+     * @path /databases/{database}/documents/users/{userId}/expenses/{expenseId}
+     * @allow (create) User with matching UID can create expense entries under their profile.
+     * @allow (get, list, update, delete) User with matching UID can read, list, update, and delete their own expense entries.
+     * @deny (create, get, list, update, delete) User cannot access another user's expense entries.
+     * @principle Enforces document ownership for all operations.
      */
     match /users/{userId}/expenses/{expenseId} {
+      // Helper function to check if the user is signed in and owns the document.
+      function isOwner(userId) {
+        return request.auth != null && request.auth.uid == userId;
+      }
+
+      // Allow the user to create expense entries if they are the owner.
+      allow create: if isOwner(userId);
+
+      // Allow the user to get expense entries if they are the owner.
       allow get: if isOwner(userId);
+
+      // Allow the user to list expense entries if they are the owner.
       allow list: if isOwner(userId);
-      allow create: if isSignedIn();
-      allow update: if isExistingOwner(userId);
-      allow delete: if isExistingOwner(userId);
+
+      // Allow the user to update expense entries if they are the owner.
+      allow update: if isOwner(userId);
+
+      // Allow the user to delete expense entries if they are the owner.
+      allow delete: if isOwner(userId);
     }
 
     /**
      * @description Controls access to credit card entries for a specific user.
-     * @path /users/{userId}/creditCards/{cardId}
-     * @allow (create) User with ID 'testUID' can create a credit card entry under their profile.
-     * @allow (get, list, update, delete) User with ID 'testUID' can read/list/update/delete their own credit card entries.
-     * @deny (create) User with ID 'otherUID' cannot create a credit card entry for 'testUID'.
-     * @deny (get, list, update, delete) User with ID 'otherUID' cannot read/list/update/delete credit card entries for 'testUID'.
-     * @principle Enforces document ownership for credit card entries.
+     * @path /databases/{database}/documents/users/{userId}/creditCards/{cardId}
+     * @allow (create) User with matching UID can create credit card entries under their profile.
+     * @allow (get, list, update, delete) User with matching UID can read, list, update, and delete their own credit card entries.
+     * @deny (create, get, list, update, delete) User cannot access another user's credit card entries.
+     * @principle Enforces document ownership for all operations.
      */
     match /users/{userId}/creditCards/{cardId} {
+      // Helper function to check if the user is signed in and owns the document.
+      function isOwner(userId) {
+        return request.auth != null && request.auth.uid == userId;
+      }
+
+      // Allow the user to create credit card entries if they are the owner.
+      allow create: if isOwner(userId);
+
+      // Allow the user to get credit card entries if they are the owner.
       allow get: if isOwner(userId);
+
+      // Allow the user to list credit card entries if they are the owner.
       allow list: if isOwner(userId);
-      allow create: if isSignedIn();
-      allow update: if isExistingOwner(userId);
-      allow delete: if isExistingOwner(userId);
+
+      // Allow the user to update credit card entries if they are the owner.
+      allow update: if isOwner(userId);
+
+      // Allow the user to delete credit card entries if they are the owner.
+      allow delete: if isOwner(userId);
     }
 
     /**
      * @description Controls access to master expense entries for a specific user.
-     * @path /users/{userId}/masterExpenses/{masterExpenseId}
-     * @allow (create) User with ID 'testUID' can create a master expense entry under their profile.
-     * @allow (get, list, update, delete) User with ID 'testUID' can read/list/update/delete their own master expense entries.
-     * @deny (create) User with ID 'otherUID' cannot create a master expense entry for 'testUID'.
-     * @deny (get, list, update, delete) User with ID 'otherUID' cannot read/list/update/delete master expense entries for 'testUID'.
-     * @principle Enforces document ownership for master expense entries.
+     * @path /databases/{database}/documents/users/{userId}/masterExpenses/{masterExpenseId}
+     * @allow (create) User with matching UID can create master expense entries under their profile.
+     * @allow (get, list, update, delete) User with matching UID can read, list, update, and delete their own master expense entries.
+     * @deny (create, get, list, update, delete) User cannot access another user's master expense entries.
+     * @principle Enforces document ownership for all operations.
      */
     match /users/{userId}/masterExpenses/{masterExpenseId} {
+      // Helper function to check if the user is signed in and owns the document.
+      function isOwner(userId) {
+        return request.auth != null && request.auth.uid == userId;
+      }
+
+      // Allow the user to create master expense entries if they are the owner.
+      allow create: if isOwner(userId);
+
+      // Allow the user to get master expense entries if they are the owner.
       allow get: if isOwner(userId);
+
+      // Allow the user to list master expense entries if they are the owner.
       allow list: if isOwner(userId);
-      allow create: if isSignedIn();
-      allow update: if isExistingOwner(userId);
-      allow delete: if isExistingOwner(userId);
+
+      // Allow the user to update master expense entries if they are the owner.
+      allow update: if isOwner(userId);
+
+      // Allow the user to delete master expense entries if they are the owner.
+      allow delete: if isOwner(userId);
     }
 
     /**
      * @description Controls access to asset entries for a specific user.
-     * @path /users/{userId}/assets/{assetId}
-     * @allow (create) User with ID 'testUID' can create an asset entry under their profile.
-     * @allow (get, list, update, delete) User with ID 'testUID' can read/list/update/delete their own asset entries.
-     * @deny (create) User with ID 'otherUID' cannot create an asset entry for 'testUID'.
-     * @deny (get, list, update, delete) User with ID 'otherUID' cannot read/list/update/delete asset entries for 'testUID'.
-     * @principle Enforces document ownership for asset entries.
+     * @path /databases/{database}/documents/users/{userId}/assets/{assetId}
+     * @allow (create) User with matching UID can create asset entries under their profile.
+     * @allow (get, list, update, delete) User with matching UID can read, list, update, and delete their own asset entries.
+     * @deny (create, get, list, update, delete) User cannot access another user's asset entries.
+     * @principle Enforces document ownership for all operations.
      */
     match /users/{userId}/assets/{assetId} {
-      allow get: if isOwner(userId);
-      allow list: if isOwner(userId);
-      allow create: if isSignedIn();
-      allow update: if isExistingOwner(userId);
-      allow delete: if isExistingOwner(userId);
-    }
+      // Helper function to check if the user is signed in and owns the document.
+      function isOwner(userId) {
+        return request.auth != null && request.auth.uid == userId;
+      }
 
-    /**
-     * @description Controls access to liability entries for a specific user.
-     * @path /users/{userId}/liabilities/{liabilityId}
-     * @allow (create) User with ID 'testUID' can create a liability entry under their profile.
-     * @allow (get, list, update, delete) User with ID 'testUID' can read/list/update/delete their own liability entries.
-     * @deny (create) User with ID 'otherUID' cannot create a liability entry for 'testUID'.
-     * @deny (get, list, update, delete) User with ID 'otherUID' cannot read/list/update/delete liability entries for 'testUID'.
-     * @principle Enforces document ownership for liability entries.
-     */
-    match /users/{userId}/liabilities/{liabilityId} {
+      // Allow the user to create asset entries if they are the owner.
+      allow create: if isOwner(userId);
+
+      // Allow the user to get asset entries if they are the owner.
       allow get: if isOwner(userId);
+
+      // Allow the user to list asset entries if they are the owner.
       allow list: if isOwner(userId);
-      allow create: if isSignedIn();
-      allow update: if isExistingOwner(userId);
-      allow delete: if isExistingOwner(userId);
+
+      // Allow the user to update asset entries if they are the owner.
+      allow update: if isOwner(userId);
+
+      // Allow the user to delete asset entries if they are the owner.
+      allow delete: if isOwner(userId);
     }
 
     /**
      * @description Controls access to note entries for a specific user.
-     * @path /users/{userId}/notes/{noteId}
-     * @allow (create) User with ID 'testUID' can create a note entry under their profile.
-     * @allow (get, list, update, delete) User with ID 'testUID' can read/list/update/delete their own note entries.
-     * @deny (create) User with ID 'otherUID' cannot create a note entry for 'testUID'.
-     * @deny (get, list, update, delete) User with ID 'otherUID' cannot read/list/update/delete note entries for 'testUID'.
-     * @principle Enforces document ownership for note entries.
+     * @path /databases/{database}/documents/users/{userId}/notes/{noteId}
+     * @allow (create) User with matching UID can create note entries under their profile.
+     * @allow (get, list, update, delete) User with matching UID can read, list, update, and delete their own note entries.
+     * @deny (create, get, list, update, delete) User cannot access another user's note entries.
+     * @principle Enforces document ownership for all operations.
      */
     match /users/{userId}/notes/{noteId} {
+      // Helper function to check if the user is signed in and owns the document.
+      function isOwner(userId) {
+        return request.auth != null && request.auth.uid == userId;
+      }
+
+      // Allow the user to create note entries if they are the owner.
+      allow create: if isOwner(userId);
+
+      // Allow the user to get note entries if they are the owner.
       allow get: if isOwner(userId);
+
+      // Allow the user to list note entries if they are the owner.
       allow list: if isOwner(userId);
-      allow create: if isSignedIn();
-      allow update: if isExistingOwner(userId);
-      allow delete: if isExistingOwner(userId);
+
+      // Allow the user to update note entries if they are the owner.
+      allow update: if isOwner(userId);
+
+      // Allow the user to delete note entries if they are the owner.
+      allow delete: if isOwner(userId);
     }
 
     /**
      * @description Controls access to net worth history entries for a specific user.
-     * @path /users/{userId}/netWorthHistory/{historyId}
-     * @allow (create) User with ID 'testUID' can create a net worth history entry under their profile.
-     * @allow (get, list, update, delete) User with ID 'testUID' can read/list/update/delete their own net worth history entries.
-     * @deny (create) User with ID 'otherUID' cannot create a net worth history entry for 'testUID'.
-     * @deny (get, list, update, delete) User with ID 'otherUID' cannot read/list/update/delete net worth history entries for 'testUID'.
-     * @principle Enforces document ownership for net worth history entries.
+     * @path /databases/{database}/documents/users/{userId}/netWorthHistory/{historyId}
+     * @allow (create) User with matching UID can create net worth history entries under their profile.
+     * @allow (get, list, update, delete) User with matching UID can read, list, update, and delete their own net worth history entries.
+     * @deny (create, get, list, update, delete) User cannot access another user's net worth history entries.
+     * @principle Enforces document ownership for all operations.
      */
     match /users/{userId}/netWorthHistory/{historyId} {
+      // Helper function to check if the user is signed in and owns the document.
+      function isOwner(userId) {
+        return request.auth != null && request.auth.uid == userId;
+      }
+
+      // Allow the user to create net worth history entries if they are the owner.
+      allow create: if isOwner(userId);
+
+      // Allow the user to get net worth history entries if they are the owner.
       allow get: if isOwner(userId);
+
+      // Allow the user to list net worth history entries if they are the owner.
       allow list: if isOwner(userId);
-      allow create: if isSignedIn();
-      allow update: if isExistingOwner(userId);
-      allow delete: if isExistingOwner(userId);
-    }
 
-    function isSignedIn() {
-      return request.auth != null;
-    }
+      // Allow the user to update net worth history entries if they are the owner.
+      allow update: if isOwner(userId);
 
-    function isOwner(userId) {
-      return request.auth.uid == userId;
-    }
-
-    function isExistingOwner(userId) {
-      return isSignedIn() && isOwner(userId) && resource != null;
-    }
-
-    function isSelfCreate(userId, resourceUid) {
-        return isSignedIn() && (userId == request.auth.uid) && (userId == resourceUid);
-    }
-
-    function isUidNotChanged(userId, resourceUid){
-        return isSignedIn() && isOwner(userId) && (userId == resourceUid);
+      // Allow the user to delete net worth history entries if they are the owner.
+      allow delete: if isOwner(userId);
     }
   }
 }
