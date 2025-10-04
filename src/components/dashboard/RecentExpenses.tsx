@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Expense } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
 import { format } from "date-fns";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 type RecentExpensesProps = {
   expenses: Expense[];
@@ -15,22 +16,23 @@ export default function RecentExpenses({ expenses }: RecentExpensesProps) {
   const unpaidExpenses = expenses.filter((e) => e.status === "Not Paid").sort((a,b) => new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime());
 
   const ExpenseList = ({ expenses }: { expenses: Expense[] }) => (
-    <div className="space-y-4 pt-4">
-      {expenses.length > 0 ? expenses.map((expense) => (
-        <div key={expense.id} className="flex items-center">
-          <div className="flex-1">
-            <p className="font-medium">{expense.description}</p>
-            <p className="text-sm text-muted-foreground">{expense.category}</p>
+    <ScrollArea className="h-72">
+      <div className="space-y-3 pr-4">
+        {expenses.length > 0 ? expenses.map((expense) => (
+          <div key={expense.id} className="flex items-center bg-emerald-50/50 dark:bg-emerald-900/20 p-3 rounded-lg border border-emerald-100 dark:border-emerald-900/30">
+            <div className="flex-1">
+              <p className="font-medium text-emerald-900 dark:text-emerald-100">{expense.description}</p>
+              <p className="text-sm text-emerald-700/80 dark:text-emerald-300/70">{expense.category}</p>
+            </div>
+            <div className="text-right">
+              <p className="font-bold text-lg text-emerald-600 dark:text-emerald-400">{formatCurrency(expense.amount)}</p>
+            </div>
           </div>
-          <div className="text-right">
-            <p className="font-medium">{formatCurrency(expense.amount)}</p>
-            <p className="text-sm text-muted-foreground">{format(new Date(expense.dueDate), 'dd MMM')}</p>
-          </div>
-        </div>
-      )) : (
-        <p className="text-sm text-muted-foreground text-center py-8">No expenses in this category for this month.</p>
-      )}
-    </div>
+        )) : (
+          <p className="text-sm text-muted-foreground text-center py-8">No expenses in this category for this month.</p>
+        )}
+      </div>
+    </ScrollArea>
   );
 
   return (
