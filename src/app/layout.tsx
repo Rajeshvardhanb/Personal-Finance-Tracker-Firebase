@@ -8,6 +8,7 @@ import { SidebarProvider } from '@/hooks/use-sidebar-provider';
 import { Inter } from "next/font/google";
 import AppBody from '@/components/AppBody';
 import { AuthProvider } from '@/hooks/use-auth';
+import { FirebaseClientProvider } from '@/firebase';
 
 const fontSans = Inter({
   subsets: ["latin"],
@@ -32,15 +33,17 @@ export default function RootLayout({
           fontSans.variable
         )}
       >
-        <AuthProvider>
-          <FinanceProvider>
-            <SidebarProvider>
-              <AppBody>
-                {children}
-              </AppBody>
-            </SidebarProvider>
-          </FinanceProvider>
-        </AuthProvider>
+        <FirebaseClientProvider>
+          <AuthProvider>
+            <FinanceProvider>
+              <SidebarProvider>
+                <AppBody>
+                  {children}
+                </AppBody>
+              </SidebarProvider>
+            </FinanceProvider>
+          </AuthProvider>
+        </FirebaseClientProvider>
         <Toaster />
       </body>
     </html>

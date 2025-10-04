@@ -1,0 +1,170 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isExistingOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId && resource != null;
+    }
+
+    /**
+     * @description Protects user profile information.
+     * @path /databases/{database}/documents/users/{userId}
+     * @allow (create) User with matching UID can create their profile.
+     * @allow (get, update, delete) User with matching UID can read, update, and delete their profile.
+     * @deny (create) User cannot create a profile with a mismatched UID.
+     * @deny (get, update, delete) User cannot read, update, or delete another user's profile.
+     * @principle Enforces document ownership for all operations.
+     */
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false;
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Protects user income entries.
+     * @path /databases/{database}/documents/users/{userId}/incomes/{incomeId}
+     * @allow (create) User with matching UID can create income entries.
+     * @allow (get, list, update, delete) User with matching UID can read, list, update, and delete their own income entries.
+     * @deny (create) User cannot create income entries with a mismatched UID.
+     * @deny (get, list, update, delete) User cannot read, list, update, or delete another user's income entries.
+     * @principle Enforces document ownership for all operations.
+     */
+    match /users/{userId}/incomes/{incomeId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Protects user expense entries.
+     * @path /databases/{database}/documents/users/{userId}/expenses/{expenseId}
+     * @allow (create) User with matching UID can create expense entries.
+     * @allow (get, list, update, delete) User with matching UID can read, list, update, and delete their own expense entries.
+     * @deny (create) User cannot create expense entries with a mismatched UID.
+     * @deny (get, list, update, delete) User cannot read, list, update, or delete another user's expense entries.
+     * @principle Enforces document ownership for all operations.
+     */
+    match /users/{userId}/expenses/{expenseId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Protects user credit card information.
+     * @path /databases/{database}/documents/users/{userId}/creditCards/{cardId}
+     * @allow (create) User with matching UID can create credit card entries.
+     * @allow (get, list, update, delete) User with matching UID can read, list, update, and delete their own credit card entries.
+     * @deny (create) User cannot create credit card entries with a mismatched UID.
+     * @deny (get, list, update, delete) User cannot read, list, update, or delete another user's credit card entries.
+     * @principle Enforces document ownership for all operations.
+     */
+    match /users/{userId}/creditCards/{cardId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Protects user master expense information.
+     * @path /databases/{database}/documents/users/{userId}/masterExpenses/{masterExpenseId}
+     * @allow (create) User with matching UID can create master expense entries.
+     * @allow (get, list, update, delete) User with matching UID can read, list, update, and delete their own master expense entries.
+     * @deny (create) User cannot create master expense entries with a mismatched UID.
+     * @deny (get, list, update, delete) User cannot read, list, update, or delete another user's master expense entries.
+     * @principle Enforces document ownership for all operations.
+     */
+    match /users/{userId}/masterExpenses/{masterExpenseId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Protects user asset information.
+     * @path /databases/{database}/documents/users/{userId}/assets/{assetId}
+     * @allow (create) User with matching UID can create asset entries.
+     * @allow (get, list, update, delete) User with matching UID can read, list, update, and delete their own asset entries.
+     * @deny (create) User cannot create asset entries with a mismatched UID.
+     * @deny (get, list, update, delete) User cannot read, list, update, or delete another user's asset entries.
+     * @principle Enforces document ownership for all operations.
+     */
+    match /users/{userId}/assets/{assetId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Protects user liability information.
+     * @path /databases/{database}/documents/users/{userId}/liabilities/{liabilityId}
+     * @allow (create) User with matching UID can create liability entries.
+     * @allow (get, list, update, delete) User with matching UID can read, list, update, and delete their own liability entries.
+     * @deny (create) User cannot create liability entries with a mismatched UID.
+     * @deny (get, list, update, delete) User cannot read, list, update, or delete another user's liability entries.
+     * @principle Enforces document ownership for all operations.
+     */
+    match /users/{userId}/liabilities/{liabilityId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Protects user quick notes.
+     * @path /databases/{database}/documents/users/{userId}/notes/{noteId}
+     * @allow (create) User with matching UID can create note entries.
+     * @allow (get, list, update, delete) User with matching UID can read, list, update, and delete their own note entries.
+     * @deny (create) User cannot create note entries with a mismatched UID.
+     * @deny (get, list, update, or delete) User cannot read, list, update, or delete another user's note entries.
+     * @principle Enforces document ownership for all operations.
+     */
+    match /users/{userId}/notes/{noteId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Protects user net worth history.
+     * @path /databases/{database}/documents/users/{userId}/netWorthHistory/{historyId}
+     * @allow (create) User with matching UID can create net worth history entries.
+     * @allow (get, list, update, delete) User with matching UID can read, list, update, and delete their own net worth history entries.
+     * @deny (create) User cannot create net worth history entries with a mismatched UID.
+     * @deny (get, list, update, or delete) User cannot read, list, update, or delete another user's net worth history entries.
+     * @principle Enforces document ownership for all operations.
+     */
+    match /users/{userId}/netWorthHistory/{historyId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+  }
+}

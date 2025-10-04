@@ -1,0 +1,176 @@
+
+{
+  "entities": {
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "Represents a user's profile information.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "The user's unique ID." },
+        "email": { "type": "string", "description": "The user's email." }
+      },
+      "required": ["uid", "email"]
+    },
+    "Income": {
+      "title": "Income",
+      "type": "object",
+      "description": "Represents a single income entry.",
+      "properties": {
+        "source": { "type": "string" },
+        "expectedAmount": { "type": "number" },
+        "creditedAmount": { "type": "number" },
+        "date": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["Credited", "Not Credited"] },
+        "isRecurring": { "type": "boolean" }
+      },
+      "required": ["source", "expectedAmount", "date", "status", "isRecurring"]
+    },
+    "Expense": {
+      "title": "Expense",
+      "type": "object",
+      "description": "Represents a single expense entry.",
+      "properties": {
+        "category": { "type": "string" },
+        "description": { "type": "string" },
+        "amount": { "type": "number" },
+        "dueDate": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["Paid", "Unpaid"] },
+        "isRecurring": { "type": "boolean" },
+        "masterExpenseId": { "type": "string", "description": "Link to master expense" }
+      },
+      "required": ["category", "description", "amount", "dueDate", "status", "isRecurring"]
+    },
+    "CreditCard": {
+      "title": "CreditCard",
+      "type": "object",
+      "description": "Represents a credit card account.",
+      "properties": {
+        "name": { "type": "string" },
+        "creditLimit": { "type": "number" },
+        "upcomingBillDueDate": { "type": "string", "format": "date-time" },
+        "transactions": {
+          "type": "array",
+          "items": { "$ref": "#/entities/CreditCardTransaction" }
+        }
+      },
+      "required": ["name", "creditLimit", "upcomingBillDueDate", "transactions"]
+    },
+    "CreditCardTransaction": {
+      "title": "CreditCardTransaction",
+      "type": "object",
+      "description": "Represents a single transaction on a credit card.",
+      "properties": {
+        "id": { "type": "string" },
+        "description": { "type": "string" },
+        "amount": { "type": "number" },
+        "date": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "description", "amount", "date"]
+    },
+    "MasterExpense": {
+      "title": "MasterExpense",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "transactions": {
+          "type": "array",
+          "items": { "$ref": "#/entities/MasterExpenseTransaction" }
+        }
+      },
+      "required": ["name", "transactions"]
+    },
+    "MasterExpenseTransaction": {
+      "title": "MasterExpenseTransaction",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "description": { "type": "string" },
+        "amount": { "type": "number" },
+        "date": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["Paid", "Unpaid"] }
+      },
+      "required": ["id", "description", "amount", "date", "status"]
+    },
+    "Asset": {
+      "title": "Asset",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "category": { "type": "string" },
+        "value": { "type": "number" },
+        "lastUpdated": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "category", "value", "lastUpdated"]
+    },
+    "Liability": {
+      "title": "Liability",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "category": { "type": "string" },
+        "value": { "type": "number" },
+        "lastUpdated": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "category", "value", "lastUpdated"]
+    },
+    "Note": {
+      "title": "QuickNote",
+      "type": "object",
+      "properties": {
+        "content": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["content", "createdAt"]
+    },
+    "NetWorthHistory": {
+      "title": "NetWorthHistory",
+      "type": "object",
+      "properties": {
+        "date": { "type": "string", "description": "'yyyy-MM' format" },
+        "value": { "type": "number" }
+      },
+      "required": ["date", "value"]
+    }
+  },
+  "auth": {
+    "providers": ["password", "anonymous"]
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Stores user profile information."
+    },
+    "/users/{userId}/incomes/{incomeId}": {
+      "schema": { "$ref": "#/entities/Income" },
+      "description": "Stores a user's income entries."
+    },
+    "/users/{userId}/expenses/{expenseId}": {
+      "schema": { "$ref": "#/entities/Expense" },
+      "description": "Stores a user's expense entries."
+    },
+    "/users/{userId}/creditCards/{cardId}": {
+      "schema": { "$ref": "#/entities/CreditCard" },
+      "description": "Stores a user's credit cards."
+    },
+    "/users/{userId}/masterExpenses/{masterExpenseId}": {
+      "schema": { "$ref": "#/entities/MasterExpense" },
+      "description": "Stores a user's master expenses."
+    },
+    "/users/{userId}/assets/{assetId}": {
+      "schema": { "$ref": "#/entities/Asset" },
+      "description": "Stores a user's assets."
+    },
+    "/users/{userId}/liabilities/{liabilityId}": {
+      "schema": { "$ref": "#/entities/Liability" },
+      "description": "Stores a user's liabilities."
+    },
+    "/users/{userId}/notes/{noteId}": {
+      "schema": { "$ref": "#/entities/Note" },
+      "description": "Stores a user's quick notes."
+    },
+    "/users/{userId}/netWorthHistory/{historyId}": {
+      "schema": { "$ref": "#/entities/NetWorthHistory" },
+      "description": "Stores a user's net worth history snapshots."
+    }
+  }
+}

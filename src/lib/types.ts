@@ -1,4 +1,5 @@
 
+
 export type TransactionStatus = 'Credited' | 'Not Credited';
 export type ExpenseStatus = 'Paid' | 'Not Paid';
 
@@ -75,6 +76,7 @@ export interface Note {
 }
 
 export interface NetWorthHistory {
+  id: string;
   date: string; // "yyyy-MM" format
   value: number;
 }

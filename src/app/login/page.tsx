@@ -10,22 +10,23 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AppLogo } from "@/components/icons";
+import { LoaderCircle } from "lucide-react";
 
 export default function LoginPage() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("rajesh@example.com");
+  const [password, setPassword] = useState("password123");
   const [error, setError] = useState("");
-  const { login } = useAuth();
+  const { login, isAuthenticating } = useAuth();
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    const success = await login(username, password);
+    const { success, error: loginError } = await login(email, password);
     if (success) {
       router.push("/");
     } else {
-      setError("Invalid username or password. Please try again.");
+      setError(loginError || "An unexpected error occurred. Please try again.");
     }
   };
 
@@ -36,8 +37,8 @@ export default function LoginPage() {
        </div>
       <Card className="w-full max-w-sm shadow-2xl">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold tracking-tight">Welcome Back!</CardTitle>
-          <CardDescription>Enter your credentials to access your dashboard.</CardDescription>
+          <CardTitle className="text-2xl font-bold tracking-tight">Welcome!</CardTitle>
+          <CardDescription>Enter your credentials to sign in or create an account.</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-6">
@@ -48,14 +49,14 @@ export default function LoginPage() {
               </Alert>
             )}
             <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="email">Email</Label>
               <Input
-                id="username"
-                type="text"
-                placeholder="e.g., rajesh"
+                id="email"
+                type="email"
+                placeholder="e.g., rajesh@example.com"
                 required
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div className="space-y-2">
@@ -64,13 +65,19 @@ export default function LoginPage() {
                 id="password"
                 type="password"
                 required
+                placeholder="e.g., password123"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            <Button type="submit" className="w-full">
-              Login
+            <Button type="submit" className="w-full" disabled={isAuthenticating}>
+              {isAuthenticating && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
+              Sign In or Sign Up
             </Button>
+            <div className="text-center text-xs text-muted-foreground">
+                <p>Try: `rajesh@example.com` / `password123`</p>
+                <p>or `yamini@example.com` / `password456`</p>
+            </div>
           </form>
         </CardContent>
       </Card>
