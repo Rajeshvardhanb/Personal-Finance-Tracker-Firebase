@@ -197,10 +197,11 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     if (transaction.masterExpenseId) {
         addMasterExpenseTransaction(transaction.masterExpenseId, {
             id: `cc-trans-${newTransaction.id}`,
-            description: `${card.name}: ${transaction.description}`,
+            description: transaction.description,
             amount: transaction.amount,
             date: transaction.date,
             status: 'Paid',
+            paidViaCard: card.name,
         });
     }
   };
@@ -214,6 +215,14 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
       const updatedTransactions = card.transactions.map(t => t.id === transaction.id ? transaction : t);
       updateCreditCard({ ...card, transactions: updatedTransactions });
 
+      const newMasterExpenseTransaction: Omit<MasterExpenseTransaction, "id"> = {
+        description: transaction.description,
+        amount: transaction.amount,
+        date: transaction.date,
+        status: 'Paid',
+        paidViaCard: card.name,
+      };
+
       // If master expense link changed
       if (originalTransaction?.masterExpenseId !== transaction.masterExpenseId) {
           // Remove from old master expense if it existed
@@ -223,21 +232,15 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
           // Add to new master expense if it exists
           if (transaction.masterExpenseId) {
               addMasterExpenseTransaction(transaction.masterExpenseId, {
-                  id: `cc-trans-${transaction.id}`,
-                  description: `${card.name}: ${transaction.description}`,
-                  amount: transaction.amount,
-                  date: transaction.date,
-                  status: 'Paid',
+                ...newMasterExpenseTransaction,
+                id: `cc-trans-${transaction.id}`,
               });
           }
       } else if (transaction.masterExpenseId) {
           // If link didn't change but other details might have, update it
           updateMasterExpenseTransaction(transaction.masterExpenseId, {
+            ...newMasterExpenseTransaction,
             id: `cc-trans-${transaction.id}`,
-            description: `${card.name}: ${transaction.description}`,
-            amount: transaction.amount,
-            date: transaction.date,
-            status: 'Paid',
           });
       }
   };
@@ -317,7 +320,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
 
     const transactionsToSync = allCreditCardTransactions.filter(t => !t.masterExpenseId);
     
-    const existingCCExpenses = data.expenses.filter(e => e.id.startsWith('cc-trans-'));
+    const existingCCExpenses = data.expenses.filter(e => e.paidViaCard && !e.masterExpenseId);
 
     const batch = writeBatch(firestore);
     const expensesRef = collection(firestore, 'users', user.uid, 'expenses');

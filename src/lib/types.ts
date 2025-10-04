@@ -47,6 +47,7 @@ export interface MasterExpenseTransaction {
   amount: number;
   date: string; // ISO 8601 format
   status: ExpenseStatus;
+  paidViaCard?: string; // Name of the credit card used
 }
 
 export interface MasterExpense {
