@@ -46,7 +46,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setIsAuthenticating(false);
       return { success: true, error: null };
     } catch (error: any) {
-      console.error("Firebase login error:", error);
+      console.error("Firebase login error:", error.code);
       setIsAuthenticating(false);
       // For any error, show a generic message and direct them to Rajesh.
       return { success: false, error: "Invalid credentials. Please contact Rajesh for access." };
