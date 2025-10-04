@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -54,9 +55,10 @@ export default function Header() {
     <header className="sticky top-0 z-30 flex h-14 items-center gap-0 border-b bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-400 sm:h-[60px]">
       <div className="flex w-full items-center justify-between px-4 sm:px-6">
         <div className="flex items-center gap-4">
-            <div className="hidden sm:block">
-                <h1 className="text-sm font-semibold uppercase tracking-wider text-white/90">FINANCE TRACKER</h1>
-            </div>
+             <AppLogo />
+        </div>
+        <div className="hidden sm:block">
+            <h1 className="text-xl font-semibold uppercase tracking-wider text-white/90">FINANCE TRACKER</h1>
         </div>
         <div className="flex items-center gap-4 md:gap-2 lg:gap-4">
             <MonthSelector />
@@ -105,7 +107,7 @@ export default function Header() {
                     href="/"
                     className="group flex h-10 shrink-0 items-center justify-start gap-2 rounded-lg bg-primary px-3 text-lg font-semibold text-primary-foreground md:text-base"
                   >
-                     <AppLogo className="font-bold text-lg" />
+                     <AppLogo/>
                   </Link>
                 </SheetClose>
                 {navItems.map((item) => (
@@ -143,3 +145,4 @@ export default function Header() {
     </header>
   );
 }
+
