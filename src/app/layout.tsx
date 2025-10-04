@@ -6,9 +6,30 @@ import { FinanceProvider } from '@/hooks/use-finances';
 import AppSidebar from '@/components/AppSidebar';
 import Header from '@/components/Header';
 import { SidebarProvider } from '@/hooks/use-sidebar-provider';
+import { Inter as FontSans } from "next/font/google";
+import { DM_Serif_Display as FontSerif } from "next/font/google";
+import { Space_Mono as FontMono } from "next/font/google";
+
+
+const fontSans = FontSans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+})
+
+const fontSerif = FontSerif({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-serif",
+});
+
+const fontMono = FontMono({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-mono",
+});
 
 export const metadata: Metadata = {
-  title: 'Personal Finance Tracker',
+  title: 'INR Tracker',
   description: 'A personal finance dashboard to track your income, expenses, and net worth.',
 };
 
@@ -19,30 +40,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400;1,700&display=swap"
-          rel="stylesheet"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&display=swap"
-          rel="stylesheet"
-        />
-        <link 
-          href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" 
-          rel="stylesheet" 
-        />
-      </head>
-      <body className={cn('font-body antialiased')}>
+      <body
+        className={cn(
+          "min-h-screen bg-background font-sans antialiased",
+          fontSans.variable,
+          fontSerif.variable,
+          fontMono.variable
+        )}
+      >
         <FinanceProvider>
           <SidebarProvider>
             <div className="relative flex min-h-screen w-full">
               <AppSidebar />
-              <div className="flex-1 sm:ml-64">
+              <div className="flex-1 transition-all duration-300 ease-in-out data-[state=expanded]:sm:ml-64" data-state='expanded'>
                 <Header />
-                <main className="p-4 sm:px-6 sm:py-0">
+                <main className="p-4 sm:px-6 sm:py-4">
                   {children}
                 </main>
               </div>

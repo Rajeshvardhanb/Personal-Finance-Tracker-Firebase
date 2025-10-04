@@ -36,20 +36,22 @@ import { cn } from "@/lib/utils";
           </TableHeader>
           <TableBody>
             {expenses.length > 0 ? expenses.map((expense) => (
-              <TableRow key={expense.id} className={cn(expense.masterExpenseId && 'bg-muted/50')}>
+              <TableRow key={expense.id} className={cn(expense.masterExpenseId && 'bg-muted/30')}>
                 <TableCell className="font-medium">{expense.description}</TableCell>
-                <TableCell>{expense.category}</TableCell>
+                <TableCell>
+                   <Badge variant="outline">{expense.category}</Badge>
+                </TableCell>
                 <TableCell>{format(new Date(expense.dueDate), 'dd MMM yyyy')}</TableCell>
                  <TableCell>
                   <Badge 
                     variant={expense.status === 'Paid' ? 'default' : 'secondary'}
-                    className={cn(!expense.masterExpenseId && 'cursor-pointer')}
+                    className={cn(!expense.masterExpenseId && 'cursor-pointer', "border border-transparent")}
                     onClick={() => onToggleStatus(expense)}
                   >
                     {expense.status}
                   </Badge>
                 </TableCell>
-                <TableCell className="text-right">{formatCurrency(expense.amount)}</TableCell>
+                <TableCell className="text-right font-mono">{formatCurrency(expense.amount)}</TableCell>
                 <TableCell className="text-right">
                   {!expense.masterExpenseId ? (
                     <>
@@ -63,7 +65,7 @@ import { cn } from "@/lib/utils";
                       </Button>
                     </>
                   ) : (
-                    <span className="text-xs text-muted-foreground">Managed in Master</span>
+                    <span className="text-xs text-muted-foreground">Managed</span>
                   )}
                 </TableCell>
               </TableRow>

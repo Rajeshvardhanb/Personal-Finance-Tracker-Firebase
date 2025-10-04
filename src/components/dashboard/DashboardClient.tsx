@@ -8,9 +8,7 @@ import RecentExpenses from "./RecentExpenses";
 import NotesWidget from "./NotesWidget";
 import SavingsForecast from "./SavingsForecast";
 import CreditCardSummary from "./CreditCardSummary";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { formatCurrency } from "@/lib/utils";
-import { CreditCard as CreditCardIcon } from "lucide-react";
+import PageHeader from "../PageHeader";
 
 export default function DashboardClient() {
   const { data, selectedDate } = useFinances();
@@ -53,6 +51,7 @@ export default function DashboardClient() {
 
   return (
     <div className="grid gap-6">
+      <PageHeader title="Dashboard" />
       <SummaryCards
         totalIncome={totalIncome}
         totalExpenses={totalExpenses}
@@ -60,51 +59,26 @@ export default function DashboardClient() {
         unpaidExpenses={unpaidExpenses}
       />
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="lg:col-span-1">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Credit Card Spend</CardTitle>
-              <CreditCardIcon className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">
-                {formatCurrency(monthlyCardSpending)}
-              </div>
-            </CardContent>
-        </Card>
-        {data.creditCards.map(card => {
-           const monthlySpending = card.transactions
-            .filter(t => getMonth(new Date(t.date)) === currentMonth && getYear(new Date(t.date)) === currentYear)
-            .reduce((sum, t) => sum + t.amount, 0);
-          return (
-            <Card key={card.id}>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">{card.name}</CardTitle>
-                 <CreditCardIcon className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {formatCurrency(monthlySpending)}
-                </div>
-              </CardContent>
-            </Card>
-          )
-        })}
-      </div>
-
-      <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2 grid gap-6">
+      <div className="grid gap-6 lg:grid-cols-5">
+        <div className="lg:col-span-3 grid gap-6">
           <DashboardCharts 
             income={totalIncome} 
             expenses={totalExpenses} 
             creditCardSpending={monthlyCardSpending} 
             expenseData={monthlyExpenses}
           />
-          <RecentExpenses expenses={monthlyExpenses} />
         </div>
-        <div className="lg:col-span-1 grid gap-6 auto-rows-min">
-           <SavingsForecast />
+        <div className="lg:col-span-2 grid gap-6 auto-rows-min">
            <CreditCardSummary creditCards={data.creditCards} selectedDate={selectedDate} />
+        </div>
+      </div>
+
+       <div className="grid gap-6 lg:grid-cols-5">
+        <div className="lg:col-span-3 grid gap-6">
+           <RecentExpenses expenses={monthlyExpenses} />
+        </div>
+        <div className="lg:col-span-2 grid gap-6 auto-rows-min">
+            <SavingsForecast />
            <NotesWidget />
         </div>
       </div>

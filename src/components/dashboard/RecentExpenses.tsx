@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Expense, ExpenseStatus } from "@/lib/types";
+import { Expense } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
 import { format } from "date-fns";
 
@@ -11,11 +11,11 @@ type RecentExpensesProps = {
 };
 
 export default function RecentExpenses({ expenses }: RecentExpensesProps) {
-  const paidExpenses = expenses.filter((e) => e.status === "Paid");
-  const unpaidExpenses = expenses.filter((e) => e.status === "Not Paid");
+  const paidExpenses = expenses.filter((e) => e.status === "Paid").sort((a,b) => new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime());
+  const unpaidExpenses = expenses.filter((e) => e.status === "Not Paid").sort((a,b) => new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime());
 
   const ExpenseList = ({ expenses }: { expenses: Expense[] }) => (
-    <div className="space-y-4">
+    <div className="space-y-4 pt-4">
       {expenses.length > 0 ? expenses.map((expense) => (
         <div key={expense.id} className="flex items-center">
           <div className="flex-1">
@@ -34,7 +34,7 @@ export default function RecentExpenses({ expenses }: RecentExpensesProps) {
   );
 
   return (
-    <Card>
+    <Card className="shadow-sm hover:shadow-lg transition-shadow">
       <CardHeader>
         <CardTitle className="font-headline">Monthly Expenses</CardTitle>
         <CardDescription>

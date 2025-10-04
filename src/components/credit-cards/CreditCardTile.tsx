@@ -26,7 +26,7 @@ export default function CreditCardTile({ card, selectedDate, onEdit, onDelete }:
     .reduce((sum, t) => sum + t.amount, 0);
   
   return (
-     <Card className="flex flex-col transition-all hover:shadow-lg">
+     <Card className="flex flex-col transition-all hover:shadow-lg dark:hover:shadow-primary/10">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-lg font-bold font-headline">{card.name}</CardTitle>
             <div className="flex items-center">
@@ -41,14 +41,14 @@ export default function CreditCardTile({ card, selectedDate, onEdit, onDelete }:
             </div>
         </CardHeader>
         <CardContent className="flex flex-col flex-grow p-6 pt-0">
-            <Link href={`/credit-cards/${card.id}`} className="block">
-                <div className="bg-gradient-to-br from-primary/80 to-primary p-4 rounded-lg text-primary-foreground shadow-lg hover:shadow-xl transition-shadow cursor-pointer aspect-[1.586] flex flex-col justify-between">
+            <Link href={`/credit-cards/${card.id}`} className="block group">
+                <div className="bg-gradient-to-br from-zinc-900 to-zinc-800 dark:from-zinc-800 dark:to-zinc-900 p-4 rounded-lg text-primary-foreground shadow-lg group-hover:shadow-xl group-hover:scale-[1.02] transition-all cursor-pointer aspect-[1.586] flex flex-col justify-between">
                     <div className="flex justify-between items-start">
-                        <RupeeIcon className="h-8 w-8 text-primary-foreground/80"/>
-                        <p className="font-code text-sm opacity-80">CARD</p>
+                        <RupeeIcon className="h-8 w-8 text-primary-foreground/70"/>
+                        <p className="font-mono text-sm opacity-70">CARD</p>
                     </div>
                     <div>
-                    <p className="text-xl font-code tracking-widest">**** **** **** 1234</p>
+                    <p className="text-xl font-mono tracking-widest">**** **** **** 1234</p>
                     <p className="text-sm font-headline pt-2">{card.name}</p>
                     </div>
                 </div>

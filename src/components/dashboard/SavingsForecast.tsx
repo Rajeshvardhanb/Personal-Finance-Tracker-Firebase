@@ -43,13 +43,14 @@ export default function SavingsForecast() {
   }, []);
 
   return (
-    <Card>
+    <Card className="shadow-sm hover:shadow-lg transition-shadow">
       <CardHeader>
         <CardTitle className="font-headline flex items-center gap-2">
+          <Sparkles className="h-5 w-5 text-primary" />
           Savings Forecast
         </CardTitle>
         <CardDescription>
-          Next month's savings projection based on your recent activity.
+          AI-powered projection of next month's savings.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -72,10 +73,10 @@ export default function SavingsForecast() {
               <p className="text-3xl font-bold text-primary">{formatCurrency(forecast.forecastedSavings)}</p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">How we calculated this:</p>
-              <p className="text-sm">{forecast.explanation}</p>
+              <p className="text-sm font-bold">Basis:</p>
+              <p className="text-sm text-muted-foreground">{forecast.explanation}</p>
             </div>
-            <Button onClick={handleForecast} size="sm" variant="ghost" className="gap-2">
+            <Button onClick={handleForecast} size="sm" variant="outline" className="gap-2">
               <Sparkles className="h-4 w-4" />
               Regenerate
             </Button>

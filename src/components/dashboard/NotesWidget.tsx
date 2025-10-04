@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useFinances } from "@/hooks/use-finances";
 import { Plus, Trash2 } from "lucide-react";
@@ -20,16 +20,17 @@ export default function NotesWidget() {
   };
 
   return (
-    <Card>
+    <Card className="shadow-sm hover:shadow-lg transition-shadow">
       <CardHeader>
         <CardTitle className="font-headline">Quick Notes</CardTitle>
+        <CardDescription>Jot down to-dos and reminders.</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="flex gap-2 mb-4">
           <Input
             value={newNote}
             onChange={(e) => setNewNote(e.target.value)}
-            placeholder="Add a to-do or reminder..."
+            placeholder="Add a note..."
             onKeyDown={(e) => e.key === 'Enter' && handleAddNote()}
           />
           <Button size="icon" onClick={handleAddNote}>
@@ -39,9 +40,9 @@ export default function NotesWidget() {
         <ScrollArea className="h-40">
           <div className="space-y-2">
             {data.notes.map((note) => (
-              <div key={note.id} className="flex items-center justify-between bg-accent/20 p-2 rounded-md">
+              <div key={note.id} className="flex items-center justify-between bg-muted/50 p-3 rounded-lg">
                 <p className="text-sm flex-1 pr-2">{note.content}</p>
-                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => deleteNote(note.id)}>
+                <Button variant="ghost" size="icon" className="h-7 w-7 shrink-0" onClick={() => deleteNote(note.id)}>
                   <Trash2 className="h-4 w-4 text-muted-foreground" />
                 </Button>
               </div>

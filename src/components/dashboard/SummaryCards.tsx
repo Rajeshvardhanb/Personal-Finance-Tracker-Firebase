@@ -22,35 +22,35 @@ export default function SummaryCards({
       title: "Total Income",
       icon: TrendingUp,
       value: totalIncome,
-      color: "text-chart-1",
+      color: "text-emerald-500",
     },
     {
       title: "Total Expenses",
       icon: TrendingDown,
       value: totalExpenses,
-      color: "text-chart-2",
+      color: "text-red-500",
     },
     {
       title: "Paid Expenses",
       icon: CheckCircle,
       value: paidExpenses,
-      color: "text-chart-3",
+      color: "text-blue-500",
     },
      {
       title: "Unpaid Expenses",
       icon: Hourglass,
       value: unpaidExpenses,
-      color: "text-chart-5",
+      color: "text-amber-500",
     },
   ];
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       {summaryData.map((item) => (
-        <Card key={item.title}>
+        <Card key={item.title} className="shadow-sm hover:shadow-lg transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">{item.title}</CardTitle>
-            <item.icon className={`h-4 w-4 text-muted-foreground ${item.color}`} />
+            <item.icon className={`h-4 w-4 ${item.color}`} />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">

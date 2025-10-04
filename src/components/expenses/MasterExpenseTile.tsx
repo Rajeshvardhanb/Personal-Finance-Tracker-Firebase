@@ -26,7 +26,7 @@ export default function MasterExpenseTile({ masterExpense, selectedDate, onEdit,
     .reduce((sum, t) => sum + t.amount, 0);
   
   return (
-     <Card className="flex flex-col transition-all hover:shadow-lg">
+     <Card className="flex flex-col transition-all hover:shadow-lg dark:hover:shadow-accent/10">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-lg font-bold font-headline">{masterExpense.name}</CardTitle>
             <div className="flex items-center">
@@ -41,13 +41,13 @@ export default function MasterExpenseTile({ masterExpense, selectedDate, onEdit,
             </div>
         </CardHeader>
         <CardContent className="flex flex-col flex-grow p-6 pt-0">
-            <Link href={`/expenses/${masterExpense.id}`} className="block">
-                <div className="bg-gradient-to-br from-accent/80 to-accent p-4 rounded-lg text-accent-foreground shadow-lg hover:shadow-xl transition-shadow cursor-pointer aspect-video flex flex-col justify-between">
+            <Link href={`/expenses/${masterExpense.id}`} className="block group">
+                <div className="bg-gradient-to-br from-amber-500 to-orange-500 dark:from-amber-600 dark:to-orange-600 p-4 rounded-lg text-white shadow-lg group-hover:shadow-xl group-hover:scale-[1.02] transition-all cursor-pointer aspect-video flex flex-col justify-between">
                     <div className="flex justify-between items-start">
-                        <FolderKanban className="h-8 w-8 text-accent-foreground/80"/>
+                        <FolderKanban className="h-8 w-8 opacity-80"/>
                     </div>
                     <div>
-                        <p className="text-sm text-accent-foreground/80">Total Spent this month</p>
+                        <p className="text-sm opacity-80">Total Spent this month</p>
                         <p className="text-2xl font-bold tracking-tight">{formatCurrency(monthlySpending)}</p>
                     </div>
                 </div>
