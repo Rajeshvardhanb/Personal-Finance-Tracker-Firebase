@@ -2,7 +2,7 @@
 
 import { useFinances } from "@/hooks/use-finances";
 import { getMonth, getYear, getDate, getDaysInMonth, format, startOfMonth } from "date-fns";
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import {
   Card,
   CardContent,
