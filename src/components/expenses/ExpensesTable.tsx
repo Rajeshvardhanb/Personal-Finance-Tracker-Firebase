@@ -12,6 +12,7 @@ import {
   import { formatCurrency } from "@/lib/utils";
   import { format } from "date-fns";
   import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
   
   type ExpensesTableProps = {
     expenses: Expense[];
@@ -35,14 +36,14 @@ import {
           </TableHeader>
           <TableBody>
             {expenses.length > 0 ? expenses.map((expense) => (
-              <TableRow key={expense.id}>
+              <TableRow key={expense.id} className={cn(expense.masterExpenseId && 'bg-muted/50')}>
                 <TableCell className="font-medium">{expense.description}</TableCell>
                 <TableCell>{expense.category}</TableCell>
                 <TableCell>{format(new Date(expense.dueDate), 'dd MMM yyyy')}</TableCell>
                  <TableCell>
                   <Badge 
                     variant={expense.status === 'Paid' ? 'default' : 'secondary'}
-                    className="cursor-pointer"
+                    className={cn(!expense.masterExpenseId && 'cursor-pointer')}
                     onClick={() => onToggleStatus(expense)}
                   >
                     {expense.status}
@@ -50,14 +51,20 @@ import {
                 </TableCell>
                 <TableCell className="text-right">{formatCurrency(expense.amount)}</TableCell>
                 <TableCell className="text-right">
-                  <Button variant="ghost" size="icon" onClick={() => onEdit(expense)} className="h-8 w-8">
-                    <Pencil className="h-4 w-4" />
-                    <span className="sr-only">Edit</span>
-                  </Button>
-                  <Button variant="ghost" size="icon" onClick={() => onDelete(expense.id)} className="h-8 w-8 text-destructive hover:text-destructive">
-                    <Trash2 className="h-4 w-4" />
-                     <span className="sr-only">Delete</span>
-                  </Button>
+                  {!expense.masterExpenseId ? (
+                    <>
+                      <Button variant="ghost" size="icon" onClick={() => onEdit(expense)} className="h-8 w-8">
+                        <Pencil className="h-4 w-4" />
+                        <span className="sr-only">Edit</span>
+                      </Button>
+                      <Button variant="ghost" size="icon" onClick={() => onDelete(expense.id)} className="h-8 w-8 text-destructive hover:text-destructive">
+                        <Trash2 className="h-4 w-4" />
+                        <span className="sr-only">Delete</span>
+                      </Button>
+                    </>
+                  ) : (
+                    <span className="text-xs text-muted-foreground">Managed in Master</span>
+                  )}
                 </TableCell>
               </TableRow>
             )) : (

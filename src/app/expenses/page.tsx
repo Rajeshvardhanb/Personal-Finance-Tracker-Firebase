@@ -25,7 +25,6 @@ export default function ExpensesPage() {
 
   const monthlyExpenses = data.expenses.filter(
     (exp) =>
-      !exp.masterExpenseId &&
       getMonth(new Date(exp.dueDate)) === currentMonth &&
       getYear(new Date(exp.dueDate)) === currentYear
   );
@@ -36,15 +35,19 @@ export default function ExpensesPage() {
   };
 
   const handleEditExpense = (expense: Expense) => {
+    if (expense.masterExpenseId) return; // Prevent editing of master expense summaries
     setEditingExpense(expense);
     setIsExpenseFormOpen(true);
   };
 
   const handleDeleteExpense = (id: string) => {
+    const expense = data.expenses.find(e => e.id === id);
+    if (expense?.masterExpenseId) return; // Prevent deleting of master expense summaries
     deleteExpense(id);
   };
 
   const handleToggleStatus = (expense: Expense) => {
+    if (expense.masterExpenseId) return; // Prevent toggling status of master expense summaries
     const newStatus = expense.status === 'Paid' ? 'Not Paid' : 'Paid';
     updateExpense({ ...expense, status: newStatus });
   }

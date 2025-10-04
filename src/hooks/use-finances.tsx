@@ -3,7 +3,7 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback } from 'react';
 import { FinanceData, initialData } from '@/lib/data';
-import type { Income, Expense, Note, Asset, Liability, CreditCard, CreditCardTransaction, MasterExpense, MasterExpenseTransaction } from '@/lib/types';
+import type { Income, Expense, Note, Asset, Liability, CreditCard, CreditCardTransaction, MasterExpense, MasterExpenseTransaction, ExpenseStatus } from '@/lib/types';
 import { startOfMonth, getMonth, getYear, format, subMonths, isEqual, parse } from 'date-fns';
 
 interface FinanceContextType {
@@ -136,37 +136,24 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
 
   const addMasterExpense = (expense: Omit<MasterExpense, 'id' | 'transactions'>) => {
     const newMasterExpense = { ...expense, id: `me-${crypto.randomUUID()}`, transactions: [] };
-    setDataState(prev => {
-        const newExpense = {
-          id: `exp-from-${newMasterExpense.id}`,
-          masterExpenseId: newMasterExpense.id,
-          description: newMasterExpense.name,
-          amount: 0,
-          category: 'Other',
-          dueDate: new Date().toISOString(),
-          status: 'Paid' as ExpenseStatus,
-        };
-        return {
-          ...prev,
-          masterExpenses: [...prev.masterExpenses, newMasterExpense],
-          expenses: [...prev.expenses, newExpense]
-        }
-    });
+    setDataState(prev => ({
+      ...prev,
+      masterExpenses: [...prev.masterExpenses, newMasterExpense],
+    }));
   };
-
+  
   const updateMasterExpense = (expense: MasterExpense) => {
     setDataState(prev => ({
       ...prev,
       masterExpenses: prev.masterExpenses.map(e => e.id === expense.id ? expense : e),
-      expenses: prev.expenses.map(e => e.masterExpenseId === expense.id ? { ...e, description: expense.name } : e)
     }));
   };
-
+  
   const deleteMasterExpense = (id: string) => {
     setDataState(prev => ({
       ...prev,
       masterExpenses: prev.masterExpenses.filter(e => e.id !== id),
-      expenses: prev.expenses.filter(e => e.masterExpenseId !== id)
+      expenses: prev.expenses.filter(e => !e.id.startsWith(`exp-from-${id}`))
     }));
   };
 
@@ -387,26 +374,64 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
 
   const updateTotalFromMasterExpense = useCallback(() => {
     setDataState(prev => {
+      const month = getMonth(selectedDate);
+      const year = getYear(selectedDate);
+      let newExpenses = prev.expenses.filter(e => !e.masterExpenseId);
       let expensesChanged = false;
-      const newExpenses = prev.expenses.map(expense => {
-        if (!expense.masterExpenseId) return expense;
-        
-        const masterExpense = prev.masterExpenses.find(me => me.id === expense.masterExpenseId);
-        if (!masterExpense) return expense;
 
-        const month = getMonth(selectedDate);
-        const year = getYear(selectedDate);
-
-        const total = masterExpense.transactions
+      prev.masterExpenses.forEach(me => {
+        const paidTotal = me.transactions
           .filter(t => getMonth(new Date(t.date)) === month && getYear(new Date(t.date)) === year && t.status === 'Paid')
           .reduce((sum, t) => sum + t.amount, 0);
 
-        if (expense.amount !== total) {
-          expensesChanged = true;
-          return { ...expense, amount: total, status: total > 0 ? 'Paid' : 'Not Paid' };
-        }
-        return expense;
+        const unpaidTotal = me.transactions
+          .filter(t => getMonth(new Date(t.date)) === month && getYear(new Date(t.date)) === year && t.status === 'Not Paid')
+          .reduce((sum, t) => sum + t.amount, 0);
+
+        const createOrUpdateExpense = (status: ExpenseStatus, amount: number) => {
+          if (amount <= 0) return;
+          const suffix = status === 'Paid' ? 'Paid' : 'Unpaid';
+          const id = `exp-from-${me.id}-${suffix.toLowerCase()}`;
+          const description = `${me.name} (${suffix})`;
+          const existing = prev.expenses.find(e => e.id === id);
+
+          if (existing) {
+            if (existing.amount !== amount) {
+              newExpenses.push({ ...existing, amount });
+              expensesChanged = true;
+            } else {
+              newExpenses.push(existing);
+            }
+          } else {
+            newExpenses.push({
+              id,
+              masterExpenseId: me.id,
+              description,
+              amount,
+              category: 'Other',
+              dueDate: selectedDate.toISOString(),
+              status,
+              isRecurring: false,
+            });
+            expensesChanged = true;
+          }
+        };
+
+        createOrUpdateExpense('Paid', paidTotal);
+        createOrUpdateExpense('Not Paid', unpaidTotal);
       });
+      
+      const masterExpenseIds = prev.masterExpenses.map(me => me.id);
+      const prevMasterSummaryIds = prev.expenses
+          .filter(e => e.masterExpenseId && masterExpenseIds.includes(e.masterExpenseId))
+          .map(e => e.id);
+      const newMasterSummaryIds = newExpenses
+          .filter(e => e.masterExpenseId && masterExpenseIds.includes(e.masterExpenseId))
+          .map(e => e.id);
+
+      if (prevMasterSummaryIds.length !== newMasterSummaryIds.length) {
+        expensesChanged = true;
+      }
 
       if (expensesChanged) {
         return { ...prev, expenses: newExpenses };
