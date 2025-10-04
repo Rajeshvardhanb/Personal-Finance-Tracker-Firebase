@@ -144,8 +144,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
           amount: 0,
           category: 'Other',
           dueDate: new Date().toISOString(),
-          isRecurring: false,
-          status: 'Not Paid' as ExpenseStatus
+          status: 'Paid' as ExpenseStatus,
         };
         return {
           ...prev,
@@ -399,12 +398,12 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
         const year = getYear(selectedDate);
 
         const total = masterExpense.transactions
-          .filter(t => getMonth(new Date(t.date)) === month && getYear(new Date(t.date)) === year)
+          .filter(t => getMonth(new Date(t.date)) === month && getYear(new Date(t.date)) === year && t.status === 'Paid')
           .reduce((sum, t) => sum + t.amount, 0);
 
         if (expense.amount !== total) {
           expensesChanged = true;
-          return { ...expense, amount: total };
+          return { ...expense, amount: total, status: total > 0 ? 'Paid' : 'Not Paid' };
         }
         return expense;
       });

@@ -52,6 +52,11 @@ export default function MasterExpenseDetailPage() {
         deleteMasterExpenseTransaction(masterExpense.id, transactionId);
     };
 
+    const handleToggleStatus = (transaction: MasterExpenseTransaction) => {
+        const newStatus = transaction.status === 'Paid' ? 'Not Paid' : 'Paid';
+        updateMasterExpenseTransaction(masterExpense.id, { ...transaction, status: newStatus });
+    }
+
     const handleCloseForm = () => {
         setIsFormOpen(false);
         setEditingTransaction(null);
@@ -95,6 +100,7 @@ export default function MasterExpenseDetailPage() {
                         transactions={monthlyTransactions}
                         onEdit={handleEditTransaction}
                         onDelete={handleDeleteTransaction}
+                        onToggleStatus={handleToggleStatus}
                     />
                 </CardContent>
             </Card>

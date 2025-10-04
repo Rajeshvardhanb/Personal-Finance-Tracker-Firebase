@@ -15,6 +15,7 @@ import { format } from "date-fns";
 import { MasterExpenseTransactionSchema, type MasterExpenseTransactionFormValues } from "@/lib/schemas";
 import type { MasterExpenseTransaction } from "@/lib/types";
 import { useEffect } from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 type MasterExpenseTransactionFormProps = {
   isOpen: boolean;
@@ -33,6 +34,7 @@ export default function MasterExpenseTransactionForm({ isOpen, onClose, transact
     defaultValues: {
       description: "",
       amount: 0,
+      status: "Not Paid",
     },
   });
 
@@ -48,6 +50,7 @@ export default function MasterExpenseTransactionForm({ isOpen, onClose, transact
           description: "",
           amount: 0,
           date: new Date(),
+          status: "Not Paid",
         });
       }
     }
@@ -142,6 +145,27 @@ export default function MasterExpenseTransactionForm({ isOpen, onClose, transact
                   <FormMessage />
                 </FormItem>
               )}
+            />
+            <FormField
+                control={form.control}
+                name="status"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Status</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select a status" />
+                        </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                            <SelectItem value="Paid">Paid</SelectItem>
+                            <SelectItem value="Not Paid">Not Paid</SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <FormMessage />
+                    </FormItem>
+                )}
             />
             <DialogFooter>
               <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
