@@ -22,7 +22,7 @@ const config = {
         sans: ["var(--font-sans)", ...fontFamily.sans],
         serif: ["var(--font-serif)", ...fontFamily.serif],
         mono: ["var(--font-mono)", ...fontFamily.mono],
-        headline: ["var(--font-serif)", ...fontFamily.serif], // Re-alias for consistency
+        headline: ["var(--font-serif)", ...fontFamily.serif],
       },
       colors: {
         border: "hsl(var(--border))",
