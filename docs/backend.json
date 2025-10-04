@@ -1,0 +1,391 @@
+{
+  "entities": {
+    "Income": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Income",
+      "type": "object",
+      "description": "Represents a single income entry.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the income entry."
+        },
+        "source": {
+          "type": "string",
+          "description": "The source of the income."
+        },
+        "expectedAmount": {
+          "type": "number",
+          "description": "The expected amount of income in INR."
+        },
+        "creditedAmount": {
+          "type": "number",
+          "description": "The actual credited amount of income in INR."
+        },
+        "date": {
+          "type": "string",
+          "description": "The date the income was expected or credited.",
+          "format": "date-time"
+        },
+        "status": {
+          "type": "string",
+          "description": "The status of the income (Credited/Not Credited)."
+        },
+        "recurring": {
+          "type": "boolean",
+          "description": "Indicates if the income is recurring monthly."
+        }
+      },
+      "required": [
+        "id",
+        "source",
+        "expectedAmount",
+        "date",
+        "status",
+        "recurring"
+      ]
+    },
+    "Expense": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Expense",
+      "type": "object",
+      "description": "Represents a single expense entry.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the expense entry."
+        },
+        "category": {
+          "type": "string",
+          "description": "The category of the expense."
+        },
+        "description": {
+          "type": "string",
+          "description": "A description of the expense."
+        },
+        "amount": {
+          "type": "number",
+          "description": "The amount of the expense in INR."
+        },
+        "dueDate": {
+          "type": "string",
+          "description": "The due date of the expense.",
+          "format": "date-time"
+        },
+        "status": {
+          "type": "string",
+          "description": "The status of the expense (Paid/Unpaid)."
+        },
+        "recurring": {
+          "type": "boolean",
+          "description": "Indicates if the expense is recurring monthly."
+        }
+      },
+      "required": [
+        "id",
+        "category",
+        "description",
+        "amount",
+        "dueDate",
+        "status",
+        "recurring"
+      ]
+    },
+    "CreditCard": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "CreditCard",
+      "type": "object",
+      "description": "Represents a credit card account.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the credit card."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the credit card."
+        },
+        "creditLimit": {
+          "type": "number",
+          "description": "The credit limit of the card in INR."
+        },
+        "totalSpending": {
+          "type": "number",
+          "description": "The total spending on the card."
+        },
+        "upcomingBillDueDate": {
+          "type": "string",
+          "description": "The due date for the upcoming bill.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "creditLimit",
+        "totalSpending",
+        "upcomingBillDueDate"
+      ]
+    },
+    "CreditCardTransaction": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "CreditCardTransaction",
+      "type": "object",
+      "description": "Represents a single transaction on a credit card.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the transaction."
+        },
+        "creditCardId": {
+          "type": "string",
+          "description": "Reference to CreditCard. (Relationship: CreditCard 1:N CreditCardTransaction)"
+        },
+        "description": {
+          "type": "string",
+          "description": "A description of the transaction."
+        },
+        "amount": {
+          "type": "number",
+          "description": "The amount of the transaction in INR."
+        },
+        "date": {
+          "type": "string",
+          "description": "The date of the transaction.",
+          "format": "date-time"
+        },
+        "status": {
+          "type": "string",
+          "description": "The status of the transaction (Paid/Unpaid)."
+        }
+      },
+      "required": [
+        "id",
+        "creditCardId",
+        "description",
+        "amount",
+        "date",
+        "status"
+      ]
+    },
+    "NetWorthItem": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "NetWorthItem",
+      "type": "object",
+      "description": "Represents an asset or liability item for net worth calculation.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the net worth item."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the asset or liability."
+        },
+        "category": {
+          "type": "string",
+          "description": "The category of the asset or liability."
+        },
+        "type": {
+          "type": "string",
+          "description": "The type of the item (Asset/Liability)."
+        },
+        "value": {
+          "type": "number",
+          "description": "The current value of the item in INR."
+        },
+        "lastUpdatedDate": {
+          "type": "string",
+          "description": "The date the value was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "category",
+        "type",
+        "value",
+        "lastUpdatedDate"
+      ]
+    },
+    "ExpenseCategoryBudget": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "ExpenseCategoryBudget",
+      "type": "object",
+      "description": "Represents a monthly budget for an expense category.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the expense category budget."
+        },
+        "category": {
+          "type": "string",
+          "description": "The expense category."
+        },
+        "budgetLimit": {
+          "type": "number",
+          "description": "The monthly budget limit for the category in INR."
+        }
+      },
+      "required": [
+        "id",
+        "category",
+        "budgetLimit"
+      ]
+    },
+    "QuickNote": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "QuickNote",
+      "type": "object",
+      "description": "Represents a quick note or to-do item.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the quick note."
+        },
+        "text": {
+          "type": "string",
+          "description": "The text content of the note."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "The date and time the note was created.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "text",
+        "createdAt"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/incomes/{incomeId}",
+        "definition": {
+          "entityName": "Income",
+          "schema": {
+            "$ref": "#/backend/entities/Income"
+          },
+          "description": "Stores income entries. Each document represents a single income.",
+          "params": [
+            {
+              "name": "incomeId",
+              "description": "The unique identifier for the income entry."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/expenses/{expenseId}",
+        "definition": {
+          "entityName": "Expense",
+          "schema": {
+            "$ref": "#/backend/entities/Expense"
+          },
+          "description": "Stores expense entries. Each document represents a single expense.",
+          "params": [
+            {
+              "name": "expenseId",
+              "description": "The unique identifier for the expense entry."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/credit_cards/{creditCardId}",
+        "definition": {
+          "entityName": "CreditCard",
+          "schema": {
+            "$ref": "#/backend/entities/CreditCard"
+          },
+          "description": "Stores credit card account information.",
+          "params": [
+            {
+              "name": "creditCardId",
+              "description": "The unique identifier for the credit card."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/credit_cards/{creditCardId}/transactions/{transactionId}",
+        "definition": {
+          "entityName": "CreditCardTransaction",
+          "schema": {
+            "$ref": "#/backend/entities/CreditCardTransaction"
+          },
+          "description": "Stores transactions for a specific credit card.",
+          "params": [
+            {
+              "name": "creditCardId",
+              "description": "The unique identifier for the credit card."
+            },
+            {
+              "name": "transactionId",
+              "description": "The unique identifier for the transaction."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/net_worth_items/{netWorthItemId}",
+        "definition": {
+          "entityName": "NetWorthItem",
+          "schema": {
+            "$ref": "#/backend/entities/NetWorthItem"
+          },
+          "description": "Stores asset and liability items for net worth calculation.",
+          "params": [
+            {
+              "name": "netWorthItemId",
+              "description": "The unique identifier for the net worth item."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/expense_category_budgets/{budgetId}",
+        "definition": {
+          "entityName": "ExpenseCategoryBudget",
+          "schema": {
+            "$ref": "#/backend/entities/ExpenseCategoryBudget"
+          },
+          "description": "Stores monthly budget limits for expense categories.",
+          "params": [
+            {
+              "name": "budgetId",
+              "description": "The unique identifier for the expense category budget."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/quick_notes/{noteId}",
+        "definition": {
+          "entityName": "QuickNote",
+          "schema": {
+            "$ref": "#/backend/entities/QuickNote"
+          },
+          "description": "Stores quick notes and to-do items.",
+          "params": [
+            {
+              "name": "noteId",
+              "description": "The unique identifier for the quick note."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "Given the requirement for local storage and no authentication, the Firestore structure focuses on organizing the data for the personal finance application.  Since there is no authentication required, all data is stored on the client side, therefore, there is no need for users collection, user id, or ownership features. The application uses local storage, the Firestore structure is designed as if the app would use remote storage.\n\nThe primary approach is structural segregation, grouping similar data types into collections. This promotes clarity and simplifies data management.  The design considers potential future scalability if authentication is added later.\n\nAuthorization Independence: Since the application uses local storage, there is no need to worry about Authorization Independence.\nQAPs (Rules are not Filters): Since all data is local, there is no need to worry about QAPs."
+  }
+}

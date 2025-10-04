@@ -1,0 +1,131 @@
+/**
+ * @file Firestore Security Rules
+ * @description This ruleset is designed for a personal finance application that currently uses local storage and assumes no authentication.
+ * As such, it mimics a remote storage structure but with all access open, as there is no concept of user-based security in this prototype.
+ *
+ * @dataStructure
+ * - /incomes/{incomeId}: Stores individual income entries.
+ * - /expenses/{expenseId}: Stores individual expense entries.
+ * - /credit_cards/{creditCardId}: Stores credit card account information.
+ * - /credit_cards/{creditCardId}/transactions/{transactionId}: Stores credit card transactions for each credit card.
+ * - /net_worth_items/{netWorthItemId}: Stores net worth items (assets and liabilities).
+ * - /expense_category_budgets/{budgetId}: Stores budget limits for expense categories.
+ * - /quick_notes/{noteId}: Stores quick notes.
+ *
+ * @keySecurityDecisions
+ * - All read and write access is currently open (`allow get, list, create, update, delete: if true;`). This is because the application uses local storage and has no authentication.
+ * - If authentication were to be added, these rules would need to be modified to enforce user-based access control (e.g., ownership).
+ *
+ * @denormalizationForAuthorization N/A - No authorization is performed in this version.
+ * @structuralSegregation N/A - No segregation is performed in this version.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * @description Allows anyone to read, create, update, and delete income entries.
+     * @path /incomes/{incomeId}
+     * @allow (get, list, create, update, delete) - Any user, authenticated or not, can perform any operation.
+     * @deny None - All operations are allowed.
+     * @principle All access is open due to local storage and lack of authentication.
+     */
+    match /incomes/{incomeId} {
+      allow get: if true;
+      allow list: if true;
+      allow create: if true;
+      allow update: if true;
+      allow delete: if true;
+    }
+
+    /**
+     * @description Allows anyone to read, create, update, and delete expense entries.
+     * @path /expenses/{expenseId}
+     * @allow (get, list, create, update, delete) - Any user, authenticated or not, can perform any operation.
+     * @deny None - All operations are allowed.
+     * @principle All access is open due to local storage and lack of authentication.
+     */
+    match /expenses/{expenseId} {
+      allow get: if true;
+      allow list: if true;
+      allow create: if true;
+      allow update: if true;
+      allow delete: if true;
+    }
+
+    /**
+     * @description Allows anyone to read, create, update, and delete credit card information.
+     * @path /credit_cards/{creditCardId}
+     * @allow (get, list, create, update, delete) - Any user, authenticated or not, can perform any operation.
+     * @deny None - All operations are allowed.
+     * @principle All access is open due to local storage and lack of authentication.
+     */
+    match /credit_cards/{creditCardId} {
+      allow get: if true;
+      allow list: if true;
+      allow create: if true;
+      allow update: if true;
+      allow delete: if true;
+    }
+
+    /**
+     * @description Allows anyone to read, create, update, and delete credit card transactions.
+     * @path /credit_cards/{creditCardId}/transactions/{transactionId}
+     * @allow (get, list, create, update, delete) - Any user, authenticated or not, can perform any operation.
+     * @deny None - All operations are allowed.
+     * @principle All access is open due to local storage and lack of authentication.
+     */
+    match /credit_cards/{creditCardId}/transactions/{transactionId} {
+      allow get: if true;
+      allow list: if true;
+      allow create: if true;
+      allow update: if true;
+      allow delete: if true;
+    }
+
+    /**
+     * @description Allows anyone to read, create, update, and delete net worth items.
+     * @path /net_worth_items/{netWorthItemId}
+     * @allow (get, list, create, update, delete) - Any user, authenticated or not, can perform any operation.
+     * @deny None - All operations are allowed.
+     * @principle All access is open due to local storage and lack of authentication.
+     */
+    match /net_worth_items/{netWorthItemId} {
+      allow get: if true;
+      allow list: if true;
+      allow create: if true;
+      allow update: if true;
+      allow delete: if true;
+    }
+
+    /**
+     * @description Allows anyone to read, create, update, and delete expense category budgets.
+     * @path /expense_category_budgets/{budgetId}
+     * @allow (get, list, create, update, delete) - Any user, authenticated or not, can perform any operation.
+     * @deny None - All operations are allowed.
+     * @principle All access is open due to local storage and lack of authentication.
+     */
+    match /expense_category_budgets/{budgetId} {
+      allow get: if true;
+      allow list: if true;
+      allow create: if true;
+      allow update: if true;
+      allow delete: if true;
+    }
+
+    /**
+     * @description Allows anyone to read, create, update, and delete quick notes.
+     * @path /quick_notes/{noteId}
+     * @allow (get, list, create, update, delete) - Any user, authenticated or not, can perform any operation.
+     * @deny None - All operations are allowed.
+     * @principle All access is open due to local storage and lack of authentication.
+     */
+    match /quick_notes/{noteId} {
+      allow get: if true;
+      allow list: if true;
+      allow create: if true;
+      allow update: if true;
+      allow delete: if true;
+    }
+  }
+}
