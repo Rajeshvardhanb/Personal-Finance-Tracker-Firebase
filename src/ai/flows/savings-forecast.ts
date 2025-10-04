@@ -67,12 +67,12 @@ const prompt = ai.definePrompt({
 
   Financial Data:
   {{#each lastThreeMonthsData}}
-  Month {{index}}:
+  Month {{@index}}:
     Income: ₹{{income}}
     Expenses: ₹{{expenses}}
     Credit Card Spending: ₹{{creditCardSpending}}
     {{#if overspendingCategories}}
-    Overspending Categories: {{join overspendingCategories ", "}}
+    Overspending Categories: {{#each overspendingCategories}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}
     {{/if}}
   {{/each}}
   `,
