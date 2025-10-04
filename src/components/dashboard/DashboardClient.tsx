@@ -39,8 +39,7 @@ export default function DashboardClient() {
     ).reduce((sum, t) => sum + t.amount, 0);
 
   const totalIncome = monthlyIncomes
-    .filter((i) => i.status === "Credited")
-    .reduce((sum, i) => sum + i.creditedAmount, 0);
+    .reduce((sum, i) => sum + (i.creditedAmount > 0 ? i.creditedAmount : i.expectedAmount), 0);
   
   const paidExpenses = monthlyExpenses
     .filter((e) => e.status === "Paid")
