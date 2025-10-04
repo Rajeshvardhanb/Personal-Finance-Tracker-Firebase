@@ -8,7 +8,7 @@ import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
 import type { CreditCard } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
 import { format, getMonth, getYear } from "date-fns";
-import { AppLogo } from "../icons";
+import { RupeeIcon } from "../icons";
 
 type CreditCardTileProps = {
   card: CreditCard;
@@ -52,7 +52,7 @@ export default function CreditCardTile({ card, selectedDate, onEdit, onDelete }:
         <Link href={`/credit-cards/${card.id}`}>
           <div className="bg-gradient-to-br from-primary/80 to-primary p-4 rounded-lg text-primary-foreground shadow-lg hover:shadow-xl transition-shadow cursor-pointer aspect-[1.586] flex flex-col justify-between">
             <div className="flex justify-between items-start">
-                <AppLogo className="h-8 w-8 text-primary-foreground/80"/>
+                <RupeeIcon className="h-8 w-8 text-primary-foreground/80"/>
                 <p className="font-code text-sm opacity-80">CARD</p>
             </div>
             <div>
