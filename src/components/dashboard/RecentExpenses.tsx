@@ -28,7 +28,7 @@ export default function RecentExpenses({ expenses }: RecentExpensesProps) {
           </div>
         </div>
       )) : (
-        <p className="text-sm text-muted-foreground text-center py-4">No expenses in this category for this month.</p>
+        <p className="text-sm text-muted-foreground text-center py-8">No expenses in this category for this month.</p>
       )}
     </div>
   );
@@ -36,7 +36,7 @@ export default function RecentExpenses({ expenses }: RecentExpensesProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="font-headline">Recent Expenses</CardTitle>
+        <CardTitle className="font-headline">Monthly Expenses</CardTitle>
         <CardDescription>
           A log of your paid and unpaid expenses for this month.
         </CardDescription>

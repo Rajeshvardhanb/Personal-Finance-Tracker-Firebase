@@ -7,6 +7,7 @@ import DashboardCharts from "./DashboardCharts";
 import RecentExpenses from "./RecentExpenses";
 import NotesWidget from "./NotesWidget";
 import SavingsForecast from "./SavingsForecast";
+import CreditCardSummary from "./CreditCardSummary";
 
 export default function DashboardClient() {
   const { data, selectedDate } = useFinances();
@@ -55,22 +56,24 @@ export default function DashboardClient() {
         paidExpenses={paidExpenses}
         unpaidExpenses={unpaidExpenses}
         savings={savings}
+        creditCardSpending={monthlyCardSpending}
       />
       <div className="grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2 grid gap-6">
           <DashboardCharts 
             income={totalIncome} 
             expenses={paidExpenses} 
             creditCardSpending={monthlyCardSpending} 
             expenseData={monthlyExpenses}
           />
+          <RecentExpenses expenses={monthlyExpenses} />
         </div>
-        <div className="lg:col-span-1 grid gap-6">
+        <div className="lg:col-span-1 grid gap-6 auto-rows-min">
            <SavingsForecast />
+           <CreditCardSummary creditCards={data.creditCards} selectedDate={selectedDate} />
            <NotesWidget />
         </div>
       </div>
-      <RecentExpenses expenses={monthlyExpenses} />
     </div>
   );
 }

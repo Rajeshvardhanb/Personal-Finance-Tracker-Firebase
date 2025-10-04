@@ -2,13 +2,14 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/utils";
-import { Banknote, PiggyBank, TrendingDown, TrendingUp } from "lucide-react";
+import { Banknote, PiggyBank, TrendingDown, TrendingUp, CreditCard } from "lucide-react";
 
 type SummaryCardsProps = {
   totalIncome: number;
   paidExpenses: number;
   unpaidExpenses: number;
   savings: number;
+  creditCardSpending: number;
 };
 
 export default function SummaryCards({
@@ -16,6 +17,7 @@ export default function SummaryCards({
   paidExpenses,
   unpaidExpenses,
   savings,
+  creditCardSpending,
 }: SummaryCardsProps) {
   const summaryData = [
     {
@@ -25,15 +27,15 @@ export default function SummaryCards({
       color: "text-chart-1",
     },
     {
-      title: "Paid Expenses",
+      title: "Total Expenses",
       icon: TrendingDown,
-      value: paidExpenses,
+      value: paidExpenses + creditCardSpending,
       color: "text-chart-2",
     },
     {
-      title: "Unpaid Expenses",
-      icon: Banknote,
-      value: unpaidExpenses,
+      title: "Credit Card",
+      icon: CreditCard,
+      value: creditCardSpending,
       color: "text-chart-4",
     },
     {
