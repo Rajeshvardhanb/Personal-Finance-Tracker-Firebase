@@ -4,7 +4,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useFirebase } from '@/firebase';
-import { User, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { User, signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword } from 'firebase/auth';
 
 interface AuthContextType {
   user: User | null;
@@ -46,7 +46,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setIsAuthenticating(false);
       return { success: true, error: null };
     } catch (error: any) {
-      console.error("Firebase login error:", error.code);
       setIsAuthenticating(false);
       // For any error, show a generic message and direct them to Rajesh.
       return { success: false, error: "Invalid credentials. Please contact Rajesh for access." };
