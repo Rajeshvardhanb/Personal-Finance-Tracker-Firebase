@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback } from 'react';
@@ -326,14 +327,14 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
 
     // Add or update expenses from credit card transactions
     for(const [id, transaction] of transactionsToSyncMap.entries()) {
-        const expenseData: Expense = {
-            id,
-            description: `${transaction.cardName}: ${transaction.description}`,
+        const expenseData: Omit<Expense, 'id'> = {
+            description: transaction.description,
             amount: transaction.amount,
             dueDate: transaction.date,
             status: 'Paid',
             isRecurring: false,
             category: 'Credit Card',
+            paidViaCard: transaction.cardName,
         };
         const docRef = doc(expensesRef, id);
         batch.set(docRef, expenseData);

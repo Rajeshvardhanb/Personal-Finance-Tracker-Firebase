@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { Badge } from "@/components/ui/badge";
@@ -22,8 +23,8 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
 
   const getTitle = () => {
     if ('source' in transaction) return transaction.source; // Income
-    if (type === 'expense' && transaction.id.startsWith('cc-trans-')) {
-        return `${transaction.description} (Paid via Credit Card)`;
+    if ('paidViaCard' in transaction && transaction.paidViaCard) {
+      return `${transaction.description} (Paid via ${transaction.paidViaCard})`;
     }
     return transaction.description; // Expense, CreditCard, MasterExpense
   }
@@ -53,7 +54,7 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
   }
   
   const isManagedExpense = type === 'expense' && 'masterExpenseId' in transaction && transaction.masterExpenseId;
-  const isCreditCardExpense = type === 'expense' && transaction.id.startsWith('cc-trans-');
+  const isCreditCardExpense = type === 'expense' && 'paidViaCard' in transaction && transaction.paidViaCard;
   const status = getStatus();
 
   return (
@@ -143,4 +144,3 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
     </div>
   );
 }
-

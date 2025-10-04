@@ -22,6 +22,7 @@ export interface Expense {
   status: ExpenseStatus;
   isRecurring: boolean;
   masterExpenseId?: string; // Link to master expense
+  paidViaCard?: string; // Name of the credit card used
 }
 
 export interface CreditCardTransaction {
