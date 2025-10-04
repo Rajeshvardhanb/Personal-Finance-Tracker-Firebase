@@ -26,7 +26,6 @@ export interface CreditCardTransaction {
   description: string;
   amount: number;
   date: string; // ISO 8601 format
-  status: ExpenseStatus;
 }
 
 export interface CreditCard {

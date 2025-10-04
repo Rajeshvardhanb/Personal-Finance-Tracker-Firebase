@@ -63,7 +63,7 @@ export default function Header() {
               className="group flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:text-base"
             >
               <AppLogo className="h-5 w-5 transition-all group-hover:scale-110" />
-              <span className="sr-only">INR Tracker</span>
+              <span className="sr-only">Personal Finance Tracker</span>
             </Link>
             {navItems.map((item) => (
               <Link
@@ -82,7 +82,7 @@ export default function Header() {
         </SheetContent>
       </Sheet>
       <div className="flex items-center gap-2">
-         <h1 className="text-xl font-semibold font-headline">INR Tracker</h1>
+         <h1 className="text-xl font-semibold font-headline">Welcome, Rajesh</h1>
       </div>
       <div className="relative ml-auto flex-1 md:grow-0">
         <MonthSelector />
@@ -105,7 +105,7 @@ export default function Header() {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
+          <DropdownMenuLabel>Rajesh's Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem>Settings</DropdownMenuItem>
           <DropdownMenuItem>Support</DropdownMenuItem>

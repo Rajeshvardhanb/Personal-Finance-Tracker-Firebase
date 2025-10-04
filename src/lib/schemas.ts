@@ -47,7 +47,6 @@ export const CreditCardTransactionSchema = z.object({
     description: z.string().min(2, { message: "Description is required." }),
     amount: z.coerce.number().min(1, { message: "Amount must be greater than 0." }),
     date: z.date({ required_error: "Please select a date." }),
-    status: z.enum(["Paid", "Not Paid"]),
 });
 
 export type CreditCardTransactionFormValues = z.infer<typeof CreditCardTransactionSchema>;

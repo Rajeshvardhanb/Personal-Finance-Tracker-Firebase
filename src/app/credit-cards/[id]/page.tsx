@@ -58,16 +58,17 @@ export default function CreditCardDetailPage() {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center gap-4">
-                <Button variant="outline" size="icon" onClick={() => router.back()}>
-                    <ArrowLeft className="h-4 w-4" />
-                </Button>
-                <PageHeader title={card.name}>
-                    <Button onClick={handleAddTransaction}>
-                        <PlusCircle className="mr-2 h-4 w-4" />
-                        Add Transaction
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                    <Button variant="outline" size="icon" onClick={() => router.back()}>
+                        <ArrowLeft className="h-4 w-4" />
                     </Button>
-                </PageHeader>
+                     <PageHeader title={card.name} />
+                </div>
+                <Button onClick={handleAddTransaction}>
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    Add Transaction
+                </Button>
             </div>
             
             <div className="grid gap-4 md:grid-cols-3">
@@ -82,9 +83,6 @@ export default function CreditCardDetailPage() {
                 <Card>
                     <CardHeader>
                         <CardTitle>Monthly Spending</CardTitle>
-                        <CardDescription>
-                            Spending for {formatCurrency(monthlySpending)}
-                        </CardDescription>
                     </CardHeader>
                     <CardContent>
                         <p className="text-2xl font-bold">{formatCurrency(monthlySpending)}</p>

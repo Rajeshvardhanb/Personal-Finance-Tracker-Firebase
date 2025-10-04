@@ -37,8 +37,8 @@ export const initialData: FinanceData = {
       creditLimit: 100000,
       upcomingBillDueDate: new Date(new Date().setMonth(new Date().getMonth() + 1, 5)).toISOString(),
       transactions: [
-        { id: 'cct1', description: 'Amazon Purchase', amount: 2500, date: new Date(new Date().setDate(3)).toISOString(), status: 'Not Paid' },
-        { id: 'cct2', description: 'Swiggy', amount: 450, date: new Date(new Date().setDate(8)).toISOString(), status: 'Not Paid' },
+        { id: 'cct1', description: 'Amazon Purchase', amount: 2500, date: new Date(new Date().setDate(3)).toISOString() },
+        { id: 'cct2', description: 'Swiggy', amount: 450, date: new Date(new Date().setDate(8)).toISOString() },
       ],
     },
     {
@@ -54,7 +54,7 @@ export const initialData: FinanceData = {
       creditLimit: 250000,
       upcomingBillDueDate: new Date(new Date().setMonth(new Date().getMonth() + 1, 15)).toISOString(),
       transactions: [
-        { id: 'cct3', description: 'Flight Tickets', amount: 12000, date: new Date(new Date().setDate(2)).toISOString(), status: 'Not Paid' }
+        { id: 'cct3', description: 'Flight Tickets', amount: 12000, date: new Date(new Date().setDate(2)).toISOString() }
       ],
     },
     {

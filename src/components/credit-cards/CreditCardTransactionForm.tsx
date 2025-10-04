@@ -14,7 +14,6 @@ import { format } from "date-fns";
 import { CreditCardTransactionSchema, type CreditCardTransactionFormValues } from "@/lib/schemas";
 import type { CreditCardTransaction } from "@/lib/types";
 import { useEffect } from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 type CreditCardTransactionFormProps = {
   isOpen: boolean;
@@ -33,7 +32,6 @@ export default function CreditCardTransactionForm({ isOpen, onClose, transaction
     defaultValues: {
       description: "",
       amount: 0,
-      status: "Not Paid",
     },
   });
 
@@ -49,7 +47,6 @@ export default function CreditCardTransactionForm({ isOpen, onClose, transaction
           description: "",
           amount: 0,
           date: new Date(),
-          status: "Not Paid",
         });
       }
     }
@@ -144,27 +141,6 @@ export default function CreditCardTransactionForm({ isOpen, onClose, transaction
                   <FormMessage />
                 </FormItem>
               )}
-            />
-            <FormField
-                control={form.control}
-                name="status"
-                render={({ field }) => (
-                    <FormItem>
-                    <FormLabel>Status</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                        <SelectTrigger>
-                            <SelectValue placeholder="Select a status" />
-                        </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                            <SelectItem value="Paid">Paid</SelectItem>
-                            <SelectItem value="Not Paid">Not Paid</SelectItem>
-                        </SelectContent>
-                    </Select>
-                    <FormMessage />
-                    </FormItem>
-                )}
             />
             <DialogFooter>
               <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>

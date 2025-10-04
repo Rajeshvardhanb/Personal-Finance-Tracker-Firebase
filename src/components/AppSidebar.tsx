@@ -24,12 +24,12 @@ import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: "/", icon: Home, label: "Dashboard" },
-  { href: "/income", icon: Landmark, label: "Income" },
-  { href: "/expenses", icon: Wallet, label: "Expenses" },
-  { href: "/credit-cards", icon: CreditCard, label: "Credit Cards" },
-  { href: "/net-worth", icon: PiggyBank, label: "Net Worth" },
-  { href: "/reports", icon: BookText, label: "Reports" },
+  { href: "/", label: "Dashboard" },
+  { href: "/income", label: "Income" },
+  { href: "/expenses", label: "Expenses" },
+  { href: "/credit-cards", label: "Credit Cards" },
+  { href: "/net-worth", label: "Net Worth" },
+  { href: "/reports", label: "Reports" },
 ];
 
 export default function AppSidebar() {
@@ -43,7 +43,7 @@ export default function AppSidebar() {
           className="group flex h-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:text-base"
         >
           <AppLogo className="h-5 w-5 transition-all group-hover:scale-110" />
-          <span className="">INR Tracker</span>
+          <span className="">Personal Finance Tracker</span>
         </Link>
         {navItems.map((item) => (
           <Link
@@ -56,7 +56,6 @@ export default function AppSidebar() {
                 : "text-muted-foreground hover:text-foreground"
             )}
           >
-            <item.icon className="h-5 w-5 mr-3" />
             <span className="">{item.label}</span>
           </Link>
         ))}

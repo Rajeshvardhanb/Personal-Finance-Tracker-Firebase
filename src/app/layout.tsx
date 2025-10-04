@@ -8,7 +8,7 @@ import Header from '@/components/Header';
 import { SidebarProvider } from '@/components/ui/sidebar';
 
 export const metadata: Metadata = {
-  title: 'INR Tracker',
+  title: 'Personal Finance Tracker',
   description: 'A personal finance dashboard to track your income, expenses, and net worth.',
 };
 

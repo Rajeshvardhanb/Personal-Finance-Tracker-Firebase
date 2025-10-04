@@ -12,7 +12,6 @@ import {
   import type { CreditCardTransaction } from "@/lib/types";
   import { formatCurrency } from "@/lib/utils";
   import { format } from "date-fns";
-  import { Badge } from "@/components/ui/badge";
   
   type CreditCardTransactionsTableProps = {
     transactions: CreditCardTransaction[];
@@ -27,7 +26,6 @@ import {
             <TableRow>
               <TableHead>Description</TableHead>
               <TableHead>Date</TableHead>
-              <TableHead>Status</TableHead>
               <TableHead className="text-right">Amount</TableHead>
               <TableHead className="w-[50px]"></TableHead>
             </TableRow>
@@ -37,11 +35,6 @@ import {
               <TableRow key={transaction.id}>
                 <TableCell className="font-medium">{transaction.description}</TableCell>
                 <TableCell>{format(new Date(transaction.date), 'dd MMM yyyy')}</TableCell>
-                <TableCell>
-                  <Badge variant={transaction.status === 'Paid' ? 'default' : 'secondary'}>
-                    {transaction.status}
-                  </Badge>
-                </TableCell>
                 <TableCell className="text-right">{formatCurrency(transaction.amount)}</TableCell>
                 <TableCell>
                   <DropdownMenu>
@@ -64,7 +57,7 @@ import {
               </TableRow>
             )) : (
               <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center">No transactions found for this month.</TableCell>
+                <TableCell colSpan={4} className="h-24 text-center">No transactions found for this month.</TableCell>
               </TableRow>
             )}
           </TableBody>
