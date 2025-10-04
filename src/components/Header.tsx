@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -54,9 +55,9 @@ export default function Header() {
     <header className="sticky top-0 z-30 flex h-14 items-center gap-0 border-b bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-400 sm:h-[60px]">
       <div className="flex w-full items-center justify-between px-4 sm:px-6">
         <div className="flex items-center gap-4 sm:w-72">
-           <AppLogo />
+           {/* Placeholder for left side content, now empty as logo is in sidebar */}
         </div>
-        <div className="flex-1 text-center hidden sm:block">
+        <div className="flex-1 text-center">
             <h1 className="text-xl font-semibold uppercase tracking-wider text-white/90">FINANCE TRACKER</h1>
         </div>
         <div className="flex items-center justify-end gap-4 md:gap-2 lg:gap-4 sm:w-72">
