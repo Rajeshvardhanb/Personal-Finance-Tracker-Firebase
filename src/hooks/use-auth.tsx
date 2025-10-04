@@ -4,7 +4,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useFirebase } from '@/firebase';
-import { User, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
+import { User, signInWithEmailAndPassword, signOut, createUserWithEmailAndPassword } from 'firebase/auth';
 
 interface AuthContextType {
   user: User | null;
@@ -42,40 +42,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = useCallback(async (email: string, pass: string) => {
     setIsAuthenticating(true);
     try {
-      // First, try to sign in the user.
       await signInWithEmailAndPassword(auth, email, pass);
       setIsAuthenticating(false);
       return { success: true, error: null };
     } catch (error: any) {
-      // If sign-in fails because the user doesn't exist, create a new account.
-      if (error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
-        try {
-          await createUserWithEmailAndPassword(auth, email, pass);
-          setIsAuthenticating(false);
-          return { success: true, error: null };
-        } catch (signUpError: any) {
-          console.error("Firebase sign-up error:", signUpError);
-          setIsAuthenticating(false);
-          return { success: false, error: signUpError.message || "Failed to create an account." };
-        }
-      } else {
-        // Handle other sign-in errors (e.g., wrong password).
-        console.error("Firebase login error:", error);
-        setIsAuthenticating(false);
-        let errorMessage = "An unknown error occurred.";
-        switch (error.code) {
-            case 'auth/wrong-password':
-              errorMessage = 'Invalid password. Please try again.';
-              break;
-            case 'auth/invalid-email':
-              errorMessage = 'Please enter a valid email address.';
-              break;
-            default:
-              errorMessage = 'Failed to log in. Please try again later.';
-              break;
-        }
-        return { success: false, error: errorMessage };
-      }
+      setIsAuthenticating(false);
+      // For any error, show a generic message and direct them to Rajesh.
+      return { success: false, error: "Invalid credentials. Please contact Rajesh for access." };
     }
   }, [auth]);
 
