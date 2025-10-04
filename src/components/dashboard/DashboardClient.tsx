@@ -50,7 +50,7 @@ export default function DashboardClient() {
     .filter((e) => e.status === "Not Paid")
     .reduce((sum, e) => sum + e.amount, 0);
 
-  const totalExpenses = paidExpenses + monthlyCardSpending;
+  const totalExpenses = paidExpenses + unpaidExpenses + monthlyCardSpending;
 
   return (
     <div className="grid gap-6">
@@ -97,7 +97,7 @@ export default function DashboardClient() {
         <div className="lg:col-span-2 grid gap-6">
           <DashboardCharts 
             income={totalIncome} 
-            expenses={paidExpenses} 
+            expenses={paidExpenses + unpaidExpenses} 
             creditCardSpending={monthlyCardSpending} 
             expenseData={monthlyExpenses}
           />

@@ -34,9 +34,8 @@ export default function DashboardCharts({ income, expenses, creditCardSpending, 
   };
 
   const expenseByCategory = expenseData.reduce((acc, expense) => {
-    if (expense.status === 'Paid') {
-      acc[expense.category] = (acc[expense.category] || 0) + expense.amount;
-    }
+    // We want to show all expenses in the pie chart, not just paid ones
+    acc[expense.category] = (acc[expense.category] || 0) + expense.amount;
     return acc;
   }, {} as { [key: string]: number });
 
