@@ -362,7 +362,6 @@ useEffect(() => {
   const syncCreditCardExpenses = useCallback(() => {
     if (!user || !creditCards || !expenses) return;
 
-    // This function will now ONLY sync transactions NOT linked to a master expense
     const allCreditCardTransactions = creditCards.flatMap(card => 
       card.transactions.map(t => ({...t, cardName: card.name}))
     );
@@ -409,17 +408,18 @@ useEffect(() => {
       if (!user) return;
       
       const runUpdates = () => {
-        if(masterExpenses && expenses) {
+        if(masterExpenses) {
           updateTotalFromMasterExpense();
         }
-        if(creditCards && expenses) {
+        if(creditCards) {
           syncCreditCardExpenses();
         }
       }
       
       runUpdates();
 
-  }, [user, masterExpenses, creditCards, expenses, selectedDate, updateTotalFromMasterExpense, syncCreditCardExpenses]);
+  }, [user, masterExpenses, creditCards, selectedDate, updateTotalFromMasterExpense, syncCreditCardExpenses]);
+
 
   const getFinancialDataForPastMonths = (numberOfMonths: number) => {
     const pastMonthsData = [];
