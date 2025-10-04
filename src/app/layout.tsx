@@ -5,7 +5,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { FinanceProvider } from '@/hooks/use-finances';
 import AppSidebar from '@/components/AppSidebar';
 import Header from '@/components/Header';
-import { SidebarProvider } from '@/hooks/use-sidebar-provider';
+import { SidebarProvider, useSidebar } from '@/hooks/use-sidebar-provider';
 import { Inter } from "next/font/google";
 
 const fontSans = Inter({
@@ -17,6 +17,22 @@ export const metadata: Metadata = {
   title: 'Infinity Cloud',
   description: 'A personal finance dashboard to track your income, expenses, and net worth.',
 };
+
+function AppBody({ children }: { children: React.ReactNode }) {
+  'use client';
+  const { state } = useSidebar();
+  return (
+    <div className="relative flex min-h-screen w-full flex-col" data-sidebar={state}>
+      <Header />
+      <div className="flex flex-1">
+        <AppSidebar />
+        <main className="flex-1 p-4 transition-all duration-300 ease-in-out data-[sidebar=expanded]:sm:ml-72 sm:px-6 sm:py-4 sm:ml-[78px]">
+          {children}
+        </main>
+      </div>
+    </div>
+  )
+}
 
 export default function RootLayout({
   children,
@@ -33,15 +49,9 @@ export default function RootLayout({
       >
         <FinanceProvider>
           <SidebarProvider>
-             <div className="relative flex min-h-screen w-full flex-col">
-              <Header />
-              <div className="flex flex-1">
-                <AppSidebar />
-                 <main className="flex-1 p-4 transition-all duration-300 ease-in-out sm:px-6 sm:py-4 data-[sidebar=expanded]:sm:ml-72 data-[sidebar=collapsed]:sm:ml-[78px]">
-                    {children}
-                 </main>
-              </div>
-            </div>
+            <AppBody>
+              {children}
+            </AppBody>
           </SidebarProvider>
         </FinanceProvider>
         <Toaster />
