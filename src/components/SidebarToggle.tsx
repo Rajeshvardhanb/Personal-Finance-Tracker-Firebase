@@ -18,7 +18,7 @@ export function SidebarToggle() {
     <Button
       variant="ghost"
       className={cn(
-        "absolute -right-10 top-1/2 -translate-y-1/2 rounded-full size-10 flex items-center justify-center p-0",
+        "absolute -right-5 top-1/2 -translate-y-1/2 rounded-full size-10 flex items-center justify-center p-0",
         "bg-background/80 text-foreground border shadow-sm backdrop-blur-sm transition-all duration-300 ease-in-out",
         "hover:bg-accent hover:text-accent-foreground"
       )}

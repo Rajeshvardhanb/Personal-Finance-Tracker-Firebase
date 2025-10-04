@@ -36,7 +36,7 @@ export default function RootLayout({
             <Header />
             <div className="relative flex min-h-screen w-full">
               <AppSidebar />
-              <div className="flex-1 transition-all duration-300 ease-in-out sm:ml-[78px] data-[sidebar=expanded]:sm:ml-72">
+              <div className="flex-1 transition-all duration-300 ease-in-out data-[sidebar=expanded]:sm:ml-72 data-[sidebar=collapsed]:sm:ml-[78px]">
                 <main className="p-4 sm:px-6 sm:py-4">
                   {children}
                 </main>
