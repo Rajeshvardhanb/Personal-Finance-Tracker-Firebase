@@ -4,8 +4,8 @@ export function AppLogo(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 150 40"
-      width="150"
+      viewBox="0 0 200 40"
+      width="200"
       height="40"
       {...props}
     >
@@ -15,68 +15,46 @@ export function AppLogo(props: SVGProps<SVGSVGElement>) {
           <stop offset="100%" stopColor="hsl(var(--accent))" />
         </linearGradient>
       </defs>
+      
+      {/* Icon */}
+      <g transform="translate(0, 4) scale(0.8)">
+        {/* Cloud and Infinity Symbol */}
+        <path d="M43.6,15.2c-4-4.5-10.5-5-15.1-1.2c-2.4,2-3.8,4.9-3.8,8c0,3.1,1.4,5.9,3.8,8c4.6,3.8,11.1,3.3,15.1-1.2 C50,23.1,50,19.9,43.6,15.2z M39,23.5c-2.4,2.4-6.3,2.4-8.7,0s-2.4-6.3,0-8.7s6.3-2.4,8.7,0S41.4,21.1,39,23.5z" fill="url(#logoGradient)"/>
+        <path d="M24.7,35c-4.6-3.8-11.1-3.3-15.1,1.2C3.2,41.9,3.2,48.4,9.6,53c6.4,4.5,15.1,1.2,15.1-1.2C31,45.9,31,39.5,24.7,35z" fill="url(#logoGradient)" transform="translate(-5, -20)"/>
 
-      <g transform="translate(0, 4)">
-        {/* Icon */}
-        <path
-          d="M28.4,5.6c-3.5-3.4-9.2-3.4-12.7,0c-1.7,1.7-2.6,3.9-2.6,6.3c0,2.4,0.9,4.6,2.6,6.3c3.5,3.4,9.2,3.4,12.7,0 c1.7-1.7,2.6-3.9,2.6-6.3C31,9.5,30.1,7.2,28.4,5.6z M24,14.8c-1.3,1.3-3,2-4.8,2s-3.5-0.7-4.8-2c-1.3-1.3-2-3-2-4.8s0.7-3.5,2-4.8 c1.3-1.3,3-2,4.8-2s3.5,0.7,4.8,2c1.3,1.3,2,3,2,4.8S25.3,13.5,24,14.8z"
-          fill="url(#logoGradient)"
-        />
-        <path
-          d="M19.2,28.8c1.3-1.3,3-2,4.8-2s3.5,0.7,4.8,2c1.3,1.3,2,3,2,4.8s-0.7,3.5-2,4.8c-1.3,1.3-3,2-4.8,2 s-3.5-0.7-4.8-2c-1.3-1.3-2-3-2-4.8S17.9,30.1,19.2,28.8z"
-          fill="url(#logoGradient)"
-          transform="translate(-10, -10)"
-        />
-        <path
-          d="M33,18.4c1.1-1.1,2.6-1.7,4.2-1.7h5.1c0.8,0,1.5-0.7,1.5-1.5s-0.7-1.5-1.5-1.5h-5.1c-1.6,0-3.1,0.6-4.2,1.7 c-1.1,1.1-1.7,2.6-1.7,4.2v5.1c0,0.8,0.7,1.5,1.5,1.5s1.5-0.7,1.5-1.5v-5.1C31.3,21,31.9,19.5,33,18.4z"
-          fill="url(#logoGradient)"
-        />
-        <rect x="35" y="24" width="2" height="2" fill="url(#logoGradient)" />
-        <rect x="38" y="21" width="2" height="2" fill="url(#logoGradient)" />
-        <rect x="38" y="27" width="2" height="2" fill="url(#logoGradient)" />
-        <rect x="41" y="18" width="2" height="2" fill="url(#logoGradient)" />
-        <rect x="41" y="24" width="2" height="2" fill="url(#logoGradient)" />
-        <rect x="44" y="21" width="2" height="2" fill="url(#logoGradient)" />
-        <path
-          d="M10,13H2c-1.1,0-2-0.9-2-2s0.9-2,2-2h8c1.1,0,2,0.9,2,2S11.1,13,10,13z"
-          fill="url(#logoGradient)"
-        />
-        <circle cx="5" cy="11" r="2" fill="url(#logoGradient)" />
-        <path
-          d="M10,19H2c-1.1,0-2-0.9-2-2s0.9-2,2-2h8c1.1,0,2,0.9,2,2S11.1,19,10,19z"
-          fill="url(#logoGradient)"
-          transform="translate(0, -5)"
-        />
-        <circle cx="5" cy="14" r="2" fill="url(#logoGradient)" />
-        <path
-          d="M10,25H2c-1.1,0-2-0.9-2-2s0.9-2,2-2h8c1.1,0,2,0.9,2,2S11.1,25,10,25z"
-          fill="url(#logoGradient)"
-          transform="translate(0, -10)"
-        />
-        <circle cx="5" cy="17" r="2" fill="url(#logoGradient)" />
+        {/* Lines */}
+        <path d="M10,13H0c-1.1,0-2-0.9-2-2s0.9-2,2-2h10c1.1,0,2,0.9,2,2S11.1,13,10,13z" fill="url(#logoGradient)" />
+        <circle cx="2" cy="11" r="2" fill="url(#logoGradient)"/>
+        
+        <path d="M15,19H0c-1.1,0-2-0.9-2-2s0.9-2,2-2h15c1.1,0,2,0.9,2,2S16.1,19,15,19z" fill="url(#logoGradient)" transform="translate(0, -5)"/>
+        <circle cx="2" cy="14" r="2" fill="url(#logoGradient)"/>
+
+        <path d="M10,25H0c-1.1,0-2-0.9-2-2s0.9-2,2-2h10c1.1,0,2,0.9,2,2S11.1,25,10,25z" fill="url(#logoGradient)" transform="translate(0, -10)"/>
+        <circle cx="2" cy="17" r="2" fill="url(#logoGradient)"/>
+
+        {/* Pixels */}
+        <rect x="45" y="16" width="2.5" height="2.5" fill="hsl(var(--accent))" opacity="0.9" />
+        <rect x="49" y="15" width="2" height="2" fill="hsl(var(--accent))" opacity="0.8" />
+        <rect x="46" y="20" width="3" height="3" fill="hsl(var(--accent))" />
+        <rect x="50" y="19" width="2.5" height="2.5" fill="hsl(var(--accent))" opacity="0.9"/>
+        <rect x="53" y="16" width="2" height="2" fill="hsl(var(--accent))" opacity="0.7"/>
+        <rect x="50" y="23" width="2" height="2" fill="hsl(var(--accent))" />
+        <rect x="54" y="22" width="2.5" height="2.5" fill="hsl(var(--accent))" opacity="0.8"/>
+        <rect x="57" y="19" width="2" height="2" fill="hsl(var(--accent))" opacity="0.6"/>
+        <rect x="53" y="26" width="2" height="2" fill="hsl(var(--accent))" opacity="0.7"/>
       </g>
-
+      
+      {/* Text */}
       <text
-        x="42"
-        y="21"
-        fontFamily="var(--font-serif)"
-        fontSize="10"
+        x="60"
+        y="24"
+        fontFamily="var(--font-headline), sans-serif"
+        fontSize="12"
         fill="hsl(var(--foreground))"
         fontWeight="700"
         letterSpacing="0.5"
       >
-        INFINITY CLOUD
-      </text>
-       <text
-        x="110"
-        y="32"
-        fontFamily="var(--font-serif)"
-        fontSize="10"
-        fill="hsl(var(--foreground))"
-        fontWeight="700"
-        letterSpacing="2.7"
-      >
-        LABS
+        INFINITY CLOUD LABS
       </text>
     </svg>
   );
