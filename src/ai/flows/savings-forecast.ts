@@ -9,7 +9,6 @@
  */
 
 import {ai} from '@/ai/genkit';
-import { generate } from 'genkit';
 import {z} from 'genkit';
 
 const SavingsForecastInputSchema = z.object({
@@ -65,7 +64,7 @@ const savingsForecastFlow = ai.defineFlow(
     outputSchema: SavingsForecastOutputSchema,
   },
   async (input) => {
-    const response = await generate({
+    const response = await ai.generate({
       model: ai.model,
       tools: [calculateForecastedSavingsTool],
       prompt: `You are a personal finance advisor. Analyze the user's financial data for the last three months and forecast their savings for the next month.
