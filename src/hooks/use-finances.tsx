@@ -1,8 +1,9 @@
+
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback } from 'react';
 import { FinanceData, initialData } from '@/lib/data';
-import type { Income, Expense, Note, Asset, Liability, CreditCard, CreditCardTransaction } from '@/lib/types';
+import type { Income, Expense, Note, Asset, Liability, CreditCard, CreditCardTransaction, MasterExpense, MasterExpenseTransaction } from '@/lib/types';
 import { startOfMonth, getMonth, getYear, format, subMonths, isEqual, parse } from 'date-fns';
 
 interface FinanceContextType {
@@ -20,6 +21,14 @@ interface FinanceContextType {
   addExpense: (expense: Omit<Expense, 'id'>) => void;
   updateExpense: (expense: Expense) => void;
   deleteExpense: (id: string) => void;
+
+  // Master Expense
+  addMasterExpense: (expense: Omit<MasterExpense, 'id' | 'transactions'>) => void;
+  updateMasterExpense: (expense: MasterExpense) => void;
+  deleteMasterExpense: (id: string) => void;
+  addMasterExpenseTransaction: (masterExpenseId: string, transaction: Omit<MasterExpenseTransaction, 'id'>) => void;
+  updateMasterExpenseTransaction: (masterExpenseId: string, transaction: MasterExpenseTransaction) => void;
+  deleteMasterExpenseTransaction: (masterExpenseId: string, transactionId: string) => void;
 
   // Credit Card
   addCreditCard: (card: Omit<CreditCard, 'id' | 'transactions'>) => void;
@@ -56,7 +65,12 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     try {
       const storedData = localStorage.getItem('financeData');
       if (storedData) {
-        setDataState(JSON.parse(storedData));
+        const parsedData = JSON.parse(storedData);
+        // Ensure masterExpenses is an array
+        if (!Array.isArray(parsedData.masterExpenses)) {
+          parsedData.masterExpenses = [];
+        }
+        setDataState(parsedData);
       }
     } catch (error) {
       console.error('Failed to load data from localStorage', error);
@@ -117,6 +131,76 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     setDataState(prev => ({
       ...prev,
       expenses: prev.expenses.filter(e => e.id !== id)
+    }));
+  };
+
+  const addMasterExpense = (expense: Omit<MasterExpense, 'id' | 'transactions'>) => {
+    const newMasterExpense = { ...expense, id: `me-${crypto.randomUUID()}`, transactions: [] };
+    setDataState(prev => {
+        const newExpense = {
+          id: `exp-from-${newMasterExpense.id}`,
+          masterExpenseId: newMasterExpense.id,
+          description: newMasterExpense.name,
+          amount: 0,
+          category: 'Other',
+          dueDate: new Date().toISOString(),
+          isRecurring: false,
+          status: 'Not Paid' as ExpenseStatus
+        };
+        return {
+          ...prev,
+          masterExpenses: [...prev.masterExpenses, newMasterExpense],
+          expenses: [...prev.expenses, newExpense]
+        }
+    });
+  };
+
+  const updateMasterExpense = (expense: MasterExpense) => {
+    setDataState(prev => ({
+      ...prev,
+      masterExpenses: prev.masterExpenses.map(e => e.id === expense.id ? expense : e),
+      expenses: prev.expenses.map(e => e.masterExpenseId === expense.id ? { ...e, description: expense.name } : e)
+    }));
+  };
+
+  const deleteMasterExpense = (id: string) => {
+    setDataState(prev => ({
+      ...prev,
+      masterExpenses: prev.masterExpenses.filter(e => e.id !== id),
+      expenses: prev.expenses.filter(e => e.masterExpenseId !== id)
+    }));
+  };
+
+  const addMasterExpenseTransaction = (masterExpenseId: string, transaction: Omit<MasterExpenseTransaction, 'id'>) => {
+    setDataState(prev => ({
+      ...prev,
+      masterExpenses: prev.masterExpenses.map(me => 
+        me.id === masterExpenseId
+          ? { ...me, transactions: [...me.transactions, { ...transaction, id: crypto.randomUUID() }] }
+          : me
+      ),
+    }));
+  };
+
+  const updateMasterExpenseTransaction = (masterExpenseId: string, transaction: MasterExpenseTransaction) => {
+    setDataState(prev => ({
+      ...prev,
+      masterExpenses: prev.masterExpenses.map(me =>
+        me.id === masterExpenseId
+          ? { ...me, transactions: me.transactions.map(t => t.id === transaction.id ? transaction : t) }
+          : me
+      ),
+    }));
+  };
+
+  const deleteMasterExpenseTransaction = (masterExpenseId: string, transactionId: string) => {
+    setDataState(prev => ({
+      ...prev,
+      masterExpenses: prev.masterExpenses.map(me =>
+        me.id === masterExpenseId
+          ? { ...me, transactions: me.transactions.filter(t => t.id !== transactionId) }
+          : me
+      ),
     }));
   };
 
@@ -302,12 +386,43 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  const updateTotalFromMasterExpense = useCallback(() => {
+    setDataState(prev => {
+      let expensesChanged = false;
+      const newExpenses = prev.expenses.map(expense => {
+        if (!expense.masterExpenseId) return expense;
+        
+        const masterExpense = prev.masterExpenses.find(me => me.id === expense.masterExpenseId);
+        if (!masterExpense) return expense;
+
+        const month = getMonth(selectedDate);
+        const year = getYear(selectedDate);
+
+        const total = masterExpense.transactions
+          .filter(t => getMonth(new Date(t.date)) === month && getYear(new Date(t.date)) === year)
+          .reduce((sum, t) => sum + t.amount, 0);
+
+        if (expense.amount !== total) {
+          expensesChanged = true;
+          return { ...expense, amount: total };
+        }
+        return expense;
+      });
+
+      if (expensesChanged) {
+        return { ...prev, expenses: newExpenses };
+      }
+      return prev;
+    });
+  }, [selectedDate]);
+
   useEffect(() => {
     if (isInitialized) {
       snapshotNetWorth();
+      updateTotalFromMasterExpense();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data.assets, data.liabilities, isInitialized]);
+  }, [data.assets, data.liabilities, data.masterExpenses, isInitialized, selectedDate, snapshotNetWorth, updateTotalFromMasterExpense]);
 
 
   const value = useMemo(() => ({
@@ -321,6 +436,12 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     addExpense,
     updateExpense,
     deleteExpense,
+    addMasterExpense,
+    updateMasterExpense,
+    deleteMasterExpense,
+    addMasterExpenseTransaction,
+    updateMasterExpenseTransaction,
+    deleteMasterExpenseTransaction,
     addCreditCard,
     updateCreditCard,
     deleteCreditCard,

@@ -1,3 +1,4 @@
+
 import { FinanceData } from './types';
 import { subMonths, format } from 'date-fns';
 
@@ -65,6 +66,7 @@ export const initialData: FinanceData = {
       transactions: [],
     },
   ],
+  masterExpenses: [],
   assets: [
     { id: 'a1', name: 'Savings Account', category: 'Bank Balance', value: 250000, lastUpdated: new Date().toISOString() },
     { id: 'a2', name: 'Mutual Funds', category: 'Investments', value: 120000, lastUpdated: new Date().toISOString() },
@@ -80,6 +82,7 @@ export const initialData: FinanceData = {
     'Groceries': 15000,
     'Dining Out': 5000,
     'Shopping': 10000,
+    'Vacation': 50000,
   },
   netWorthHistory: generateHistory(),
 };

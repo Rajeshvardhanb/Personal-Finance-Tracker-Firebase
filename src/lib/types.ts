@@ -1,3 +1,4 @@
+
 export type TransactionStatus = 'Credited' | 'Not Credited';
 export type ExpenseStatus = 'Paid' | 'Not Paid';
 
@@ -19,6 +20,7 @@ export interface Expense {
   dueDate: string; // ISO 8601 format
   status: ExpenseStatus;
   isRecurring: boolean;
+  masterExpenseId?: string; // Link to master expense
 }
 
 export interface CreditCardTransaction {
@@ -34,6 +36,19 @@ export interface CreditCard {
   creditLimit: number;
   upcomingBillDueDate: string; // ISO 8601 format
   transactions: CreditCardTransaction[];
+}
+
+export interface MasterExpenseTransaction {
+  id: string;
+  description: string;
+  amount: number;
+  date: string; // ISO 8601 format
+}
+
+export interface MasterExpense {
+  id: string;
+  name: string;
+  transactions: MasterExpenseTransaction[];
 }
 
 export interface Asset {
@@ -67,6 +82,7 @@ export interface FinanceData {
   incomes: Income[];
   expenses: Expense[];
   creditCards: CreditCard[];
+  masterExpenses: MasterExpense[];
   assets: Asset[];
   liabilities: Liability[];
   notes: Note[];
@@ -84,6 +100,7 @@ export const ExpenseCategories = [
   'Dining Out',
   'Shopping',
   'EMI',
+  'Vacation',
   'Other',
 ] as const;
 

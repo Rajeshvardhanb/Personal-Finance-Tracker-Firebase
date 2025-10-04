@@ -1,3 +1,4 @@
+
 import { z } from "zod";
 
 export const NetWorthEntrySchema = z.object({
@@ -50,3 +51,19 @@ export const CreditCardTransactionSchema = z.object({
 });
 
 export type CreditCardTransactionFormValues = z.infer<typeof CreditCardTransactionSchema>;
+
+
+export const MasterExpenseSchema = z.object({
+    id: z.string().optional(),
+    name: z.string().min(2, { message: "Name is required." }),
+});
+export type MasterExpenseFormValues = z.infer<typeof MasterExpenseSchema>;
+
+export const MasterExpenseTransactionSchema = z.object({
+    id: z.string().optional(),
+    description: z.string().min(2, { message: "Description is required." }),
+    amount: z.coerce.number().min(1, { message: "Amount must be greater than 0." }),
+    date: z.date({ required_error: "Please select a date." }),
+});
+
+export type MasterExpenseTransactionFormValues = z.infer<typeof MasterExpenseTransactionSchema>;
