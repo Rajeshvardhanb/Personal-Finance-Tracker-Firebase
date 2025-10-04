@@ -13,8 +13,8 @@ import { AppLogo } from "@/components/icons";
 import { LoaderCircle } from "lucide-react";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("rajesh@example.com");
+  const [password, setPassword] = useState("password123");
   const [error, setError] = useState("");
   const { login, isAuthenticating } = useAuth();
   const router = useRouter();
@@ -26,7 +26,7 @@ export default function LoginPage() {
     if (success) {
       router.push("/");
     } else {
-      setError(loginError || "Invalid email or password. Please try again.");
+      setError(loginError || "An unexpected error occurred. Please try again.");
     }
   };
 
@@ -37,8 +37,8 @@ export default function LoginPage() {
        </div>
       <Card className="w-full max-w-sm shadow-2xl">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold tracking-tight">Welcome Back!</CardTitle>
-          <CardDescription>Enter your credentials to access your dashboard.</CardDescription>
+          <CardTitle className="text-2xl font-bold tracking-tight">Welcome!</CardTitle>
+          <CardDescription>Enter your credentials to sign in or create an account.</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-6">
@@ -72,8 +72,12 @@ export default function LoginPage() {
             </div>
             <Button type="submit" className="w-full" disabled={isAuthenticating}>
               {isAuthenticating && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
-              Login
+              Sign In or Sign Up
             </Button>
+            <div className="text-center text-xs text-muted-foreground">
+                <p>Try: `rajesh@example.com` / `password123`</p>
+                <p>or `yamini@example.com` / `password456`</p>
+            </div>
           </form>
         </CardContent>
       </Card>
