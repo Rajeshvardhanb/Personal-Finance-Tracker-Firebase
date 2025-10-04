@@ -106,7 +106,7 @@ export default function Header() {
       
       <div className="flex w-full items-center gap-4">
         <div className="hidden sm:block">
-            <h1 className="text-xl font-semibold font-headline text-muted-foreground/80">FINANCE TRACKER</h1>
+            <h1 className="text-xl font-semibold font-headline text-primary">FINANCE TRACKER</h1>
         </div>
         <div className="ml-auto flex items-center gap-4 md:gap-2 lg:gap-4">
             <MonthSelector />
