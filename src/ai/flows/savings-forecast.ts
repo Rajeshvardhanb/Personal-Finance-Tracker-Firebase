@@ -85,13 +85,13 @@ const savingsForecastFlow = ai.defineFlow(
       `,
     });
 
-    const toolResponse = response.toolRequest();
+    const toolResponse = response.toolRequest;
     if (toolResponse) {
       const toolOutput = await toolResponse.execute();
       return toolOutput as SavingsForecastOutput;
     }
 
-    const output = response.output();
+    const output = response.output;
     if (!output) {
       throw new Error('No output from AI');
     }
