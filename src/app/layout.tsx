@@ -6,15 +6,8 @@ import { FinanceProvider } from '@/hooks/use-finances';
 import AppSidebar from '@/components/AppSidebar';
 import Header from '@/components/Header';
 import { SidebarProvider } from '@/hooks/use-sidebar-provider';
-import { PT_Sans as FontSans } from "next/font/google";
 import { Playfair_Display as FontSerif } from "next/font/google";
 
-
-const fontSans = FontSans({
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: "--font-sans",
-})
 
 const fontSerif = FontSerif({
   subsets: ["latin"],
@@ -37,8 +30,7 @@ export default function RootLayout({
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
-          fontSans.variable,
-          fontSerif.variable,
+          fontSerif.variable
         )}
       >
         <FinanceProvider>

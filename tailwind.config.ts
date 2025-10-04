@@ -19,7 +19,7 @@ const config = {
     },
     extend: {
       fontFamily: {
-        sans: ["var(--font-sans)", ...fontFamily.sans],
+        sans: [...fontFamily.sans],
         serif: ["var(--font-serif)", ...fontFamily.serif],
         headline: ["var(--font-serif)"],
       },
