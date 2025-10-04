@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useFinances } from "@/hooks/use-finances";
@@ -58,7 +59,7 @@ export default function DashboardClient() {
       
       <Card>
         <CardContent className="p-6">
-          <h2 className="text-2xl font-bold capitalize">Welcome, {user?.username}!</h2>
+          <h2 className="text-2xl font-bold">Welcome, {user?.email}!</h2>
           <p className="text-muted-foreground">Here's your financial overview for the selected month.</p>
         </CardContent>
       </Card>

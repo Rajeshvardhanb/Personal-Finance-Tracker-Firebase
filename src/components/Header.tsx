@@ -90,7 +90,7 @@ export default function Header() {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuLabel className="font-normal capitalize">{user?.username}</DropdownMenuLabel>
+                <DropdownMenuLabel className="font-normal">{user?.email}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>
                     <Settings className="mr-2 h-4 w-4" />

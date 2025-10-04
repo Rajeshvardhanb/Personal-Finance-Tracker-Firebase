@@ -10,22 +10,23 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AppLogo } from "@/components/icons";
+import { LoaderCircle } from "lucide-react";
 
 export default function LoginPage() {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { login } = useAuth();
+  const { login, isAuthenticating } = useAuth();
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    const success = await login(username, password);
+    const { success, error: loginError } = await login(email, password);
     if (success) {
       router.push("/");
     } else {
-      setError("Invalid username or password. Please try again.");
+      setError(loginError || "Invalid email or password. Please try again.");
     }
   };
 
@@ -48,14 +49,14 @@ export default function LoginPage() {
               </Alert>
             )}
             <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="email">Email</Label>
               <Input
-                id="username"
-                type="text"
-                placeholder="e.g., rajesh"
+                id="email"
+                type="email"
+                placeholder="e.g., rajesh@example.com"
                 required
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div className="space-y-2">
@@ -64,11 +65,13 @@ export default function LoginPage() {
                 id="password"
                 type="password"
                 required
+                placeholder="e.g., password123"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full" disabled={isAuthenticating}>
+              {isAuthenticating && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
               Login
             </Button>
           </form>

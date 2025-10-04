@@ -3,60 +3,77 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
-import users from '@/lib/users.json';
-
-interface User {
-  username: string;
-}
+import { useFirebase } from '@/firebase';
+import { User, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 
 interface AuthContextType {
   user: User | null;
-  login: (username: string, pass: string) => Promise<boolean>;
+  login: (email: string, pass: string) => Promise<{ success: boolean, error: string | null }>;
   logout: () => void;
   isLoading: boolean;
+  isAuthenticating: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { auth, isUserLoading } = useFirebase();
+  const [user, setUser] = useState<User | null>(auth.currentUser);
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('finance_user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    setIsLoading(false);
-  }, []);
+    const unsubscribe = auth.onAuthStateChanged((firebaseUser) => {
+      setUser(firebaseUser);
+    });
+    return () => unsubscribe();
+  }, [auth]);
 
   useEffect(() => {
-    if (!isLoading && !user && pathname !== '/login') {
+    if (!isUserLoading && !user && pathname !== '/login') {
       router.push('/login');
     }
-  }, [user, isLoading, pathname, router]);
-
-  const login = useCallback(async (username: string, pass: string): Promise<boolean> => {
-    const userPassword = (users as Record<string, string>)[username];
-    if (userPassword && userPassword === pass) {
-      const userData = { username };
-      localStorage.setItem('finance_user', JSON.stringify(userData));
-      setUser(userData);
-      return true;
+     if (!isUserLoading && user && pathname === '/login') {
+      router.push('/');
     }
-    return false;
-  }, []);
+  }, [user, isUserLoading, pathname, router]);
 
-  const logout = useCallback(() => {
-    localStorage.removeItem('finance_user');
-    setUser(null);
+  const login = useCallback(async (email: string, pass: string) => {
+    setIsAuthenticating(true);
+    setError(null);
+    try {
+      await signInWithEmailAndPassword(auth, email, pass);
+      setIsAuthenticating(false);
+      return { success: true, error: null };
+    } catch (error: any) {
+      console.error("Firebase login error:", error);
+      setIsAuthenticating(false);
+      let errorMessage = "An unknown error occurred.";
+      switch (error.code) {
+        case 'auth/user-not-found':
+        case 'auth/wrong-password':
+          errorMessage = 'Invalid email or password.';
+          break;
+        case 'auth/invalid-email':
+          errorMessage = 'Please enter a valid email address.';
+          break;
+        default:
+          errorMessage = 'Failed to log in. Please try again later.';
+          break;
+      }
+      return { success: false, error: errorMessage };
+    }
+  }, [auth]);
+
+
+  const logout = useCallback(async () => {
+    await signOut(auth);
     router.push('/login');
-  }, [router]);
+  }, [auth, router]);
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, login, logout, isLoading: isUserLoading, isAuthenticating }}>
       {children}
     </AuthContext.Provider>
   );
