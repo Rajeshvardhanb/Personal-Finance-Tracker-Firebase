@@ -52,12 +52,15 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
 
   return (
     <div className={cn(
-      "flex items-center p-4 rounded-lg border transition-all duration-300 hover:shadow-lg hover:border-primary/20",
-      type === 'income' && "bg-green-50/50 border-green-100 dark:bg-green-900/10 dark:border-green-900/20",
-      type === 'expense' && status === 'Paid' && "bg-blue-50/50 border-blue-100 dark:bg-blue-900/10 dark:border-blue-900/20",
-      type === 'expense' && status === 'Not Paid' && "bg-amber-50/50 border-amber-100 dark:bg-amber-900/10 dark:border-amber-900/20",
-      (type === 'credit-card' || type === 'master-expense') && "bg-indigo-50/50 border-indigo-100 dark:bg-indigo-900/10 dark:border-indigo-900/20",
-      transaction.masterExpenseId && 'bg-slate-50 dark:bg-slate-800/20'
+      "flex items-center p-4 rounded-lg border-l-4",
+      status === 'Credited' && 'border-green-500 bg-green-500/10',
+      status === 'Not Credited' && 'border-amber-500 bg-amber-500/10',
+      status === 'Paid' && 'border-green-500 bg-green-500/10',
+      status === 'Not Paid' && 'border-amber-500 bg-amber-500/10',
+      type === 'credit-card' && 'border-indigo-500 bg-indigo-500/10',
+      type === 'master-expense' && status === 'Paid' && 'border-green-500 bg-green-500/10',
+      type === 'master-expense' && status === 'Not Paid' && 'border-amber-500 bg-amber-500/10',
+      'bg-card'
     )}>
       <div className="flex-1 grid grid-cols-1 md:grid-cols-3 items-center gap-2">
         {/* Main Info */}
@@ -71,28 +74,37 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
             {type === 'expense' && (
                 <>
                     <span className="text-muted-foreground">{format(new Date(getDate()), 'dd MMM yyyy')}</span>
-                    <Badge 
-                        variant={status === 'Paid' ? 'default' : 'secondary'}
-                        className={cn(!transaction.masterExpenseId && onToggleStatus && 'cursor-pointer', "border")}
-                        onClick={onToggleStatus}
-                    >
-                        {status}
-                    </Badge>
+                    {onToggleStatus && !transaction.masterExpenseId ? (
+                      <Badge 
+                          variant={status === 'Paid' ? 'default' : 'destructive'}
+                          className='cursor-pointer border-none'
+                          onClick={onToggleStatus}
+                      >
+                          {status}
+                      </Badge>
+                    ) : (
+                      <Badge 
+                        variant={status === 'Paid' ? 'default' : 'destructive'}
+                        className='border-none'
+                      >
+                          {status}
+                      </Badge>
+                    )}
                 </>
             )}
              {type === 'income' && status && (
                 <Badge 
-                    variant={status === 'Credited' ? 'default' : 'secondary'}
-                    className={cn(onToggleStatus && 'cursor-pointer', "border")}
+                    variant={status === 'Credited' ? 'default' : 'destructive'}
+                    className={cn(onToggleStatus && 'cursor-pointer', "border-none")}
                     onClick={onToggleStatus}
                 >
                     {status}
                 </Badge>
             )}
              {type === 'master-expense' && status && (
-                <Badge 
-                    variant={status === 'Paid' ? 'default' : 'secondary'}
-                    className={cn(onToggleStatus && 'cursor-pointer', "border")}
+                 <Badge 
+                    variant={status === 'Paid' ? 'default' : 'destructive'}
+                    className={cn(onToggleStatus && 'cursor-pointer', 'border-none')}
                     onClick={onToggleStatus}
                 >
                     {status}
@@ -102,12 +114,7 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
 
         {/* Amount */}
         <div className="md:col-span-1 md:text-right">
-          <p className={cn(
-              "font-bold text-lg",
-              type === 'income' && "text-green-600",
-              type === 'expense' && "text-red-600",
-              (type === 'credit-card' || type === 'master-expense') && "text-indigo-600"
-          )}>{formatCurrency(getAmount())}</p>
+          <p className="font-bold text-lg">{formatCurrency(getAmount())}</p>
         </div>
       </div>
       

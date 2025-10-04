@@ -51,7 +51,7 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-background px-4 sm:h-[60px] sm:px-6">
+    <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b bg-card px-4 sm:h-[60px] sm:px-6">
       <div className="flex items-center gap-2 sm:hidden">
         {isClient ? (
           <Sheet>
@@ -61,7 +61,7 @@ export default function Header() {
                 <span className="sr-only">Toggle Menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="sm:max-w-xs">
+            <SheetContent side="left" className="sm:max-w-xs bg-secondary border-r-0">
               <nav className="grid gap-6 text-lg font-medium">
                 <SheetClose asChild>
                   <Link
@@ -78,8 +78,8 @@ export default function Header() {
                       className={cn(
                         "flex items-center gap-4 px-2.5",
                         pathname === item.href
-                          ? "text-foreground"
-                          : "text-muted-foreground hover:text-foreground"
+                          ? "text-primary-foreground"
+                          : "text-muted-foreground/80 hover:text-primary-foreground"
                       )}
                     >
                       <item.icon className="h-5 w-5" />
@@ -90,7 +90,7 @@ export default function Header() {
                 <SheetClose asChild>
                   <Link
                     href="#"
-                    className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
+                    className="flex items-center gap-4 px-2.5 text-muted-foreground/80 hover:text-primary-foreground"
                   >
                     <Settings className="h-5 w-5" />
                     Settings
@@ -106,7 +106,7 @@ export default function Header() {
       
       <div className="flex w-full items-center gap-4">
         <div className="hidden sm:block">
-            <h1 className="text-xl font-semibold font-headline text-primary">FINANCE TRACKER</h1>
+            <h1 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground/80">FINANCE TRACKER</h1>
         </div>
         <div className="ml-auto flex items-center gap-4 md:gap-2 lg:gap-4">
             <MonthSelector />

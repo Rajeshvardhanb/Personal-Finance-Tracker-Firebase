@@ -27,21 +27,21 @@ export default function CreditCardSummary({ creditCards, selectedDate }: CreditC
   });
 
   return (
-    <Card className="shadow-sm hover:shadow-lg transition-shadow">
+    <Card>
       <CardHeader>
-        <CardTitle className="font-headline">Credit Card Spending</CardTitle>
+        <CardTitle>Credit Card Spending</CardTitle>
         <CardDescription>Breakdown of spending for each card this month.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {cardSummaries.map(card => (
           <div key={card.id}>
              <Link href={`/credit-cards/${card.id}`} className="group">
-                <div className="flex justify-between items-baseline">
+                <div className="flex justify-between items-baseline mb-1">
                   <p className="font-medium group-hover:text-primary">{card.name}</p>
-                  <p className="font-bold text-lg">{formatCurrency(card.monthlySpending)}</p>
+                  <p className="font-semibold text-base">{formatCurrency(card.monthlySpending)}</p>
                 </div>
-                <Progress value={card.utilization} className="my-2" />
-                <div className="flex justify-between items-center text-xs text-muted-foreground">
+                <Progress value={card.utilization} className="h-2" />
+                <div className="flex justify-between items-center text-xs text-muted-foreground mt-1">
                   <span>{Math.round(card.utilization)}% of {formatCurrency(card.creditLimit)}</span>
                   <span>Available: {formatCurrency(card.creditLimit - card.monthlySpending)}</span>
                 </div>

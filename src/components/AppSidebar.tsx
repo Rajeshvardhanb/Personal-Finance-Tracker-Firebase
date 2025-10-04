@@ -28,10 +28,10 @@ export default function AppSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-20 hidden w-64 flex-col border-r bg-card sm:flex">
-      <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
-        <Link href="/" className="flex items-center gap-2 font-semibold">
-          <AppLogo className="font-bold text-lg text-primary" />
+    <aside className="fixed inset-y-0 left-0 z-20 hidden w-64 flex-col border-r bg-secondary sm:flex">
+      <div className="flex h-14 items-center border-b border-secondary-foreground/10 px-4 lg:h-[60px] lg:px-6">
+        <Link href="/" className="flex items-center gap-2 font-semibold text-primary-foreground">
+          <AppLogo className="font-bold text-lg" />
         </Link>
       </div>
       <nav className="flex flex-col gap-2 p-2 sm:py-3">
@@ -42,8 +42,8 @@ export default function AppSidebar() {
             className={cn(
               "flex items-center justify-start gap-3 rounded-lg px-3 py-2 transition-all duration-300",
               pathname === item.href
-                ? "bg-primary text-primary-foreground shadow-lg"
-                : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground/80 hover:bg-secondary-foreground/10 hover:text-primary-foreground"
             )}
           >
             <item.icon className="h-5 w-5" />
@@ -54,7 +54,7 @@ export default function AppSidebar() {
       <nav className="mt-auto flex flex-col items-stretch gap-2 p-2 sm:py-3">
         <Link
           href="#"
-          className="flex items-center justify-start gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-muted/50 hover:text-foreground"
+          className="flex items-center justify-start gap-3 rounded-lg px-3 py-2 text-muted-foreground/80 transition-all hover:bg-secondary-foreground/10 hover:text-primary-foreground"
         >
           <Settings className="h-5 w-5" />
           <span className="font-medium">Settings</span>
