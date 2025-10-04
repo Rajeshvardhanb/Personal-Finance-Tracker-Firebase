@@ -64,38 +64,10 @@ const savingsForecastFlow = ai.defineFlow(
     outputSchema: SavingsForecastOutputSchema,
   },
   async (input) => {
-    const response = await ai.generate({
-      model: ai.model,
-      tools: [calculateForecastedSavingsTool],
-      prompt: `You are a personal finance advisor. Analyze the user's financial data for the last three months and forecast their savings for the next month.
-
-  Consider income, expenses, credit card spending, and any overspending categories to provide an accurate forecast and a clear explanation.
-  The forecasted amount should be in INR (₹).
-
-  Use the calculateForecastedSavings tool to calculate the forecasted savings. Be sure to pass in all the information provided in the prompt.
-
-  Financial Data:
-  ${input.lastThreeMonthsData.map((month, index) => `
-  Month ${index + 1}:
-    Income: ₹${month.income}
-    Expenses: ₹${month.expenses}
-    Credit Card Spending: ₹${month.creditCardSpending}
-    ${month.overspendingCategories && month.overspendingCategories.length > 0 ? `Overspending Categories: ${month.overspendingCategories.join(', ')}` : ''}
-  `).join('')}
-      `,
-    });
-
-    const toolResponse = response.toolRequest;
-    if (toolResponse) {
-      const toolOutput = await toolResponse.execute();
-      return toolOutput as SavingsForecastOutput;
-    }
-
-    const output = response.output;
-    if (!output) {
-      throw new Error('No output from AI');
-    }
-    return output;
+    // Directly call the tool instead of asking the model to do it.
+    // This makes the flow more deterministic.
+    const toolOutput = await calculateForecastedSavingsTool(input);
+    return toolOutput;
   }
 );
 
