@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
@@ -26,8 +26,6 @@ export default function CreditCardTile({ card, selectedDate, onEdit, onDelete }:
     .filter(t => getMonth(new Date(t.date)) === currentMonth && getYear(new Date(t.date)) === currentYear)
     .reduce((sum, t) => sum + t.amount, 0);
   
-  const availableCredit = card.creditLimit - monthlySpending;
-
   return (
      <Card className="flex flex-col transition-all hover:shadow-lg">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -49,17 +47,19 @@ export default function CreditCardTile({ card, selectedDate, onEdit, onDelete }:
             </DropdownMenuContent>
             </DropdownMenu>
         </CardHeader>
-        <Link href={`/credit-cards/${card.id}`} className="flex flex-col flex-grow p-6 pt-0">
-            <div className="bg-gradient-to-br from-primary/80 to-primary p-4 rounded-lg text-primary-foreground shadow-lg hover:shadow-xl transition-shadow cursor-pointer aspect-[1.586] flex flex-col justify-between">
-                <div className="flex justify-between items-start">
-                    <RupeeIcon className="h-8 w-8 text-primary-foreground/80"/>
-                    <p className="font-code text-sm opacity-80">CARD</p>
+        <CardContent className="flex flex-col flex-grow p-6 pt-0">
+            <Link href={`/credit-cards/${card.id}`} className="block">
+                <div className="bg-gradient-to-br from-primary/80 to-primary p-4 rounded-lg text-primary-foreground shadow-lg hover:shadow-xl transition-shadow cursor-pointer aspect-[1.586] flex flex-col justify-between">
+                    <div className="flex justify-between items-start">
+                        <RupeeIcon className="h-8 w-8 text-primary-foreground/80"/>
+                        <p className="font-code text-sm opacity-80">CARD</p>
+                    </div>
+                    <div>
+                    <p className="text-xl font-code tracking-widest">**** **** **** 1234</p>
+                    <p className="text-sm font-headline pt-2">{card.name}</p>
+                    </div>
                 </div>
-                <div>
-                <p className="text-xl font-code tracking-widest">**** **** **** 1234</p>
-                <p className="text-sm font-headline pt-2">{card.name}</p>
-                </div>
-            </div>
+            </Link>
             <div className="grid grid-cols-2 gap-2 text-sm pt-4">
                 <div>
                     <p className="text-muted-foreground">Monthly Spend</p>
@@ -70,7 +70,7 @@ export default function CreditCardTile({ card, selectedDate, onEdit, onDelete }:
                     <p className="font-medium">{format(new Date(card.upcomingBillDueDate), 'dd MMM')}</p>
                 </div>
             </div>
-        </Link>
+        </CardContent>
     </Card>
   );
 }
