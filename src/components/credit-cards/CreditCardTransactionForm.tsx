@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -26,6 +27,8 @@ type CreditCardTransactionFormProps = {
   updateTransaction: (cardId: string, transaction: CreditCardTransaction) => void;
 };
 
+const NONE_VALUE = "none";
+
 export default function CreditCardTransactionForm({ isOpen, onClose, transaction, cardId, masterExpenses, addTransaction, updateTransaction }: CreditCardTransactionFormProps) {
   const isEditing = !!transaction;
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -35,7 +38,7 @@ export default function CreditCardTransactionForm({ isOpen, onClose, transaction
     defaultValues: {
       description: "",
       amount: 0,
-      masterExpenseId: "",
+      masterExpenseId: NONE_VALUE,
     },
   });
 
@@ -45,14 +48,14 @@ export default function CreditCardTransactionForm({ isOpen, onClose, transaction
         form.reset({
           ...transaction,
           date: new Date(transaction.date),
-          masterExpenseId: transaction.masterExpenseId || "",
+          masterExpenseId: transaction.masterExpenseId || NONE_VALUE,
         });
       } else {
         form.reset({
           description: "",
           amount: 0,
           date: new Date(),
-          masterExpenseId: "",
+          masterExpenseId: NONE_VALUE,
         });
       }
     }
@@ -62,7 +65,7 @@ export default function CreditCardTransactionForm({ isOpen, onClose, transaction
     const dataToSubmit = {
       ...values,
       date: values.date.toISOString(),
-      masterExpenseId: values.masterExpenseId === "" ? undefined : values.masterExpenseId,
+      masterExpenseId: values.masterExpenseId === NONE_VALUE ? undefined : values.masterExpenseId,
     };
 
     if (isEditing && transaction) {
@@ -165,7 +168,7 @@ export default function CreditCardTransactionForm({ isOpen, onClose, transaction
                       </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                          <SelectItem value="">None</SelectItem>
+                          <SelectItem value={NONE_VALUE}>None</SelectItem>
                           {masterExpenses.map((me) => (
                               <SelectItem key={me.id} value={me.id}>{me.name}</SelectItem>
                           ))}
