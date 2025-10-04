@@ -66,15 +66,15 @@ const prompt = ai.definePrompt({
   Use the calculateForecastedSavings tool to calculate the forecasted savings. Be sure to pass in all the information provided in the prompt.
 
   Financial Data:
-  {% for month in lastThreeMonthsData %}
-  Month {{ loop.index }}:
-    Income: ₹{{ month.income }}
-    Expenses: ₹{{ month.expenses }}
-    Credit Card Spending: ₹{{ month.creditCardSpending }}
-    {% if month.overspendingCategories %}
-    Overspending Categories: {{ month.overspendingCategories|join(", ") }}
-    {% endif %}
-  {% endfor %}
+  {{#each lastThreeMonthsData}}
+  Month {{index}}:
+    Income: ₹{{income}}
+    Expenses: ₹{{expenses}}
+    Credit Card Spending: ₹{{creditCardSpending}}
+    {{#if overspendingCategories}}
+    Overspending Categories: {{join overspendingCategories ", "}}
+    {{/if}}
+  {{/each}}
   `,
 });
 
