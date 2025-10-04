@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/utils";
-import { TrendingDown, TrendingUp, Hourglass, CheckCircle } from "lucide-react";
+import { TrendingDown, TrendingUp, Hourglass, CheckCircle, Wallet, PiggyBank } from "lucide-react";
 
 type SummaryCardsProps = {
   totalIncome: number;
@@ -17,12 +17,27 @@ export default function SummaryCards({
   paidExpenses,
   unpaidExpenses
 }: SummaryCardsProps) {
+  const availableFunds = totalIncome - paidExpenses;
+  const projectedSavings = totalIncome - totalExpenses;
+
   const summaryData = [
     {
       title: "Total Income",
       icon: TrendingUp,
       value: totalIncome,
       color: "text-emerald-500",
+    },
+    {
+      title: "Available Funds",
+      icon: Wallet,
+      value: availableFunds,
+      color: "text-green-600",
+    },
+    {
+      title: "Projected Savings",
+      icon: PiggyBank,
+      value: projectedSavings,
+      color: "text-indigo-500",
     },
     {
       title: "Total Expenses",
@@ -45,7 +60,7 @@ export default function SummaryCards({
   ];
 
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
       {summaryData.map((item) => (
         <Card key={item.title} className="shadow-sm hover:shadow-lg transition-shadow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
