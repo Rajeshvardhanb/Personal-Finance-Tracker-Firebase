@@ -33,10 +33,10 @@ export default function RootLayout({
       >
         <FinanceProvider>
           <SidebarProvider>
+            <Header />
             <div className="relative flex min-h-screen w-full">
               <AppSidebar />
               <div className="flex-1 sm:ml-72">
-                <Header />
                 <main className="p-4 sm:px-6 sm:py-4">
                   {children}
                 </main>

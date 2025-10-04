@@ -27,7 +27,7 @@ export default function AppSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-40 hidden w-72 flex-col border-r bg-secondary sm:flex">
+    <aside className="fixed inset-y-0 left-0 z-30 hidden w-72 flex-col border-r bg-secondary pt-14 sm:flex">
       <div className="flex h-14 items-center px-4 lg:h-[60px] lg:px-6">
       </div>
       <nav className="flex flex-col gap-2 p-2 sm:py-3">

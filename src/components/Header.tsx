@@ -10,6 +10,8 @@ import {
   CreditCard,
   BookText,
   PiggyBank,
+  Infinity,
+  Cloud,
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -51,16 +53,18 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center gap-0 border-b bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-400 sm:h-[60px]">
+    <header className="sticky top-0 z-40 flex h-14 items-center gap-0 border-b bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-400 sm:h-[60px]">
       <div className="flex w-full items-center justify-between px-4 sm:px-6">
-        <div className="flex items-center gap-4 sm:w-72">
+        <div className="flex items-center gap-4">
            <AppLogo />
         </div>
-        <div className="flex-1 text-center">
+        <div className="flex-1 text-center sm:hidden">
             <h1 className="text-xl font-semibold uppercase tracking-wider text-white/90">FINANCE TRACKER</h1>
         </div>
-        <div className="flex items-center justify-end gap-4 md:gap-2 lg:gap-4 sm:w-72">
-            <MonthSelector />
+        <div className="flex items-center justify-end gap-4 md:gap-2 lg:gap-4">
+            <div className="hidden sm:block">
+              <MonthSelector />
+            </div>
             <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button
@@ -133,6 +137,9 @@ export default function Header() {
                           Settings
                         </Link>
                       </SheetClose>
+                       <div className="pt-4 mt-auto">
+                        <MonthSelector />
+                       </div>
                     </nav>
                   </SheetContent>
                 </Sheet>
