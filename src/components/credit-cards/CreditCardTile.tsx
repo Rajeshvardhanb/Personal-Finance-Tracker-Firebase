@@ -42,7 +42,7 @@ export default function CreditCardTile({ card, selectedDate, onEdit, onDelete }:
         </CardHeader>
         <CardContent className="flex flex-col flex-grow p-6 pt-0">
             <Link href={`/credit-cards/${card.id}`} className="block group">
-                <div className="bg-gradient-to-br from-zinc-900 to-zinc-800 dark:from-zinc-800 dark:to-zinc-900 p-4 rounded-lg text-primary-foreground shadow-lg group-hover:shadow-xl group-hover:scale-[1.02] transition-all cursor-pointer aspect-[1.586] flex flex-col justify-between">
+                <div className="bg-gradient-to-br from-blue-500 to-cyan-500 dark:from-blue-600 dark:to-cyan-600 p-4 rounded-lg text-primary-foreground shadow-lg group-hover:shadow-xl group-hover:scale-[1.02] transition-all cursor-pointer aspect-[1.586] flex flex-col justify-between">
                     <div className="flex justify-between items-start">
                         <RupeeIcon className="h-8 w-8 text-primary-foreground/70"/>
                         <p className="font-mono text-sm opacity-70">CARD</p>

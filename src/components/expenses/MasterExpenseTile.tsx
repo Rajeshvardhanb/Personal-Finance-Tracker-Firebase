@@ -26,7 +26,7 @@ export default function MasterExpenseTile({ masterExpense, selectedDate, onEdit,
     .reduce((sum, t) => sum + t.amount, 0);
   
   return (
-     <Card className="flex flex-col transition-all hover:shadow-lg dark:hover:shadow-accent/10">
+     <Card className="flex flex-col transition-all hover:shadow-lg dark:hover:shadow-cyan-500/10">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-lg font-bold font-headline">{masterExpense.name}</CardTitle>
             <div className="flex items-center">
@@ -42,7 +42,7 @@ export default function MasterExpenseTile({ masterExpense, selectedDate, onEdit,
         </CardHeader>
         <CardContent className="flex flex-col flex-grow p-6 pt-0">
             <Link href={`/expenses/${masterExpense.id}`} className="block group">
-                <div className="bg-gradient-to-br from-amber-500 to-orange-500 dark:from-amber-600 dark:to-orange-600 p-4 rounded-lg text-white shadow-lg group-hover:shadow-xl group-hover:scale-[1.02] transition-all cursor-pointer aspect-video flex flex-col justify-between">
+                <div className="bg-gradient-to-br from-cyan-500 to-blue-500 dark:from-cyan-600 dark:to-blue-600 p-4 rounded-lg text-white shadow-lg group-hover:shadow-xl group-hover:scale-[1.02] transition-all cursor-pointer aspect-video flex flex-col justify-between">
                     <div className="flex justify-between items-start">
                         <FolderKanban className="h-8 w-8 opacity-80"/>
                     </div>

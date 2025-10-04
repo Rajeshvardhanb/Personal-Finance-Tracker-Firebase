@@ -6,8 +6,12 @@ import { FinanceProvider } from '@/hooks/use-finances';
 import AppSidebar from '@/components/AppSidebar';
 import Header from '@/components/Header';
 import { SidebarProvider } from '@/hooks/use-sidebar-provider';
-import { Playfair_Display as FontSerif } from "next/font/google";
+import { Inter as FontSans, Orbitron as FontSerif } from "next/font/google";
 
+const fontSans = FontSans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
 
 const fontSerif = FontSerif({
   subsets: ["latin"],
@@ -16,7 +20,7 @@ const fontSerif = FontSerif({
 });
 
 export const metadata: Metadata = {
-  title: 'INR Tracker',
+  title: 'Infinity Cloud',
   description: 'A personal finance dashboard to track your income, expenses, and net worth.',
 };
 
@@ -26,10 +30,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className='dark'>
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
+          fontSans.variable,
           fontSerif.variable
         )}
       >

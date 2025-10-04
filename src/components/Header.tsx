@@ -68,8 +68,7 @@ export default function Header() {
                     href="/"
                     className="group flex h-10 shrink-0 items-center justify-start gap-2 rounded-lg bg-primary px-3 text-lg font-semibold text-primary-foreground md:text-base"
                   >
-                    <AppLogo className="h-6 w-6 transition-all group-hover:scale-110" />
-                    <span className="font-headline">INR Tracker</span>
+                    <AppLogo className="h-8 w-auto transition-all group-hover:scale-110" />
                   </Link>
                 </SheetClose>
                 {navItems.map((item) => (

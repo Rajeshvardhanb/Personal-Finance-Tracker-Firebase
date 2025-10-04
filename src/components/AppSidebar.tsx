@@ -28,11 +28,10 @@ export default function AppSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-20 hidden w-64 flex-col border-r bg-card sm:flex dark:bg-zinc-900/50">
+    <aside className="fixed inset-y-0 left-0 z-20 hidden w-64 flex-col border-r bg-card sm:flex">
       <div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
         <Link href="/" className="flex items-center gap-2 font-semibold">
-          <AppLogo className="h-6 w-6 text-primary" />
-          <span className="font-headline text-lg">INR Tracker</span>
+          <AppLogo className="h-8 w-auto text-primary" />
         </Link>
       </div>
       <nav className="flex flex-col gap-2 p-2 sm:py-3">
