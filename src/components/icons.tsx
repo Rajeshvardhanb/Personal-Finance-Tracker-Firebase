@@ -73,7 +73,7 @@ export function AppLogo(props: SVGProps<SVGSVGElement>) {
         INFINITY CLOUD
       </text>
        <text
-        x="75"
+        x="98"
         y="38"
         fontFamily="Orbitron, sans-serif"
         fontSize="10"
@@ -81,7 +81,7 @@ export function AppLogo(props: SVGProps<SVGSVGElement>) {
         fontWeight="700"
         letterSpacing="2.7"
       >
-        CLOUD LABS
+        LABS
       </text>
     </svg>
   );
