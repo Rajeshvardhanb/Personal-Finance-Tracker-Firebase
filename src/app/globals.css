@@ -4,10 +4,10 @@
 
 @layer base {
   :root {
-    --background: 240 10% 98%;
+    --background: 240 5.9% 96.1%; /* Light gray instead of white */
     --foreground: 224 71.4% 4.1%;
 
-    --card: 0 0% 100%;
+    --card: 240 5.9% 93%; /* Slightly darker for sidebar and cards */
     --card-foreground: 224 71.4% 4.1%;
 
     --popover: 0 0% 100%;
@@ -16,10 +16,10 @@
     --primary: 221 83% 53%; /* A slightly more vibrant blue */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 215 28% 93%;
+    --secondary: 215 28% 90%; /* Adjusted for new background */
     --secondary-foreground: 224 71.4% 4.1%;
 
-    --muted: 215 28% 93%;
+    --muted: 215 28% 90%; /* Adjusted for new background */
     --muted-foreground: 215 20% 55%;
 
     --accent: 217 91% 60%;
@@ -28,8 +28,8 @@
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 215 20% 90%;
-    --input: 215 20% 90%;
+    --border: 215 20% 85%;
+    --input: 215 20% 85%;
     --ring: 221 83% 53%;
 
     --chart-1: 221 83% 53%;
