@@ -51,17 +51,14 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center gap-0 border-b bg-secondary px-0 sm:h-[60px] sm:px-0">
-      <div className="flex h-full items-center gap-4 bg-background/5 px-4 w-64 justify-start">
-        {/* This space is intentionally left to align with the sidebar width */}
-      </div>
-
-
-      <div className="flex w-full items-center gap-4 bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-400 h-full px-6">
-        <div className="hidden sm:block">
-            <h1 className="text-sm font-semibold uppercase tracking-wider text-white/90">FINANCE TRACKER</h1>
+    <header className="sticky top-0 z-30 flex h-14 items-center gap-0 border-b bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-400 sm:h-[60px]">
+      <div className="flex w-full items-center justify-between px-4 sm:px-6">
+        <div className="flex items-center gap-4">
+            <div className="hidden sm:block">
+                <h1 className="text-sm font-semibold uppercase tracking-wider text-white/90">FINANCE TRACKER</h1>
+            </div>
         </div>
-        <div className="ml-auto flex items-center gap-4 md:gap-2 lg:gap-4">
+        <div className="flex items-center gap-4 md:gap-2 lg:gap-4">
             <MonthSelector />
             <DropdownMenu>
             <DropdownMenuTrigger asChild>
