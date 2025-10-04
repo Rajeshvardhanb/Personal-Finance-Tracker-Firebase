@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Badge } from "@/components/ui/badge";
@@ -48,6 +49,7 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
     return null;
   }
   
+  const isManagedExpense = type === 'expense' && 'masterExpenseId' in transaction && transaction.masterExpenseId;
   const status = getStatus();
 
   return (
@@ -72,7 +74,7 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
             {type === 'expense' && (
                 <>
                     <span className="text-muted-foreground">{format(new Date(getDate()), 'dd MMM yyyy')}</span>
-                    {onToggleStatus && !transaction.masterExpenseId ? (
+                    {onToggleStatus && !isManagedExpense ? (
                       <Badge 
                           variant={status === 'Paid' ? 'default' : 'destructive'}
                           className='cursor-pointer'
@@ -117,7 +119,11 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
       
       {/* Actions */}
       <div className="ml-4 flex items-center">
-        {!('masterExpenseId' in transaction && transaction.masterExpenseId) ? (
+        {isManagedExpense ? (
+             <div className="w-16 text-center">
+                <Badge variant="outline">Managed</Badge>
+             </div>
+        ) : (
             <>
             <Button variant="ghost" size="icon" onClick={onEdit} className="h-8 w-8">
                 <Pencil className="h-4 w-4" />
@@ -128,12 +134,9 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
                 <span className="sr-only">Delete</span>
             </Button>
             </>
-        ) : (
-             <div className="w-16 text-center">
-                <Badge variant="outline">Managed</Badge>
-             </div>
         )}
       </div>
     </div>
   );
 }
+
