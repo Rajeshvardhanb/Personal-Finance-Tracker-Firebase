@@ -51,7 +51,7 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-40 flex h-14 items-center gap-0 border-b bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-400 sm:h-[60px]">
+    <header className="sticky top-0 z-40 flex h-14 items-center gap-0 border-b border-white/10 bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-400 sm:h-[60px]">
       <div className="flex w-full items-center justify-between px-4 sm:px-6">
         <div className="flex items-center gap-4">
            <AppLogo />

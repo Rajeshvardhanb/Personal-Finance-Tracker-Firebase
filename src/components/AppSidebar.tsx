@@ -35,7 +35,7 @@ export default function AppSidebar() {
   return (
     <aside
       className={cn(
-        "fixed inset-y-0 left-0 z-30 flex-col border-r bg-secondary transition-all duration-300 ease-in-out",
+        "fixed inset-y-0 left-0 z-30 flex-col border-r border-white/10 bg-gradient-to-b from-blue-600 to-cyan-500 text-white transition-all duration-300 ease-in-out",
         state === 'expanded' ? 'w-72' : 'w-[78px]',
         isMobile ? "flex" : "hidden sm:flex"
       )}
@@ -52,8 +52,8 @@ export default function AppSidebar() {
               "flex items-center gap-3 rounded-lg px-3 py-2 transition-all duration-300",
               state === 'expanded' ? "justify-start" : "justify-center",
               pathname === item.href
-                ? "bg-primary text-primary-foreground shadow-lg"
-                : "text-muted-foreground/80 hover:bg-secondary-foreground/10 hover:text-primary-foreground"
+                ? "bg-white/20 text-white shadow-lg"
+                : "text-white/80 hover:bg-white/10"
             )}
           >
             <item.icon className="h-5 w-5 shrink-0" />
@@ -65,7 +65,7 @@ export default function AppSidebar() {
         <Link
           href="#"
           className={cn(
-            "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground/80 transition-all hover:bg-secondary-foreground/10 hover:text-primary-foreground",
+            "flex items-center gap-3 rounded-lg px-3 py-2 text-white/80 transition-all hover:bg-white/10",
             state === 'expanded' ? "justify-start" : "justify-center"
           )}
         >
