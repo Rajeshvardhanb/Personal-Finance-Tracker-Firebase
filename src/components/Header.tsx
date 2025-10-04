@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Image from "next/image";
 import MonthSelector from "./MonthSelector";
-import { AppLogo } from "./icons";
+import { AppLogo, AppLogoIcon } from "./icons";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
@@ -88,61 +88,61 @@ export default function Header() {
                 <DropdownMenuItem>Logout</DropdownMenuItem>
             </DropdownMenuContent>
             </DropdownMenu>
+            
+            <div className="flex items-center gap-2 sm:hidden">
+              {isClient ? (
+                <Sheet>
+                  <SheetTrigger asChild>
+                    <Button size="icon" variant="ghost" className="text-primary-foreground">
+                      <PanelLeft className="h-5 w-5" />
+                      <span className="sr-only">Toggle Menu</span>
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent side="left" className="sm:max-w-xs bg-secondary border-r-0">
+                    <nav className="grid gap-6 text-lg font-medium">
+                      <SheetClose asChild>
+                        <Link
+                          href="/"
+                          className="group flex h-10 shrink-0 items-center justify-start gap-2 rounded-lg bg-primary px-3 text-lg font-semibold text-primary-foreground md:text-base"
+                        >
+                          <AppLogoIcon className="h-8 w-8" />
+                          <span className="font-bold">Menu</span>
+                        </Link>
+                      </SheetClose>
+                      {navItems.map((item) => (
+                        <SheetClose asChild key={item.href}>
+                          <Link
+                            href={item.href}
+                            className={cn(
+                              "flex items-center gap-4 px-2.5",
+                              pathname === item.href
+                                ? "text-primary-foreground"
+                                : "text-muted-foreground/80 hover:text-primary-foreground"
+                            )}
+                          >
+                            <item.icon className="h-5 w-5" />
+                            {item.label}
+                          </Link>
+                        </SheetClose>
+                      ))}
+                      <SheetClose asChild>
+                        <Link
+                          href="#"
+                          className="flex items-center gap-4 px-2.5 text-muted-foreground/80 hover:text-primary-foreground"
+                        >
+                          <Settings className="h-5 w-5" />
+                          Settings
+                        </Link>
+                      </SheetClose>
+                    </nav>
+                  </SheetContent>
+                </Sheet>
+              ) : (
+                <div className="h-10 w-10" />
+              )}
+            </div>
         </div>
-      </div>
-      
-      <div className="flex items-center gap-2 sm:hidden">
-        {isClient ? (
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button size="icon" variant="ghost" className="text-primary-foreground">
-                <PanelLeft className="h-5 w-5" />
-                <span className="sr-only">Toggle Menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="sm:max-w-xs bg-secondary border-r-0">
-              <nav className="grid gap-6 text-lg font-medium">
-                <SheetClose asChild>
-                  <Link
-                    href="/"
-                    className="group flex h-10 shrink-0 items-center justify-start gap-2 rounded-lg bg-primary px-3 text-lg font-semibold text-primary-foreground md:text-base"
-                  >
-                     <AppLogo/>
-                  </Link>
-                </SheetClose>
-                {navItems.map((item) => (
-                  <SheetClose asChild key={item.href}>
-                    <Link
-                      href={item.href}
-                      className={cn(
-                        "flex items-center gap-4 px-2.5",
-                        pathname === item.href
-                          ? "text-primary-foreground"
-                          : "text-muted-foreground/80 hover:text-primary-foreground"
-                      )}
-                    >
-                      <item.icon className="h-5 w-5" />
-                      {item.label}
-                    </Link>
-                  </SheetClose>
-                ))}
-                <SheetClose asChild>
-                  <Link
-                    href="#"
-                    className="flex items-center gap-4 px-2.5 text-muted-foreground/80 hover:text-primary-foreground"
-                  >
-                    <Settings className="h-5 w-5" />
-                    Settings
-                  </Link>
-                </SheetClose>
-              </nav>
-            </SheetContent>
-          </Sheet>
-        ) : (
-          <div className="h-10 w-10" />
-        )}
       </div>
     </header>
   );
 }
-
