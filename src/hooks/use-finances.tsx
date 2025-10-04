@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback } from 'react';
 import { FinanceData, initialData } from '@/lib/data';
-import type { Income, Expense, Note, Asset, Liability } from '@/lib/types';
+import type { Income, Expense, Note, Asset, Liability, CreditCard } from '@/lib/types';
 import { startOfMonth, getMonth, getYear, format, subMonths, isEqual, parse } from 'date-fns';
 
 interface FinanceContextType {
@@ -10,11 +10,26 @@ interface FinanceContextType {
   setData: (data: FinanceData) => void;
   selectedDate: Date;
   setSelectedDate: (date: Date) => void;
+
+  // Income
   addIncome: (income: Omit<Income, 'id'>) => void;
+  updateIncome: (income: Income) => void;
+  deleteIncome: (id: string) => void;
+
+  // Expense
   addExpense: (expense: Omit<Expense, 'id'>) => void;
+  updateExpense: (expense: Expense) => void;
+  deleteExpense: (id: string) => void;
+
+  // Credit Card
+  addCreditCard: (card: Omit<CreditCard, 'id' | 'transactions'>) => void;
+  updateCreditCard: (card: CreditCard) => void;
+  deleteCreditCard: (id: string) => void;
+
+  // Notes
   addNote: (note: Omit<Note, 'id'>) => void;
   deleteNote: (id: string) => void;
-  getFinancialDataForPastMonths: (numberOfMonths: number) => { month: string; income: number; expenses: number; creditCardSpending: number }[];
+  getFinancialDataForPastMonths: (numberOfMonths: number) => { month: string; income: number; expenses: number; creditCardSpending: number, overspendingCategories: string[] }[];
 
   // Net Worth
   addAsset: (asset: Omit<Asset, 'id' | 'lastUpdated'>) => void;
@@ -65,11 +80,60 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
       incomes: [...prev.incomes, { ...income, id: crypto.randomUUID() }]
     }));
   };
+
+  const updateIncome = (income: Income) => {
+    setDataState(prev => ({
+      ...prev,
+      incomes: prev.incomes.map(i => i.id === income.id ? income : i)
+    }));
+  };
+
+  const deleteIncome = (id: string) => {
+    setDataState(prev => ({
+      ...prev,
+      incomes: prev.incomes.filter(i => i.id !== id)
+    }));
+  };
   
   const addExpense = (expense: Omit<Expense, 'id'>) => {
     setDataState(prev => ({
       ...prev,
       expenses: [...prev.expenses, { ...expense, id: crypto.randomUUID() }]
+    }));
+  };
+
+  const updateExpense = (expense: Expense) => {
+    setDataState(prev => ({
+      ...prev,
+      expenses: prev.expenses.map(e => e.id === expense.id ? expense : e)
+    }));
+  };
+
+  const deleteExpense = (id: string) => {
+    setDataState(prev => ({
+      ...prev,
+      expenses: prev.expenses.filter(e => e.id !== id)
+    }));
+  };
+
+  const addCreditCard = (card: Omit<CreditCard, 'id' | 'transactions'>) => {
+    setDataState(prev => ({
+      ...prev,
+      creditCards: [...prev.creditCards, { ...card, id: crypto.randomUUID(), transactions: [] }]
+    }));
+  };
+
+  const updateCreditCard = (card: CreditCard) => {
+    setDataState(prev => ({
+      ...prev,
+      creditCards: prev.creditCards.map(c => c.id === card.id ? card : c)
+    }));
+  };
+
+  const deleteCreditCard = (id: string) => {
+    setDataState(prev => ({
+      ...prev,
+      creditCards: prev.creditCards.filter(c => c.id !== id)
     }));
   };
 
@@ -101,6 +165,17 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
         const expenses = data.expenses
             .filter(d => getMonth(new Date(d.dueDate)) === month && getYear(new Date(d.dueDate)) === year && d.status === 'Paid')
             .reduce((acc, d) => acc + d.amount, 0);
+        
+        const paidExpensesByCategory = data.expenses
+            .filter(d => getMonth(new Date(d.dueDate)) === month && getYear(new Date(d.dueDate)) === year && d.status === 'Paid')
+            .reduce((acc, d) => {
+              acc[d.category] = (acc[d.category] || 0) + d.amount;
+              return acc;
+            }, {} as {[key: string]: number});
+        
+        const overspendingCategories = Object.entries(paidExpensesByCategory)
+            .filter(([category, amount]) => data.categoryBudgets[category] && amount > data.categoryBudgets[category])
+            .map(([category]) => category);
 
         const creditCardSpending = data.creditCards
             .flatMap(cc => cc.transactions)
@@ -112,7 +187,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
             income,
             expenses,
             creditCardSpending,
-            overspendingCategories: [], // Placeholder for now
+            overspendingCategories,
         });
     }
     return pastMonthsData;
@@ -195,7 +270,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
       snapshotNetWorth();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data.assets, data.liabilities, isInitialized, snapshotNetWorth]);
+  }, [data.assets, data.liabilities, isInitialized]);
 
 
   const value = useMemo(() => ({
@@ -204,7 +279,14 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     selectedDate,
     setSelectedDate,
     addIncome,
+    updateIncome,
+    deleteIncome,
     addExpense,
+    updateExpense,
+    deleteExpense,
+    addCreditCard,
+    updateCreditCard,
+    deleteCreditCard,
     addNote,
     deleteNote,
     getFinancialDataForPastMonths,

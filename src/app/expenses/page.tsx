@@ -1,30 +1,76 @@
 "use client";
+import { useState } from "react";
 import PageHeader from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { useFinances } from "@/hooks/use-finances";
+import { getMonth, getYear } from "date-fns";
+import { Card, CardContent } from "@/components/ui/card";
+import ExpensesTable from "@/components/expenses/ExpensesTable";
+import ExpenseForm from "@/components/expenses/ExpenseForm";
+import type { Expense } from "@/lib/types";
 
 export default function ExpensesPage() {
-  const { toast } = useToast();
+  const { data, selectedDate, addExpense, updateExpense, deleteExpense } = useFinances();
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
+
+  const currentMonth = getMonth(selectedDate);
+  const currentYear = getYear(selectedDate);
+
+  const monthlyExpenses = data.expenses.filter(
+    (exp) =>
+      getMonth(new Date(exp.dueDate)) === currentMonth &&
+      getYear(new Date(exp.dueDate)) === currentYear
+  );
 
   const handleAddExpense = () => {
-    toast({
-      title: "Feature Not Implemented",
-      description: "Adding a new expense is not yet available.",
-    });
-  }
+    setEditingExpense(null);
+    setIsFormOpen(true);
+  };
+
+  const handleEditExpense = (expense: Expense) => {
+    setEditingExpense(expense);
+    setIsFormOpen(true);
+  };
+
+  const handleDeleteExpense = (id: string) => {
+    deleteExpense(id);
+  };
+
+  const handleCloseForm = () => {
+    setIsFormOpen(false);
+    setEditingExpense(null);
+  };
 
   return (
-    <div>
+    <div className="space-y-6">
       <PageHeader title="Expenses">
         <Button onClick={handleAddExpense}>
           <PlusCircle className="mr-2 h-4 w-4" />
           Add Expense
         </Button>
       </PageHeader>
-      <div className="text-center py-16 text-muted-foreground">
-        <p>Expense tracking and budget content will be displayed here.</p>
-      </div>
+      
+      <Card>
+        <CardContent className="p-0">
+          <ExpensesTable
+            expenses={monthlyExpenses}
+            onEdit={handleEditExpense}
+            onDelete={handleDeleteExpense}
+          />
+        </CardContent>
+      </Card>
+
+      {isFormOpen && (
+        <ExpenseForm
+          isOpen={isFormOpen}
+          onClose={handleCloseForm}
+          expense={editingExpense}
+          addExpense={addExpense}
+          updateExpense={updateExpense}
+        />
+      )}
     </div>
   );
 }
