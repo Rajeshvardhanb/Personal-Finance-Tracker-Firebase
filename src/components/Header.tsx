@@ -2,12 +2,8 @@
 
 import {
   Home,
-  LineChart,
-  Package,
   PanelLeft,
   Settings,
-  ShoppingCart,
-  Users2,
   Wallet,
   Landmark,
   CreditCard,
