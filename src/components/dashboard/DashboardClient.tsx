@@ -76,7 +76,7 @@ export default function DashboardClient() {
           <DashboardCharts 
             income={totalIncome} 
             expenses={totalExpenses} 
-            creditCardSpending={monthlyCardSpending} 
+            creditCardSpending={0} // Set to 0 as it's now part of total expenses
             expenseData={monthlyExpenses}
           />
         </div>

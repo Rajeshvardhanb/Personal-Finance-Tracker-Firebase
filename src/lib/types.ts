@@ -29,6 +29,7 @@ export interface CreditCardTransaction {
   description: string;
   amount: number;
   date: string; // ISO 8601 format
+  masterExpenseId?: string; // Optional link to a master expense
 }
 
 export interface CreditCard {

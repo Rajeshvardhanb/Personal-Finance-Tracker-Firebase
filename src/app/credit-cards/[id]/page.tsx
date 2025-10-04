@@ -128,6 +128,7 @@ export default function CreditCardDetailPage() {
                     onClose={handleCloseForm}
                     transaction={editingTransaction}
                     cardId={card.id}
+                    masterExpenses={data.masterExpenses}
                     addTransaction={addCreditCardTransaction}
                     updateTransaction={updateCreditCardTransaction}
                 />

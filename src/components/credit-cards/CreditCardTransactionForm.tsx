@@ -12,19 +12,21 @@ import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { CreditCardTransactionSchema, type CreditCardTransactionFormValues } from "@/lib/schemas";
-import type { CreditCardTransaction } from "@/lib/types";
+import type { CreditCardTransaction, MasterExpense } from "@/lib/types";
 import { useEffect, useState } from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 type CreditCardTransactionFormProps = {
   isOpen: boolean;
   onClose: () => void;
   transaction: CreditCardTransaction | null;
   cardId: string;
+  masterExpenses: MasterExpense[];
   addTransaction: (cardId: string, transaction: Omit<CreditCardTransaction, 'id'>) => void;
   updateTransaction: (cardId: string, transaction: CreditCardTransaction) => void;
 };
 
-export default function CreditCardTransactionForm({ isOpen, onClose, transaction, cardId, addTransaction, updateTransaction }: CreditCardTransactionFormProps) {
+export default function CreditCardTransactionForm({ isOpen, onClose, transaction, cardId, masterExpenses, addTransaction, updateTransaction }: CreditCardTransactionFormProps) {
   const isEditing = !!transaction;
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
@@ -33,6 +35,7 @@ export default function CreditCardTransactionForm({ isOpen, onClose, transaction
     defaultValues: {
       description: "",
       amount: 0,
+      masterExpenseId: "",
     },
   });
 
@@ -42,12 +45,14 @@ export default function CreditCardTransactionForm({ isOpen, onClose, transaction
         form.reset({
           ...transaction,
           date: new Date(transaction.date),
+          masterExpenseId: transaction.masterExpenseId || "",
         });
       } else {
         form.reset({
           description: "",
           amount: 0,
           date: new Date(),
+          masterExpenseId: "",
         });
       }
     }
@@ -57,6 +62,7 @@ export default function CreditCardTransactionForm({ isOpen, onClose, transaction
     const dataToSubmit = {
       ...values,
       date: values.date.toISOString(),
+      masterExpenseId: values.masterExpenseId === "" ? undefined : values.masterExpenseId,
     };
 
     if (isEditing && transaction) {
@@ -135,7 +141,7 @@ export default function CreditCardTransactionForm({ isOpen, onClose, transaction
                         mode="single"
                         selected={field.value}
                         onSelect={(date) => {
-                          field.onChange(date);
+                          if (date) field.onChange(date);
                           setIsCalendarOpen(false);
                         }}
                         initialFocus
@@ -144,6 +150,29 @@ export default function CreditCardTransactionForm({ isOpen, onClose, transaction
                   </Popover>
                   <FormMessage />
                 </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="masterExpenseId"
+              render={({ field }) => (
+                  <FormItem>
+                  <FormLabel>Master Expense (Optional)</FormLabel>
+                   <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                      <SelectTrigger>
+                          <SelectValue placeholder="Link to a master expense" />
+                      </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                          <SelectItem value="">None</SelectItem>
+                          {masterExpenses.map((me) => (
+                              <SelectItem key={me.id} value={me.id}>{me.name}</SelectItem>
+                          ))}
+                      </SelectContent>
+                  </Select>
+                  <FormMessage />
+                  </FormItem>
               )}
             />
             <DialogFooter>
