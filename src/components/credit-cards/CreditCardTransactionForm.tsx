@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { CreditCardTransactionSchema, type CreditCardTransactionFormValues } from "@/lib/schemas";
 import type { CreditCardTransaction } from "@/lib/types";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 type CreditCardTransactionFormProps = {
   isOpen: boolean;
@@ -26,6 +26,7 @@ type CreditCardTransactionFormProps = {
 
 export default function CreditCardTransactionForm({ isOpen, onClose, transaction, cardId, addTransaction, updateTransaction }: CreditCardTransactionFormProps) {
   const isEditing = !!transaction;
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   const form = useForm<CreditCardTransactionFormValues>({
     resolver: zodResolver(CreditCardTransactionSchema),
@@ -110,7 +111,7 @@ export default function CreditCardTransactionForm({ isOpen, onClose, transaction
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel>Transaction Date</FormLabel>
-                  <Popover>
+                  <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
@@ -133,7 +134,10 @@ export default function CreditCardTransactionForm({ isOpen, onClose, transaction
                       <Calendar
                         mode="single"
                         selected={field.value}
-                        onSelect={field.onChange}
+                        onSelect={(date) => {
+                          field.onChange(date);
+                          setIsCalendarOpen(false);
+                        }}
                         initialFocus
                       />
                     </PopoverContent>

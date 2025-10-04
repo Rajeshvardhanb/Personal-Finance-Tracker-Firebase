@@ -15,7 +15,7 @@ import { format } from "date-fns";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ExpenseSchema, type ExpenseFormValues } from "@/lib/schemas";
 import { ExpenseCategories, type Expense } from "@/lib/types";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 type ExpenseFormProps = {
   isOpen: boolean;
@@ -27,6 +27,7 @@ type ExpenseFormProps = {
 
 export default function ExpenseForm({ isOpen, onClose, expense, addExpense, updateExpense }: ExpenseFormProps) {
   const isEditing = !!expense;
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   const form = useForm<ExpenseFormValues>({
     resolver: zodResolver(ExpenseSchema),
@@ -139,7 +140,7 @@ export default function ExpenseForm({ isOpen, onClose, expense, addExpense, upda
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel>Due Date</FormLabel>
-                  <Popover>
+                  <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
@@ -162,7 +163,10 @@ export default function ExpenseForm({ isOpen, onClose, expense, addExpense, upda
                       <Calendar
                         mode="single"
                         selected={field.value}
-                        onSelect={field.onChange}
+                        onSelect={(date) => {
+                          field.onChange(date);
+                          setIsCalendarOpen(false);
+                        }}
                         initialFocus
                       />
                     </PopoverContent>

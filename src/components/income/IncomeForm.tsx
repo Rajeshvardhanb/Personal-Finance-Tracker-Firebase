@@ -15,7 +15,7 @@ import { format } from "date-fns";
 import { Checkbox } from "@/components/ui/checkbox";
 import { IncomeSchema, type IncomeFormValues } from "@/lib/schemas";
 import type { Income } from "@/lib/types";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 type IncomeFormProps = {
   isOpen: boolean;
@@ -27,6 +27,7 @@ type IncomeFormProps = {
 
 export default function IncomeForm({ isOpen, onClose, income, addIncome, updateIncome }: IncomeFormProps) {
   const isEditing = !!income;
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   const form = useForm<IncomeFormValues>({
     resolver: zodResolver(IncomeSchema),
@@ -132,7 +133,7 @@ export default function IncomeForm({ isOpen, onClose, income, addIncome, updateI
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel>Date</FormLabel>
-                  <Popover>
+                  <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
@@ -155,7 +156,10 @@ export default function IncomeForm({ isOpen, onClose, income, addIncome, updateI
                       <Calendar
                         mode="single"
                         selected={field.value}
-                        onSelect={field.onChange}
+                        onSelect={(date) => {
+                          field.onChange(date);
+                          setIsCalendarOpen(false);
+                        }}
                         initialFocus
                       />
                     </PopoverContent>
