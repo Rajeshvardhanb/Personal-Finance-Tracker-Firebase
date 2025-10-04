@@ -312,7 +312,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
   }, [data.assets, data.liabilities, data.netWorthHistory, user]);
 
   const syncCreditCardExpenses = useCallback(() => {
-    if (!user) return;
+    if (!user || !data.creditCards) return;
 
     const allCreditCardTransactions = data.creditCards.flatMap(card => 
       card.transactions.map(t => ({...t, cardName: card.name}))
@@ -356,7 +356,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
 
 
    const updateTotalFromMasterExpense = useCallback(() => {
-    if (!user) return;
+    if (!user || !data.masterExpenses) return;
     const batch = writeBatch(firestore);
     const month = getMonth(selectedDate);
     const year = getYear(selectedDate);
@@ -376,7 +376,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
       const processSummary = (status: ExpenseStatus, amount: number) => {
         const suffix = status === 'Paid' ? 'paid' : 'unpaid';
         const id = `exp-from-${me.id}-${suffix}`;
-        const description = `${me.name} - ${status} Total`;
+        const description = me.name; // Reverted to simple name
         const expDocRef = doc(firestore, 'users', user.uid, 'expenses', id);
 
         if (amount > 0) {
@@ -402,7 +402,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
       snapshotNetWorth();
       updateTotalFromMasterExpense();
       syncCreditCardExpenses();
-  }, [data.assets, data.liabilities, data.masterExpenses, data.creditCards, selectedDate, snapshotNetWorth, updateTotalFromMasterExpense, syncCreditCardExpenses]);
+  }, [data.assets, data.liabilities, data.masterExpenses, data.creditCards, data.expenses, selectedDate, snapshotNetWorth, updateTotalFromMasterExpense, syncCreditCardExpenses]);
 
 
   const getFinancialDataForPastMonths = (numberOfMonths: number) => {
