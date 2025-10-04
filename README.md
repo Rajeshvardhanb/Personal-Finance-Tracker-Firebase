@@ -52,7 +52,8 @@ Generate insightful reports to analyze your spending habits.
 - **Charts**: [Recharts](https://recharts.org/)
 - **AI/Generative**: [Genkit](https://firebase.google.com/docs/genkit)
 - **State Management**: React Context API
-- **Data Persistence**: Browser `localStorage` for client-side data storage.
+- **Authentication**: Custom username/password (hardcoded in `src/lib/users.json`)
+- **Data Persistence**: Browser `localStorage` (scoped per user)
 
 ## Getting Started
 
@@ -84,34 +85,33 @@ Execute the following command to start the development server:
 npm run dev
 ```
 
-The application will be available at [http://localhost:9002](http://localhost:9002).
+The application will be available at [http://localhost:3000](http://localhost:3000).
+
+### User Credentials
+
+You can log in with the following credentials (defined in `src/lib/users.json`):
+- **Username**: `rajesh`, **Password**: `password123`
+- **Username**: `yamini`, **Password**: `password456`
 
 ## Deployment
 
-This project is configured for seamless deployment on **Firebase App Hosting**.
+This Next.js application can be deployed to any hosting service that supports Node.js applications. Here are the general steps:
 
-### Prerequisites
-
-- A Firebase project.
-- The [Firebase CLI](https://firebase.google.com/docs/cli) installed and authenticated (`firebase login`).
-
-### Deployment Steps
-
-1.  **Connect to Firebase:**
-    Associate your local project with your Firebase project by running:
-    ```bash
-    firebase use <YOUR_FIREBASE_PROJECT_ID>
-    ```
-
-2.  **Build the Project:**
+1.  **Build the Project:**
     Create a production-ready build of your Next.js application.
     ```bash
     npm run build
     ```
+    This will create an optimized build in the `.next` directory.
 
-3.  **Deploy to Firebase App Hosting:**
-    Deploy your application using the Firebase CLI.
+2.  **Deploy:**
+    Deploy the output to your hosting provider of choice. Popular options include:
+    - **Vercel**: As the creators of Next.js, Vercel provides a seamless deployment experience. Connect your Git repository and it will build and deploy automatically.
+    - **Netlify**: Another excellent option for deploying modern web applications.
+    - **AWS, Google Cloud, Azure**: You can deploy the app on any cloud provider using a Node.js runtime, either in a container or a serverless function.
+
+    After building, you can run the production server using:
     ```bash
-    firebase apphosting:backends:deploy
+    npm run start
     ```
-    Follow the prompts to select or create a backend. Once deployed, the CLI will provide you with the URL of your live application.
+    Your hosting provider will typically handle this step for you.
