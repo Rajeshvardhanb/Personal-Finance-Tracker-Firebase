@@ -62,18 +62,18 @@ export function AppLogo(props: SVGProps<SVGSVGElement>) {
       </g>
 
       <text
-        x="50"
+        x="42"
         y="25"
         fontFamily="Orbitron, sans-serif"
         fontSize="12"
         fill="url(#logoGradient)"
         fontWeight="700"
-        letterSpacing="1"
+        letterSpacing="0"
       >
         INFINITY CLOUD
       </text>
-      <text
-        x="80"
+       <text
+        x="75"
         y="38"
         fontFamily="Orbitron, sans-serif"
         fontSize="10"
