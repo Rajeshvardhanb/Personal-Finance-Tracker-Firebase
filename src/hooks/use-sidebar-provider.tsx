@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
@@ -78,6 +79,12 @@ export const SidebarProvider = React.forwardRef<
       window.addEventListener("keydown", handleKeyDown)
       return () => window.removeEventListener("keydown", handleKeyDown)
     }, [toggleSidebar])
+    
+    React.useEffect(() => {
+      if (isMobile) {
+        setOpen(false)
+      }
+    }, [isMobile, setOpen])
 
     const state = open ? "expanded" : "collapsed"
 
@@ -94,26 +101,9 @@ export const SidebarProvider = React.forwardRef<
 
     return (
       <SidebarContext.Provider value={contextValue}>
-        <div ref={ref} {...props}>{children}</div>
+        <div ref={ref} {...props} data-sidebar={state}>{children}</div>
       </SidebarContext.Provider>
     )
   }
 )
 SidebarProvider.displayName = "SidebarProvider"
-
-
-function useIsMobile() {
-    const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined)
-  
-    React.useEffect(() => {
-      const mql = window.matchMedia(`(max-width: 767px)`)
-      const onChange = () => {
-        setIsMobile(mql.matches)
-      }
-      mql.addEventListener("change", onChange)
-      setIsMobile(mql.matches)
-      return () => mql.removeEventListener("change", onChange)
-    }, [])
-  
-    return !!isMobile
-  }

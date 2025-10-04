@@ -10,9 +10,10 @@ import {
   BookText,
   PiggyBank,
 } from "lucide-react";
-
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { useSidebar } from "@/hooks/use-sidebar-provider";
+import { SidebarToggle } from "./SidebarToggle";
 
 const navItems = [
     { href: "/", icon: Home, label: "Dashboard" },
@@ -25,10 +26,22 @@ const navItems = [
 
 export default function AppSidebar() {
   const pathname = usePathname();
+  const { state, isMobile, open } = useSidebar();
+
+  if (isMobile && !open) {
+    return null;
+  }
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-30 hidden w-72 flex-col border-r bg-secondary sm:flex">
-      <div className="flex h-14 items-center px-4 lg:h-[60px] lg:px-6">
+    <aside
+      className={cn(
+        "fixed inset-y-0 left-0 z-30 flex-col border-r bg-secondary transition-all duration-300 ease-in-out",
+        state === 'expanded' ? 'w-72' : 'w-[78px]',
+        isMobile ? "flex" : "hidden sm:flex"
+      )}
+    >
+      <SidebarToggle />
+      <div className={cn("flex h-14 items-center px-4 lg:h-[60px] lg:px-6", state === 'expanded' ? 'justify-start' : 'justify-center')}>
       </div>
       <nav className="flex flex-col gap-2 p-2 sm:py-3">
         {navItems.map((item) => (
@@ -36,24 +49,28 @@ export default function AppSidebar() {
             key={item.href}
             href={item.href}
             className={cn(
-              "flex items-center justify-start gap-3 rounded-lg px-3 py-2 transition-all duration-300",
+              "flex items-center gap-3 rounded-lg px-3 py-2 transition-all duration-300",
+              state === 'expanded' ? "justify-start" : "justify-center",
               pathname === item.href
                 ? "bg-primary text-primary-foreground shadow-lg"
                 : "text-muted-foreground/80 hover:bg-secondary-foreground/10 hover:text-primary-foreground"
             )}
           >
-            <item.icon className="h-5 w-5" />
-            <span className="font-medium">{item.label}</span>
+            <item.icon className="h-5 w-5 shrink-0" />
+            <span className={cn("font-medium", state === 'collapsed' && "hidden")}>{item.label}</span>
           </Link>
         ))}
       </nav>
       <nav className="mt-auto flex flex-col items-stretch gap-2 p-2 sm:py-3">
         <Link
           href="#"
-          className="flex items-center justify-start gap-3 rounded-lg px-3 py-2 text-muted-foreground/80 transition-all hover:bg-secondary-foreground/10 hover:text-primary-foreground"
+          className={cn(
+            "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground/80 transition-all hover:bg-secondary-foreground/10 hover:text-primary-foreground",
+            state === 'expanded' ? "justify-start" : "justify-center"
+          )}
         >
-          <Settings className="h-5 w-5" />
-          <span className="font-medium">Settings</span>
+          <Settings className="h-5 w-5 shrink-0" />
+          <span className={cn("font-medium", state === 'collapsed' && "hidden")}>Settings</span>
         </Link>
       </nav>
     </aside>
