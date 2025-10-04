@@ -1,0 +1,77 @@
+"use client";
+
+import Link from "next/link";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import type { CreditCard } from "@/lib/types";
+import { formatCurrency } from "@/lib/utils";
+import { format, getMonth, getYear } from "date-fns";
+import { AppLogo } from "../icons";
+
+type CreditCardTileProps = {
+  card: CreditCard;
+  selectedDate: Date;
+  onEdit: (card: CreditCard) => void;
+  onDelete: (id: string) => void;
+};
+
+export default function CreditCardTile({ card, selectedDate, onEdit, onDelete }: CreditCardTileProps) {
+  const currentMonth = getMonth(selectedDate);
+  const currentYear = getYear(selectedDate);
+
+  const monthlySpending = card.transactions
+    .filter(t => getMonth(new Date(t.date)) === currentMonth && getYear(new Date(t.date)) === currentYear)
+    .reduce((sum, t) => sum + t.amount, 0);
+  
+  const availableCredit = card.creditLimit - monthlySpending;
+
+  return (
+    <Card className="flex flex-col">
+      <CardHeader className="flex flex-row items-center justify-between">
+        <CardTitle className="text-lg font-bold font-headline">{card.name}</CardTitle>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => onEdit(card)}>
+              <Pencil className="mr-2 h-4 w-4" /> Edit
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onDelete(card.id)} className="text-destructive">
+              <Trash2 className="mr-2 h-4 w-4" /> Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </CardHeader>
+      <CardContent className="flex-grow">
+        <Link href={`/credit-cards/${card.id}`}>
+          <div className="bg-gradient-to-br from-primary/80 to-primary p-4 rounded-lg text-primary-foreground shadow-lg hover:shadow-xl transition-shadow cursor-pointer aspect-[1.586] flex flex-col justify-between">
+            <div className="flex justify-between items-start">
+                <AppLogo className="h-8 w-8 text-primary-foreground/80"/>
+                <p className="font-code text-sm opacity-80">CARD</p>
+            </div>
+            <div>
+              <p className="text-xl font-code tracking-widest">**** **** **** 1234</p>
+              <p className="text-sm font-headline pt-2">{card.name}</p>
+            </div>
+          </div>
+        </Link>
+      </CardContent>
+      <CardFooter className="grid grid-cols-2 gap-2 text-sm">
+        <div>
+            <p className="text-muted-foreground">Monthly Spend</p>
+            <p className="font-medium">{formatCurrency(monthlySpending)}</p>
+        </div>
+        <div className="text-right">
+            <p className="text-muted-foreground">Due Date</p>
+            <p className="font-medium">{format(new Date(card.upcomingBillDueDate), 'dd MMM')}</p>
+        </div>
+      </CardFooter>
+    </Card>
+  );
+}

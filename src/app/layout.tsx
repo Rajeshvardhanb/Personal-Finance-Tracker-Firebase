@@ -30,6 +30,10 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&display=swap"
           rel="stylesheet"
         />
+        <link 
+          href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" 
+          rel="stylesheet" 
+        />
       </head>
       <body className={cn('font-body antialiased')}>
         <FinanceProvider>

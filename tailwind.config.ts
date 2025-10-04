@@ -12,7 +12,7 @@ export default {
       fontFamily: {
         body: ['Lato', 'sans-serif'],
         headline: ['Merriweather', 'serif'],
-        code: ['monospace'],
+        code: ['"Space Mono"', 'monospace'],
       },
       colors: {
         background: 'hsl(var(--background))',

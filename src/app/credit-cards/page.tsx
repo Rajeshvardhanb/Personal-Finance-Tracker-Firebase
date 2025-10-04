@@ -5,10 +5,9 @@ import PageHeader from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import { useFinances } from "@/hooks/use-finances";
-import { Card, CardContent } from "@/components/ui/card";
-import CreditCardsTable from "@/components/credit-cards/CreditCardsTable";
 import CreditCardForm from "@/components/credit-cards/CreditCardForm";
 import type { CreditCard } from "@/lib/types";
+import CreditCardTile from "@/components/credit-cards/CreditCardTile";
 
 export default function CreditCardsPage() {
   const { data, selectedDate, addCreditCard, updateCreditCard, deleteCreditCard } = useFinances();
@@ -43,16 +42,25 @@ export default function CreditCardsPage() {
           Add Card
         </Button>
       </PageHeader>
-      <Card>
-        <CardContent className="p-0">
-          <CreditCardsTable 
-            cards={data.creditCards}
-            onEdit={handleEditCard}
-            onDelete={handleDeleteCard}
-            selectedDate={selectedDate}
-          />
-        </CardContent>
-      </Card>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {data.creditCards.map(card => (
+            <CreditCardTile 
+                key={card.id} 
+                card={card} 
+                selectedDate={selectedDate}
+                onEdit={handleEditCard}
+                onDelete={handleDeleteCard}
+            />
+        ))}
+      </div>
+
+      {data.creditCards.length === 0 && (
+        <div className="text-center py-16 text-muted-foreground">
+          <p>No credit cards found. Click 'Add Card' to get started.</p>
+        </div>
+      )}
+
 
       {isFormOpen && (
         <CreditCardForm
