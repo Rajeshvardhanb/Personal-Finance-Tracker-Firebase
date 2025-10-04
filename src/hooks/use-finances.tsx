@@ -403,7 +403,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
       snapshotNetWorth();
       updateTotalFromMasterExpense();
       syncCreditCardExpenses();
-  }, [data, selectedDate, snapshotNetWorth, updateTotalFromMasterExpense, syncCreditCardExpenses]);
+  }, [data, selectedDate]);
 
 
   const getFinancialDataForPastMonths = (numberOfMonths: number) => {
