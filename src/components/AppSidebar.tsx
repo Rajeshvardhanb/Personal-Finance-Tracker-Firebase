@@ -36,7 +36,7 @@ export default function AppSidebar() {
   return (
     <aside
       className={cn(
-        "fixed inset-y-0 left-0 z-30 flex-col border-r border-white/10 bg-gradient-to-b from-blue-600 to-cyan-500 text-white transition-all duration-300 ease-in-out",
+        "fixed inset-y-0 left-0 z-30 flex-col border-r border-transparent bg-gradient-to-b from-indigo-700 via-purple-700 to-cyan-500 text-white transition-all duration-300 ease-in-out",
         state === 'expanded' ? 'w-72' : 'w-[78px]',
         isMobile ? "flex" : "hidden sm:flex"
       )}
