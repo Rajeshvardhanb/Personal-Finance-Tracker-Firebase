@@ -22,6 +22,9 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
 
   const getTitle = () => {
     if ('source' in transaction) return transaction.source; // Income
+    if (type === 'expense' && transaction.id.startsWith('cc-trans-')) {
+        return `${transaction.description} (Paid via Credit Card)`;
+    }
     return transaction.description; // Expense, CreditCard, MasterExpense
   }
 
@@ -50,6 +53,7 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
   }
   
   const isManagedExpense = type === 'expense' && 'masterExpenseId' in transaction && transaction.masterExpenseId;
+  const isCreditCardExpense = type === 'expense' && transaction.id.startsWith('cc-trans-');
   const status = getStatus();
 
   return (
@@ -74,7 +78,7 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
             {type === 'expense' && (
                 <>
                     <span className="text-muted-foreground">{format(new Date(getDate()), 'dd MMM yyyy')}</span>
-                    {onToggleStatus && !isManagedExpense ? (
+                    {onToggleStatus && !isManagedExpense && !isCreditCardExpense ? (
                       <Badge 
                           variant={status === 'Paid' ? 'default' : 'destructive'}
                           className='cursor-pointer'
@@ -119,7 +123,7 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
       
       {/* Actions */}
       <div className="ml-4 flex items-center">
-        {isManagedExpense ? (
+        {isManagedExpense || isCreditCardExpense ? (
              <div className="w-16 text-center">
                 <Badge variant="outline">Managed</Badge>
              </div>
