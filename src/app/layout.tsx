@@ -6,17 +6,11 @@ import { FinanceProvider } from '@/hooks/use-finances';
 import AppSidebar from '@/components/AppSidebar';
 import Header from '@/components/Header';
 import { SidebarProvider } from '@/hooks/use-sidebar-provider';
-import { Inter as FontSans, Playfair_Display as FontSerif } from "next/font/google";
+import { Inter as FontSans } from "next/font/google";
 
 const fontSans = FontSans({
   subsets: ["latin"],
   variable: "--font-sans",
-});
-
-const fontSerif = FontSerif({
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: "--font-serif",
 });
 
 export const metadata: Metadata = {
@@ -34,8 +28,7 @@ export default function RootLayout({
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
-          fontSans.variable,
-          fontSerif.variable
+          fontSans.variable
         )}
       >
         <FinanceProvider>
