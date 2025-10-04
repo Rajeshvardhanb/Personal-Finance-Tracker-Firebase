@@ -406,10 +406,20 @@ useEffect(() => {
   }, [user, firestore, creditCards, expenses]);
 
   useEffect(() => {
-      if (!user || !data) return;
-      updateTotalFromMasterExpense();
-      syncCreditCardExpenses();
-  }, [user, data, selectedDate, updateTotalFromMasterExpense, syncCreditCardExpenses]);
+      if (!user) return;
+      
+      const runUpdates = () => {
+        if(masterExpenses && expenses) {
+          updateTotalFromMasterExpense();
+        }
+        if(creditCards && expenses) {
+          syncCreditCardExpenses();
+        }
+      }
+      
+      runUpdates();
+
+  }, [user, masterExpenses, creditCards, expenses, selectedDate, updateTotalFromMasterExpense, syncCreditCardExpenses]);
 
   const getFinancialDataForPastMonths = (numberOfMonths: number) => {
     const pastMonthsData = [];
