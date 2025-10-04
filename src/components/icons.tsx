@@ -11,14 +11,9 @@ export function AppLogo(props: SVGProps<SVGSVGElement>) {
     >
       <defs>
         <linearGradient id="logoGradient" x1="0" y1="0.5" x2="1" y2="0.5">
-          <stop offset="0%" stopColor="#00AEEF" />
-          <stop offset="100%" stopColor="#2E3192" />
+          <stop offset="0%" stopColor="hsl(var(--primary))" />
+          <stop offset="100%" stopColor="hsl(var(--accent))" />
         </linearGradient>
-        <style>
-          {`
-            @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
-          `}
-        </style>
       </defs>
 
       <g transform="translate(0, 4)">
@@ -63,21 +58,21 @@ export function AppLogo(props: SVGProps<SVGSVGElement>) {
 
       <text
         x="42"
-        y="25"
-        fontFamily="Orbitron, sans-serif"
-        fontSize="12"
-        fill="url(#logoGradient)"
+        y="21"
+        fontFamily="var(--font-serif)"
+        fontSize="10"
+        fill="hsl(var(--foreground))"
         fontWeight="700"
-        letterSpacing="0"
+        letterSpacing="0.5"
       >
         INFINITY CLOUD
       </text>
        <text
         x="110"
-        y="38"
-        fontFamily="Orbitron, sans-serif"
+        y="32"
+        fontFamily="var(--font-serif)"
         fontSize="10"
-        fill="url(#logoGradient)"
+        fill="hsl(var(--foreground))"
         fontWeight="700"
         letterSpacing="2.7"
       >
