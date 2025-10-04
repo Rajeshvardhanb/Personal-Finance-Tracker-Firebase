@@ -4,8 +4,8 @@ export function AppLogo(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 128 40"
-      width="128"
+      viewBox="0 0 150 40"
+      width="150"
       height="40"
       {...props}
     >
@@ -73,7 +73,7 @@ export function AppLogo(props: SVGProps<SVGSVGElement>) {
         INFINITY CLOUD
       </text>
        <text
-        x="98"
+        x="110"
         y="38"
         fontFamily="Orbitron, sans-serif"
         fontSize="10"
