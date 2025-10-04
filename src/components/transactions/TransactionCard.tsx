@@ -53,7 +53,7 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
 
   return (
     <div className={cn(
-      "flex items-center p-4 rounded-lg border transition-all",
+      "flex items-center p-4 rounded-lg border transition-all hover:shadow-md",
       (type === 'income' || (type === 'expense' && status === 'Paid')) && "bg-emerald-50/50 border-emerald-100 dark:bg-emerald-900/20 dark:border-emerald-900/30",
       (type === 'expense' && status === 'Not Paid') && "bg-amber-50/50 border-amber-100 dark:bg-amber-900/20 dark:border-amber-900/30",
       (type === 'credit-card' || type === 'master-expense') && "bg-blue-50/50 border-blue-100 dark:bg-blue-900/20 dark:border-blue-900/30",
