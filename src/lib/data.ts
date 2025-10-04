@@ -48,6 +48,22 @@ export const initialData: FinanceData = {
       upcomingBillDueDate: new Date(new Date().setMonth(new Date().getMonth() + 1, 10)).toISOString(),
       transactions: [],
     },
+    {
+      id: 'cc3',
+      name: 'Axis Bank Magnus',
+      creditLimit: 250000,
+      upcomingBillDueDate: new Date(new Date().setMonth(new Date().getMonth() + 1, 15)).toISOString(),
+      transactions: [
+        { id: 'cct3', description: 'Flight Tickets', amount: 12000, date: new Date(new Date().setDate(2)).toISOString(), status: 'Not Paid' }
+      ],
+    },
+    {
+      id: 'cc4',
+      name: 'SBI Cashback Card',
+      creditLimit: 75000,
+      upcomingBillDueDate: new Date(new Date().setMonth(new Date().getMonth() + 1, 20)).toISOString(),
+      transactions: [],
+    },
   ],
   assets: [
     { id: 'a1', name: 'Savings Account', category: 'Bank Balance', value: 250000, lastUpdated: new Date().toISOString() },

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
     Table,
     TableBody,
@@ -43,7 +44,11 @@ import {
 
               return (
               <TableRow key={card.id}>
-                <TableCell className="font-medium">{card.name}</TableCell>
+                <TableCell className="font-medium">
+                  <Link href={`/credit-cards/${card.id}`} className="hover:underline">
+                    {card.name}
+                  </Link>
+                </TableCell>
                 <TableCell>{format(new Date(card.upcomingBillDueDate), 'dd MMM yyyy')}</TableCell>
                 <TableCell>{formatCurrency(monthlySpending)}</TableCell>
                 <TableCell className="text-right">{formatCurrency(card.creditLimit)}</TableCell>

@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback } from 'react';
 import { FinanceData, initialData } from '@/lib/data';
-import type { Income, Expense, Note, Asset, Liability, CreditCard } from '@/lib/types';
+import type { Income, Expense, Note, Asset, Liability, CreditCard, CreditCardTransaction } from '@/lib/types';
 import { startOfMonth, getMonth, getYear, format, subMonths, isEqual, parse } from 'date-fns';
 
 interface FinanceContextType {
@@ -25,6 +25,10 @@ interface FinanceContextType {
   addCreditCard: (card: Omit<CreditCard, 'id' | 'transactions'>) => void;
   updateCreditCard: (card: CreditCard) => void;
   deleteCreditCard: (id: string) => void;
+  addCreditCardTransaction: (cardId: string, transaction: Omit<CreditCardTransaction, 'id'>) => void;
+  updateCreditCardTransaction: (cardId: string, transaction: CreditCardTransaction) => void;
+  deleteCreditCardTransaction: (cardId: string, transactionId: string) => void;
+
 
   // Notes
   addNote: (note: Omit<Note, 'id'>) => void;
@@ -134,6 +138,39 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     setDataState(prev => ({
       ...prev,
       creditCards: prev.creditCards.filter(c => c.id !== id)
+    }));
+  };
+
+  const addCreditCardTransaction = (cardId: string, transaction: Omit<CreditCardTransaction, 'id'>) => {
+    setDataState(prev => ({
+      ...prev,
+      creditCards: prev.creditCards.map(card => 
+        card.id === cardId
+          ? { ...card, transactions: [...card.transactions, { ...transaction, id: crypto.randomUUID() }] }
+          : card
+      ),
+    }));
+  };
+
+  const updateCreditCardTransaction = (cardId: string, transaction: CreditCardTransaction) => {
+    setDataState(prev => ({
+      ...prev,
+      creditCards: prev.creditCards.map(card =>
+        card.id === cardId
+          ? { ...card, transactions: card.transactions.map(t => t.id === transaction.id ? transaction : t) }
+          : card
+      ),
+    }));
+  };
+
+  const deleteCreditCardTransaction = (cardId: string, transactionId: string) => {
+    setDataState(prev => ({
+      ...prev,
+      creditCards: prev.creditCards.map(card =>
+        card.id === cardId
+          ? { ...card, transactions: card.transactions.filter(t => t.id !== transactionId) }
+          : card
+      ),
     }));
   };
 
@@ -287,6 +324,9 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     addCreditCard,
     updateCreditCard,
     deleteCreditCard,
+    addCreditCardTransaction,
+    updateCreditCardTransaction,
+    deleteCreditCardTransaction,
     addNote,
     deleteNote,
     getFinancialDataForPastMonths,
