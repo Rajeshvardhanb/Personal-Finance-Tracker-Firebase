@@ -41,6 +41,7 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
   }
   
   const getSubtext = () => {
+    if ('category' in transaction && transaction.category === 'Master Expense') return null; // Don't show subtext for master expense summaries
     if ('category' in transaction) return transaction.category; // Expense
     if (type === 'income') return format(new Date(getDate()), 'dd MMM yyyy');
     if (type === 'credit-card') return format(new Date(getDate()), 'dd MMM yyyy');
@@ -54,7 +55,6 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
   }
   
   const isManagedExpense = type === 'expense' && 'masterExpenseId' in transaction && transaction.masterExpenseId;
-  const isCreditCardExpense = type === 'expense' && 'paidViaCard' in transaction && transaction.paidViaCard;
   const status = getStatus();
 
   return (
@@ -79,7 +79,7 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
             {type === 'expense' && (
                 <>
                     <span className="text-muted-foreground">{format(new Date(getDate()), 'dd MMM yyyy')}</span>
-                    {onToggleStatus && !isManagedExpense && !isCreditCardExpense ? (
+                    {onToggleStatus && !isManagedExpense ? (
                       <Badge 
                           variant={status === 'Paid' ? 'default' : 'destructive'}
                           className='cursor-pointer'
@@ -124,7 +124,7 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
       
       {/* Actions */}
       <div className="ml-4 flex items-center">
-        {isManagedExpense || isCreditCardExpense ? (
+        {isManagedExpense ? (
              <div className="w-16 text-center">
                 <Badge variant="outline">Managed</Badge>
              </div>

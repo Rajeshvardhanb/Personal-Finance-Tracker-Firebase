@@ -376,12 +376,12 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
       const processSummary = (status: ExpenseStatus, amount: number) => {
         const suffix = status === 'Paid' ? 'paid' : 'unpaid';
         const id = `exp-from-${me.id}-${suffix}`;
-        const description = `${me.name} (${status})`;
+        const description = `${me.name} - ${status} Total`;
         const expDocRef = doc(firestore, 'users', user.uid, 'expenses', id);
 
         if (amount > 0) {
           batch.set(expDocRef, {
-            id, masterExpenseId: me.id, description, amount, category: 'Other',
+            id, masterExpenseId: me.id, description, amount, category: 'Master Expense',
             dueDate: selectedDate.toISOString(), status, isRecurring: false,
           }, { merge: true });
         } else {
