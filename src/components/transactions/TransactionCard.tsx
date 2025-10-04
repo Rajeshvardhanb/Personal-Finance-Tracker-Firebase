@@ -52,15 +52,13 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
 
   return (
     <div className={cn(
-      "flex items-center p-4 rounded-lg border-l-4",
-      status === 'Credited' && 'border-green-500 bg-green-500/10',
-      status === 'Not Credited' && 'border-amber-500 bg-amber-500/10',
-      status === 'Paid' && 'border-green-500 bg-green-500/10',
-      status === 'Not Paid' && 'border-amber-500 bg-amber-500/10',
-      type === 'credit-card' && 'border-indigo-500 bg-indigo-500/10',
-      type === 'master-expense' && status === 'Paid' && 'border-green-500 bg-green-500/10',
-      type === 'master-expense' && status === 'Not Paid' && 'border-amber-500 bg-amber-500/10',
-      'bg-card'
+      "flex items-center p-4 rounded-lg bg-card border-l-4",
+      status === 'Credited' && 'border-green-500',
+      status === 'Not Credited' && 'border-amber-500',
+      status === 'Paid' && 'border-green-500',
+      status === 'Not Paid' && 'border-amber-500',
+      type === 'credit-card' && 'border-indigo-500',
+      !status && 'border-transparent'
     )}>
       <div className="flex-1 grid grid-cols-1 md:grid-cols-3 items-center gap-2">
         {/* Main Info */}
@@ -77,7 +75,7 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
                     {onToggleStatus && !transaction.masterExpenseId ? (
                       <Badge 
                           variant={status === 'Paid' ? 'default' : 'destructive'}
-                          className='cursor-pointer border-none'
+                          className='cursor-pointer'
                           onClick={onToggleStatus}
                       >
                           {status}
@@ -85,7 +83,6 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
                     ) : (
                       <Badge 
                         variant={status === 'Paid' ? 'default' : 'destructive'}
-                        className='border-none'
                       >
                           {status}
                       </Badge>
@@ -95,7 +92,7 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
              {type === 'income' && status && (
                 <Badge 
                     variant={status === 'Credited' ? 'default' : 'destructive'}
-                    className={cn(onToggleStatus && 'cursor-pointer', "border-none")}
+                    className={cn(onToggleStatus && 'cursor-pointer')}
                     onClick={onToggleStatus}
                 >
                     {status}
@@ -104,7 +101,7 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
              {type === 'master-expense' && status && (
                  <Badge 
                     variant={status === 'Paid' ? 'default' : 'destructive'}
-                    className={cn(onToggleStatus && 'cursor-pointer', 'border-none')}
+                    className={cn(onToggleStatus && 'cursor-pointer')}
                     onClick={onToggleStatus}
                 >
                     {status}
@@ -120,7 +117,7 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
       
       {/* Actions */}
       <div className="ml-4 flex items-center">
-        {!transaction.masterExpenseId ? (
+        {!('masterExpenseId' in transaction && transaction.masterExpenseId) ? (
             <>
             <Button variant="ghost" size="icon" onClick={onEdit} className="h-8 w-8">
                 <Pencil className="h-4 w-4" />
@@ -132,7 +129,9 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
             </Button>
             </>
         ) : (
-            <span className="text-xs text-muted-foreground">Managed</span>
+             <div className="w-16 text-center">
+                <Badge variant="outline">Managed</Badge>
+             </div>
         )}
       </div>
     </div>

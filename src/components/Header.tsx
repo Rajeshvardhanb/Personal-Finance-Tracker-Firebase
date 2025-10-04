@@ -51,21 +51,15 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-secondary px-4 sm:h-[60px] sm:px-6">
-      <div className="flex items-center gap-4">
-        <Link
-          href="/"
-          className="flex items-center gap-2 font-semibold text-primary-foreground"
-        >
-          <AppLogo className="font-bold text-lg" />
-        </Link>
+    <header className="sticky top-0 z-30 flex h-14 items-center gap-0 border-b bg-secondary px-0 sm:h-[60px] sm:px-0">
+      <div className="flex h-full items-center gap-4 bg-background/5 px-4 w-64 justify-start">
+        {/* This space is intentionally left to align with the sidebar width */}
       </div>
 
-      <div className="h-8 border-l border-secondary-foreground/20"></div>
 
-      <div className="flex w-full items-center gap-4">
+      <div className="flex w-full items-center gap-4 bg-gradient-to-r from-blue-600 via-blue-500 to-cyan-400 h-full px-6">
         <div className="hidden sm:block">
-            <h1 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground/80">FINANCE TRACKER</h1>
+            <h1 className="text-sm font-semibold uppercase tracking-wider text-white/90">FINANCE TRACKER</h1>
         </div>
         <div className="ml-auto flex items-center gap-4 md:gap-2 lg:gap-4">
             <MonthSelector />
@@ -74,7 +68,7 @@ export default function Header() {
                 <Button
                 variant="outline"
                 size="icon"
-                className="overflow-hidden rounded-full border-2 border-secondary-foreground/20"
+                className="overflow-hidden rounded-full border-2 border-white/20"
                 >
                 <Image
                     src="https://picsum.photos/seed/user-avatar/36/36"

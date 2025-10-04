@@ -30,6 +30,9 @@ export default function AppSidebar() {
   return (
     <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r bg-secondary sm:flex">
       <div className="flex h-14 items-center border-b border-secondary-foreground/10 px-4 lg:h-[60px] lg:px-6">
+         <Link href="/" className="flex items-center gap-2 font-semibold text-primary-foreground">
+            <AppLogo className="font-bold text-lg" />
+         </Link>
       </div>
       <nav className="flex flex-col gap-2 p-2 sm:py-3">
         {navItems.map((item) => (
