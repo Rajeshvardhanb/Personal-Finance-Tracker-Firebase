@@ -6,10 +6,10 @@ import PageHeader from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import { useFinances } from "@/hooks/use-finances";
-import IncomeTable from "@/components/income/IncomeTable";
 import IncomeForm from "@/components/income/IncomeForm";
 import { Card, CardContent } from "@/components/ui/card";
 import type { Income } from "@/lib/types";
+import TransactionCard from "@/components/transactions/TransactionCard";
 
 export default function IncomePage() {
   const { data, selectedDate, addIncome, updateIncome, deleteIncome } = useFinances();
@@ -57,17 +57,27 @@ export default function IncomePage() {
           Add Income
         </Button>
       </PageHeader>
-
-      <Card>
-        <CardContent className="p-0">
-          <IncomeTable 
-            incomes={monthlyIncomes} 
-            onEdit={handleEditIncome}
-            onDelete={handleDeleteIncome}
-            onToggleStatus={handleToggleStatus}
-          />
-        </CardContent>
-      </Card>
+      
+      <div className="space-y-3">
+        {monthlyIncomes.length > 0 ? (
+          monthlyIncomes.map((income) => (
+            <TransactionCard
+              key={income.id}
+              type="income"
+              transaction={income}
+              onEdit={() => handleEditIncome(income)}
+              onDelete={() => handleDeleteIncome(income.id)}
+              onToggleStatus={() => handleToggleStatus(income)}
+            />
+          ))
+        ) : (
+          <Card>
+            <CardContent className="p-10 text-center text-muted-foreground">
+              No income found for this month.
+            </CardContent>
+          </Card>
+        )}
+      </div>
       
       {isFormOpen && (
         <IncomeForm

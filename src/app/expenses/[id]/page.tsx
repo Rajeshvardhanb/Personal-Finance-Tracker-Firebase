@@ -10,9 +10,9 @@ import { ArrowLeft, PlusCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/utils";
 import MasterExpenseTransactionForm from "@/components/expenses/MasterExpenseTransactionForm";
-import MasterExpenseTransactionsTable from "@/components/expenses/MasterExpenseTransactionsTable";
 import { MasterExpenseTransaction } from "@/lib/types";
 import { getMonth, getYear } from "date-fns";
+import TransactionCard from "@/components/transactions/TransactionCard";
 
 export default function MasterExpenseDetailPage() {
     const { id } = useParams();
@@ -95,13 +95,21 @@ export default function MasterExpenseDetailPage() {
                         A list of transactions for this month.
                     </CardDescription>
                 </CardHeader>
-                <CardContent className="p-0">
-                    <MasterExpenseTransactionsTable
-                        transactions={monthlyTransactions}
-                        onEdit={handleEditTransaction}
-                        onDelete={handleDeleteTransaction}
-                        onToggleStatus={handleToggleStatus}
-                    />
+                <CardContent className="space-y-3">
+                    {monthlyTransactions.length > 0 ? monthlyTransactions.map((transaction) => (
+                        <TransactionCard
+                            key={transaction.id}
+                            type="master-expense"
+                            transaction={transaction}
+                            onEdit={() => handleEditTransaction(transaction)}
+                            onDelete={() => handleDeleteTransaction(transaction.id)}
+                            onToggleStatus={() => handleToggleStatus(transaction)}
+                         />
+                    )) : (
+                        <div className="text-center py-10 text-muted-foreground">
+                            No transactions found for this month.
+                        </div>
+                    )}
                 </CardContent>
             </Card>
 

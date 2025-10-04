@@ -9,9 +9,9 @@ import { ArrowLeft, PlusCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/utils";
 import CreditCardTransactionForm from "@/components/credit-cards/CreditCardTransactionForm";
-import CreditCardTransactionsTable from "@/components/credit-cards/CreditCardTransactionsTable";
 import { CreditCardTransaction } from "@/lib/types";
-import { getMonth, getYear } from "date-fns";
+import { getMonth, getYear, format } from "date-fns";
+import TransactionCard from "@/components/transactions/TransactionCard";
 
 export default function CreditCardDetailPage() {
     const { id } = useParams();
@@ -105,12 +105,20 @@ export default function CreditCardDetailPage() {
                         A list of transactions for this month.
                     </CardDescription>
                 </CardHeader>
-                <CardContent className="p-0">
-                    <CreditCardTransactionsTable
-                        transactions={monthlyTransactions}
-                        onEdit={handleEditTransaction}
-                        onDelete={handleDeleteTransaction}
-                    />
+                <CardContent className="space-y-3">
+                    {monthlyTransactions.length > 0 ? monthlyTransactions.map((transaction) => (
+                        <TransactionCard
+                            key={transaction.id}
+                            type="credit-card"
+                            transaction={transaction}
+                            onEdit={() => handleEditTransaction(transaction)}
+                            onDelete={() => handleDeleteTransaction(transaction.id)}
+                        />
+                    )) : (
+                        <div className="text-center py-10 text-muted-foreground">
+                            No transactions found for this month.
+                        </div>
+                    )}
                 </CardContent>
             </Card>
 

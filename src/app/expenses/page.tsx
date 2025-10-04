@@ -7,11 +7,11 @@ import { PlusCircle } from "lucide-react";
 import { useFinances } from "@/hooks/use-finances";
 import { getMonth, getYear } from "date-fns";
 import { Card, CardContent } from "@/components/ui/card";
-import ExpensesTable from "@/components/expenses/ExpensesTable";
 import ExpenseForm from "@/components/expenses/ExpenseForm";
 import MasterExpenseForm from "@/components/expenses/MasterExpenseForm";
 import MasterExpenseTile from "@/components/expenses/MasterExpenseTile";
 import type { Expense, MasterExpense } from "@/lib/types";
+import TransactionCard from "@/components/transactions/TransactionCard";
 
 export default function ExpensesPage() {
   const { data, selectedDate, addExpense, updateExpense, deleteExpense, addMasterExpense, updateMasterExpense, deleteMasterExpense } = useFinances();
@@ -105,16 +105,24 @@ export default function ExpensesPage() {
         </div>
       )}
 
-      <Card>
-        <CardContent className="p-0">
-          <ExpensesTable
-            expenses={monthlyExpenses}
-            onEdit={handleEditExpense}
-            onDelete={handleDeleteExpense}
-            onToggleStatus={handleToggleStatus}
-          />
-        </CardContent>
-      </Card>
+      <div className="space-y-3">
+         {monthlyExpenses.length > 0 ? monthlyExpenses.map((expense) => (
+              <TransactionCard 
+                key={expense.id}
+                type="expense"
+                transaction={expense}
+                onEdit={() => handleEditExpense(expense)}
+                onDelete={() => handleDeleteExpense(expense.id)}
+                onToggleStatus={() => handleToggleStatus(expense)}
+              />
+            )) : (
+              <Card>
+                <CardContent className="p-10 text-center text-muted-foreground">
+                  No expenses found for this month.
+                </CardContent>
+              </Card>
+            )}
+      </div>
 
       {isExpenseFormOpen && (
         <ExpenseForm
