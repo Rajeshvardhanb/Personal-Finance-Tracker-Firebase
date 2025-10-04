@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Badge } from "@/components/ui/badge";
@@ -53,17 +52,18 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
 
   return (
     <div className={cn(
-      "flex items-center p-4 rounded-lg border transition-all hover:shadow-md",
-      (type === 'income' || (type === 'expense' && status === 'Paid')) && "bg-emerald-50/50 border-emerald-100 dark:bg-emerald-900/20 dark:border-emerald-900/30",
-      (type === 'expense' && status === 'Not Paid') && "bg-amber-50/50 border-amber-100 dark:bg-amber-900/20 dark:border-amber-900/30",
-      (type === 'credit-card' || type === 'master-expense') && "bg-blue-50/50 border-blue-100 dark:bg-blue-900/20 dark:border-blue-900/30",
-      transaction.masterExpenseId && 'bg-muted/30'
+      "flex items-center p-4 rounded-lg border transition-all duration-300 hover:shadow-lg hover:border-primary/20",
+      type === 'income' && "bg-green-50/50 border-green-100 dark:bg-green-900/10 dark:border-green-900/20",
+      type === 'expense' && status === 'Paid' && "bg-blue-50/50 border-blue-100 dark:bg-blue-900/10 dark:border-blue-900/20",
+      type === 'expense' && status === 'Not Paid' && "bg-amber-50/50 border-amber-100 dark:bg-amber-900/10 dark:border-amber-900/20",
+      (type === 'credit-card' || type === 'master-expense') && "bg-indigo-50/50 border-indigo-100 dark:bg-indigo-900/10 dark:border-indigo-900/20",
+      transaction.masterExpenseId && 'bg-slate-50 dark:bg-slate-800/20'
     )}>
       <div className="flex-1 grid grid-cols-1 md:grid-cols-3 items-center gap-2">
         {/* Main Info */}
         <div className="md:col-span-1">
-          <p className="font-medium text-emerald-900 dark:text-emerald-100">{getTitle()}</p>
-          <p className="text-sm text-emerald-700/80 dark:text-emerald-300/70">{getSubtext()}</p>
+          <p className="font-semibold">{getTitle()}</p>
+          {getSubtext() && <p className="text-sm text-muted-foreground">{getSubtext()}</p>}
         </div>
 
         {/* Date and Status */}
@@ -73,7 +73,7 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
                     <span className="text-muted-foreground">{format(new Date(getDate()), 'dd MMM yyyy')}</span>
                     <Badge 
                         variant={status === 'Paid' ? 'default' : 'secondary'}
-                        className={cn(!transaction.masterExpenseId && onToggleStatus && 'cursor-pointer', "border border-transparent")}
+                        className={cn(!transaction.masterExpenseId && onToggleStatus && 'cursor-pointer', "border")}
                         onClick={onToggleStatus}
                     >
                         {status}
@@ -83,7 +83,7 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
              {type === 'income' && status && (
                 <Badge 
                     variant={status === 'Credited' ? 'default' : 'secondary'}
-                    className={cn(onToggleStatus && 'cursor-pointer', "border border-transparent")}
+                    className={cn(onToggleStatus && 'cursor-pointer', "border")}
                     onClick={onToggleStatus}
                 >
                     {status}
@@ -92,7 +92,7 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
              {type === 'master-expense' && status && (
                 <Badge 
                     variant={status === 'Paid' ? 'default' : 'secondary'}
-                    className={cn(onToggleStatus && 'cursor-pointer', "border border-transparent")}
+                    className={cn(onToggleStatus && 'cursor-pointer', "border")}
                     onClick={onToggleStatus}
                 >
                     {status}
@@ -102,7 +102,12 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
 
         {/* Amount */}
         <div className="md:col-span-1 md:text-right">
-          <p className="font-bold text-lg text-emerald-600 dark:text-emerald-400">{formatCurrency(getAmount())}</p>
+          <p className={cn(
+              "font-bold text-lg",
+              type === 'income' && "text-green-600",
+              type === 'expense' && "text-red-600",
+              (type === 'credit-card' || type === 'master-expense') && "text-indigo-600"
+          )}>{formatCurrency(getAmount())}</p>
         </div>
       </div>
       

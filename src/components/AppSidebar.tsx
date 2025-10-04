@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -41,9 +40,9 @@ export default function AppSidebar() {
             key={item.href}
             href={item.href}
             className={cn(
-              "flex items-center justify-start gap-3 rounded-lg px-3 py-2 transition-all",
+              "flex items-center justify-start gap-3 rounded-lg px-3 py-2 transition-all duration-300",
               pathname === item.href
-                ? "bg-primary text-primary-foreground"
+                ? "bg-primary text-primary-foreground shadow-lg"
                 : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
             )}
           >
