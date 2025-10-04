@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -26,7 +26,7 @@ export default function LoginPage() {
     if (success) {
       router.push("/");
     } else {
-      setError(loginError || "An unexpected error occurred. Please try again.");
+      setError(loginError || "An unexpected error occurred. Please contact Rajesh.");
     }
   };
 
@@ -38,7 +38,7 @@ export default function LoginPage() {
       <Card className="w-full max-w-sm shadow-2xl">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold tracking-tight">Welcome!</CardTitle>
-          <CardDescription>Enter your credentials to sign in or create an account.</CardDescription>
+          <CardDescription>Enter your credentials to sign in. Please contact Rajesh for access.</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-6">
@@ -72,14 +72,13 @@ export default function LoginPage() {
             </div>
             <Button type="submit" className="w-full" disabled={isAuthenticating}>
               {isAuthenticating && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
-              Sign In or Sign Up
+              Sign In
             </Button>
-            <div className="text-center text-xs text-muted-foreground">
-                <p>Try: `rajesh@example.com` / `password123`</p>
-                <p>or `yamini@example.com` / `password456`</p>
-            </div>
           </form>
         </CardContent>
+        <CardFooter className="flex justify-center text-xs text-muted-foreground">
+            <p>This application is proudly developed and maintained by Rajesh B.</p>
+        </CardFooter>
       </Card>
     </div>
   );
