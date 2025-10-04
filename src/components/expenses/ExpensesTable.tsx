@@ -7,8 +7,7 @@ import {
     TableRow,
   } from "@/components/ui/table";
   import { Button } from "@/components/ui/button";
-  import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-  import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+  import { Pencil, Trash2 } from "lucide-react";
   import type { Expense } from "@/lib/types";
   import { formatCurrency } from "@/lib/utils";
   import { format } from "date-fns";
@@ -18,9 +17,10 @@ import {
     expenses: Expense[];
     onEdit: (expense: Expense) => void;
     onDelete: (id: string) => void;
+    onToggleStatus: (expense: Expense) => void;
   };
   
-  export default function ExpensesTable({ expenses, onEdit, onDelete }: ExpensesTableProps) {
+  export default function ExpensesTable({ expenses, onEdit, onDelete, onToggleStatus }: ExpensesTableProps) {
     return (
         <Table>
           <TableHeader>
@@ -30,7 +30,7 @@ import {
               <TableHead>Due Date</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Amount</TableHead>
-              <TableHead className="w-[50px]"></TableHead>
+              <TableHead className="w-[100px] text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -40,28 +40,24 @@ import {
                 <TableCell>{expense.category}</TableCell>
                 <TableCell>{format(new Date(expense.dueDate), 'dd MMM yyyy')}</TableCell>
                  <TableCell>
-                  <Badge variant={expense.status === 'Paid' ? 'default' : 'secondary'}>
+                  <Badge 
+                    variant={expense.status === 'Paid' ? 'default' : 'secondary'}
+                    className="cursor-pointer"
+                    onClick={() => onToggleStatus(expense)}
+                  >
                     {expense.status}
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right">{formatCurrency(expense.amount)}</TableCell>
-                <TableCell>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
-                        <span className="sr-only">Open menu</span>
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => onEdit(expense)}>
-                        <Pencil className="mr-2 h-4 w-4" /> Edit
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => onDelete(expense.id)} className="text-destructive">
-                        <Trash2 className="mr-2 h-4 w-4" /> Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                <TableCell className="text-right">
+                  <Button variant="ghost" size="icon" onClick={() => onEdit(expense)} className="h-8 w-8">
+                    <Pencil className="h-4 w-4" />
+                    <span className="sr-only">Edit</span>
+                  </Button>
+                  <Button variant="ghost" size="icon" onClick={() => onDelete(expense.id)} className="h-8 w-8 text-destructive hover:text-destructive">
+                    <Trash2 className="h-4 w-4" />
+                     <span className="sr-only">Delete</span>
+                  </Button>
                 </TableCell>
               </TableRow>
             )) : (

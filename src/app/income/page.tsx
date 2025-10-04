@@ -39,6 +39,11 @@ export default function IncomePage() {
     deleteIncome(id);
   };
 
+  const handleToggleStatus = (income: Income) => {
+    const newStatus = income.status === 'Credited' ? 'Not Credited' : 'Credited';
+    updateIncome({ ...income, status: newStatus });
+  }
+
   const handleCloseForm = () => {
     setIsFormOpen(false);
     setEditingIncome(null);
@@ -59,6 +64,7 @@ export default function IncomePage() {
             incomes={monthlyIncomes} 
             onEdit={handleEditIncome}
             onDelete={handleDeleteIncome}
+            onToggleStatus={handleToggleStatus}
           />
         </CardContent>
       </Card>

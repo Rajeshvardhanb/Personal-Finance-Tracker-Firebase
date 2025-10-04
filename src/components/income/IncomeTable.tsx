@@ -7,8 +7,7 @@ import {
     TableRow,
   } from "@/components/ui/table";
   import { Button } from "@/components/ui/button";
-  import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-  import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+  import { Pencil, Trash2 } from "lucide-react";
   import type { Income } from "@/lib/types";
   import { formatCurrency } from "@/lib/utils";
   import { format } from "date-fns";
@@ -18,9 +17,10 @@ import {
     incomes: Income[];
     onEdit: (income: Income) => void;
     onDelete: (id: string) => void;
+    onToggleStatus: (income: Income) => void;
   };
   
-  export default function IncomeTable({ incomes, onEdit, onDelete }: IncomeTableProps) {
+  export default function IncomeTable({ incomes, onEdit, onDelete, onToggleStatus }: IncomeTableProps) {
     return (
         <Table>
           <TableHeader>
@@ -29,7 +29,7 @@ import {
               <TableHead>Date</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Amount</TableHead>
-              <TableHead className="w-[50px]"></TableHead>
+              <TableHead className="w-[100px] text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -38,28 +38,24 @@ import {
                 <TableCell className="font-medium">{income.source}</TableCell>
                 <TableCell>{format(new Date(income.date), 'dd MMM yyyy')}</TableCell>
                  <TableCell>
-                  <Badge variant={income.status === 'Credited' ? 'default' : 'secondary'}>
+                  <Badge 
+                    variant={income.status === 'Credited' ? 'default' : 'secondary'}
+                    className="cursor-pointer"
+                    onClick={() => onToggleStatus(income)}
+                  >
                     {income.status}
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right">{formatCurrency(income.creditedAmount > 0 ? income.creditedAmount : income.expectedAmount)}</TableCell>
-                <TableCell>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
-                        <span className="sr-only">Open menu</span>
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => onEdit(income)}>
-                        <Pencil className="mr-2 h-4 w-4" /> Edit
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => onDelete(income.id)} className="text-destructive">
-                        <Trash2 className="mr-2 h-4 w-4" /> Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                <TableCell className="text-right">
+                  <Button variant="ghost" size="icon" onClick={() => onEdit(income)} className="h-8 w-8">
+                    <Pencil className="h-4 w-4" />
+                     <span className="sr-only">Edit</span>
+                  </Button>
+                  <Button variant="ghost" size="icon" onClick={() => onDelete(income.id)} className="h-8 w-8 text-destructive hover:text-destructive">
+                    <Trash2 className="h-4 w-4" />
+                     <span className="sr-only">Delete</span>
+                  </Button>
                 </TableCell>
               </TableRow>
             )) : (

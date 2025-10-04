@@ -38,6 +38,11 @@ export default function ExpensesPage() {
     deleteExpense(id);
   };
 
+  const handleToggleStatus = (expense: Expense) => {
+    const newStatus = expense.status === 'Paid' ? 'Not Paid' : 'Paid';
+    updateExpense({ ...expense, status: newStatus });
+  }
+
   const handleCloseForm = () => {
     setIsFormOpen(false);
     setEditingExpense(null);
@@ -58,6 +63,7 @@ export default function ExpensesPage() {
             expenses={monthlyExpenses}
             onEdit={handleEditExpense}
             onDelete={handleDeleteExpense}
+            onToggleStatus={handleToggleStatus}
           />
         </CardContent>
       </Card>
