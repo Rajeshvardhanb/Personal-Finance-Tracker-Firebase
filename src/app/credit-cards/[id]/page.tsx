@@ -5,15 +5,20 @@ import { useParams, notFound, useRouter } from "next/navigation";
 import { useFinances } from "@/hooks/use-finances";
 import PageHeader from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowLeft, PlusCircle } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/utils";
 import { getMonth, getYear } from "date-fns";
+import type { CreditCardTransaction } from "@/lib/types";
+import CreditCardTransactionForm from "@/components/credit-cards/CreditCardTransactionForm";
+import TransactionCard from "@/components/transactions/TransactionCard";
 
 export default function CreditCardDetailPage() {
     const { id } = useParams();
     const router = useRouter();
-    const { data, selectedDate } = useFinances();
+    const { data, selectedDate, addCreditCardTransaction, updateCreditCardTransaction, deleteCreditCardTransaction } = useFinances();
+    const [isFormOpen, setIsFormOpen] = useState(false);
+    const [editingTransaction, setEditingTransaction] = useState<CreditCardTransaction | null>(null);
 
     const card = data.creditCards.find(c => c.id === id);
 
@@ -32,6 +37,27 @@ export default function CreditCardDetailPage() {
     
     const monthlySpending = monthlyTransactions.reduce((sum, t) => sum + t.amount, 0);
 
+    const handleAddTransaction = () => {
+        setEditingTransaction(null);
+        setIsFormOpen(true);
+    };
+
+    const handleEditTransaction = (transaction: CreditCardTransaction) => {
+        setEditingTransaction(transaction);
+        setIsFormOpen(true);
+    };
+
+    const handleDeleteTransaction = (transactionId: string) => {
+        if (typeof id === 'string') {
+            deleteCreditCardTransaction(id, transactionId);
+        }
+    };
+
+    const handleCloseForm = () => {
+        setIsFormOpen(false);
+        setEditingTransaction(null);
+    };
+
     return (
         <div className="space-y-6">
             <div className="flex items-center justify-between">
@@ -41,6 +67,10 @@ export default function CreditCardDetailPage() {
                     </Button>
                      <PageHeader title={card.name} />
                 </div>
+                 <Button onClick={handleAddTransaction}>
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    Add Transaction
+                </Button>
             </div>
             
             <div className="grid gap-4 md:grid-cols-3">
@@ -69,6 +99,42 @@ export default function CreditCardDetailPage() {
                     </CardContent>
                 </Card>
             </div>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>Transactions</CardTitle>
+                    <CardDescription>
+                        A list of transactions for this month.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                    {monthlyTransactions.length > 0 ? monthlyTransactions.map((transaction) => (
+                        <TransactionCard
+                            key={transaction.id}
+                            type="credit-card"
+                            transaction={transaction}
+                            onEdit={() => handleEditTransaction(transaction)}
+                            onDelete={() => handleDeleteTransaction(transaction.id)}
+                         />
+                    )) : (
+                        <div className="text-center py-10 text-muted-foreground">
+                            No transactions found for this month.
+                        </div>
+                    )}
+                </CardContent>
+            </Card>
+
+            {isFormOpen && typeof id === 'string' && (
+                <CreditCardTransactionForm
+                    isOpen={isFormOpen}
+                    onClose={handleCloseForm}
+                    transaction={editingTransaction}
+                    cardId={id}
+                    masterExpenses={data.masterExpenses}
+                    addTransaction={addCreditCardTransaction}
+                    updateTransaction={updateCreditCardTransaction}
+                />
+            )}
         </div>
     )
 }
