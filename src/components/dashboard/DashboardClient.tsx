@@ -9,9 +9,12 @@ import NotesWidget from "./NotesWidget";
 import SavingsForecast from "./SavingsForecast";
 import CreditCardSummary from "./CreditCardSummary";
 import PageHeader from "../PageHeader";
+import { useAuth } from "@/hooks/use-auth";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function DashboardClient() {
   const { data, selectedDate } = useFinances();
+  const { user } = useAuth();
   
   const currentMonth = getMonth(selectedDate);
   const currentYear = getYear(selectedDate);
@@ -52,6 +55,14 @@ export default function DashboardClient() {
   return (
     <div className="grid gap-6">
       <PageHeader title="Dashboard" />
+      
+      <Card>
+        <CardContent className="p-6">
+          <h2 className="text-2xl font-bold capitalize">Welcome, {user?.username}!</h2>
+          <p className="text-muted-foreground">Here's your financial overview for the selected month.</p>
+        </CardContent>
+      </Card>
+
       <SummaryCards
         totalIncome={totalIncome}
         totalExpenses={totalExpenses}
