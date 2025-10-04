@@ -362,13 +362,15 @@ useEffect(() => {
   const syncCreditCardExpenses = useCallback(() => {
     if (!user || !creditCards || !expenses) return;
 
+    // This function will now ONLY sync transactions NOT linked to a master expense
     const allCreditCardTransactions = creditCards.flatMap(card => 
       card.transactions.map(t => ({...t, cardName: card.name}))
     );
-
+    
+    // Key change: Filter out transactions that have a masterExpenseId
     const transactionsToSync = allCreditCardTransactions.filter(t => !t.masterExpenseId);
     
-    const existingCCExpenses = expenses.filter(e => e.paidViaCard && !e.masterExpenseId);
+    const existingCCExpenses = expenses.filter(e => e.paidViaCard);
 
     const batch = writeBatch(firestore);
     const expensesRef = collection(firestore, 'users', user.uid, 'expenses');
@@ -388,12 +390,13 @@ useEffect(() => {
             paidViaCard: transaction.cardName,
         };
         const docRef = doc(expensesRef, id);
-        batch.set(docRef, expenseData);
+        batch.set(docRef, expenseData, { merge: true });
     }
     
     // Delete expenses that are no longer in credit card transactions (or have been moved to a master expense)
-    for(const [id] of existingCCExpensesMap.entries()) {
-      if(!transactionsToSyncMap.has(id)) {
+    for(const [id, expense] of existingCCExpensesMap.entries()) {
+      // Only delete if it's not a master expense summary
+      if (!expense.masterExpenseId && !transactionsToSyncMap.has(id)) {
         const docRef = doc(expensesRef, id);
         batch.delete(docRef);
       }
@@ -403,9 +406,10 @@ useEffect(() => {
   }, [user, firestore, creditCards, expenses]);
 
   useEffect(() => {
+      if (!user || !data) return;
       updateTotalFromMasterExpense();
       syncCreditCardExpenses();
-  }, [masterExpenses, creditCards, selectedDate, updateTotalFromMasterExpense, syncCreditCardExpenses]);
+  }, [user, data, selectedDate, updateTotalFromMasterExpense, syncCreditCardExpenses]);
 
   const getFinancialDataForPastMonths = (numberOfMonths: number) => {
     const pastMonthsData = [];
