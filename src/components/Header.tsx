@@ -3,15 +3,13 @@
 import { useState, useEffect } from "react";
 import {
   Home,
-  PanelLeft,
+  Menu,
   Settings,
   Wallet,
   Landmark,
   CreditCard,
   BookText,
   PiggyBank,
-  Infinity,
-  Cloud,
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -97,7 +95,7 @@ export default function Header() {
                 <Sheet>
                   <SheetTrigger asChild>
                     <Button size="icon" variant="ghost" className="text-primary-foreground">
-                      <PanelLeft className="h-5 w-5" />
+                      <Menu className="h-6 w-6" />
                       <span className="sr-only">Toggle Menu</span>
                     </Button>
                   </SheetTrigger>
