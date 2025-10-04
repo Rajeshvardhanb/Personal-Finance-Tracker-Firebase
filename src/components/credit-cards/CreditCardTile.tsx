@@ -4,8 +4,7 @@
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import type { CreditCard } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
 import { format, getMonth, getYear } from "date-fns";
@@ -30,22 +29,16 @@ export default function CreditCardTile({ card, selectedDate, onEdit, onDelete }:
      <Card className="flex flex-col transition-all hover:shadow-lg">
         <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-lg font-bold font-headline">{card.name}</CardTitle>
-            <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => onEdit(card)}>
-                <Pencil className="mr-2 h-4 w-4" /> Edit
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onDelete(card.id)} className="text-destructive">
-                <Trash2 className="mr-2 h-4 w-4" /> Delete
-                </DropdownMenuItem>
-            </DropdownMenuContent>
-            </DropdownMenu>
+            <div className="flex items-center">
+              <Button variant="ghost" size="icon" onClick={() => onEdit(card)} className="h-8 w-8">
+                  <Pencil className="h-4 w-4" />
+                  <span className="sr-only">Edit</span>
+              </Button>
+              <Button variant="ghost" size="icon" onClick={() => onDelete(card.id)} className="h-8 w-8 text-destructive hover:text-destructive">
+                  <Trash2 className="h-4 w-4" />
+                  <span className="sr-only">Delete</span>
+              </Button>
+            </div>
         </CardHeader>
         <CardContent className="flex flex-col flex-grow p-6 pt-0">
             <Link href={`/credit-cards/${card.id}`} className="block">

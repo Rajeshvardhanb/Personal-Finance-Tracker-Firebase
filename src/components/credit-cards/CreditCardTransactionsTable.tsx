@@ -7,8 +7,7 @@ import {
     TableRow,
   } from "@/components/ui/table";
   import { Button } from "@/components/ui/button";
-  import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-  import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+  import { Pencil, Trash2 } from "lucide-react";
   import type { CreditCardTransaction } from "@/lib/types";
   import { formatCurrency } from "@/lib/utils";
   import { format } from "date-fns";
@@ -27,7 +26,7 @@ import {
               <TableHead>Description</TableHead>
               <TableHead>Date</TableHead>
               <TableHead className="text-right">Amount</TableHead>
-              <TableHead className="w-[50px]"></TableHead>
+              <TableHead className="w-[100px] text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -36,23 +35,15 @@ import {
                 <TableCell className="font-medium">{transaction.description}</TableCell>
                 <TableCell>{format(new Date(transaction.date), 'dd MMM yyyy')}</TableCell>
                 <TableCell className="text-right">{formatCurrency(transaction.amount)}</TableCell>
-                <TableCell>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
-                        <span className="sr-only">Open menu</span>
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => onEdit(transaction)}>
-                        <Pencil className="mr-2 h-4 w-4" /> Edit
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => onDelete(transaction.id)} className="text-destructive">
-                        <Trash2 className="mr-2 h-4 w-4" /> Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                <TableCell className="text-right">
+                  <Button variant="ghost" size="icon" onClick={() => onEdit(transaction)} className="h-8 w-8">
+                    <Pencil className="h-4 w-4" />
+                    <span className="sr-only">Edit</span>
+                  </Button>
+                  <Button variant="ghost" size="icon" onClick={() => onDelete(transaction.id)} className="h-8 w-8 text-destructive hover:text-destructive">
+                    <Trash2 className="h-4 w-4" />
+                     <span className="sr-only">Delete</span>
+                  </Button>
                 </TableCell>
               </TableRow>
             )) : (
@@ -64,4 +55,3 @@ import {
         </Table>
     );
   }
-  

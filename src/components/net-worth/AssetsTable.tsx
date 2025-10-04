@@ -1,8 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import type { Asset } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
 
@@ -25,7 +24,7 @@ export default function AssetsTable({ assets, onEdit, onDelete }: AssetsTablePro
               <TableHead>Name</TableHead>
               <TableHead>Category</TableHead>
               <TableHead className="text-right">Value</TableHead>
-              <TableHead className="w-[50px]"></TableHead>
+              <TableHead className="w-[100px] text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -34,23 +33,15 @@ export default function AssetsTable({ assets, onEdit, onDelete }: AssetsTablePro
                 <TableCell className="font-medium">{asset.name}</TableCell>
                 <TableCell className="text-muted-foreground">{asset.category}</TableCell>
                 <TableCell className="text-right">{formatCurrency(asset.value)}</TableCell>
-                <TableCell>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
-                        <span className="sr-only">Open menu</span>
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => onEdit(asset)}>
-                        <Pencil className="mr-2 h-4 w-4" /> Edit
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => onDelete(asset.id)} className="text-destructive">
-                        <Trash2 className="mr-2 h-4 w-4" /> Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                <TableCell className="text-right">
+                  <Button variant="ghost" size="icon" onClick={() => onEdit(asset)} className="h-8 w-8">
+                    <Pencil className="h-4 w-4" />
+                     <span className="sr-only">Edit</span>
+                  </Button>
+                  <Button variant="ghost" size="icon" onClick={() => onDelete(asset.id)} className="h-8 w-8 text-destructive hover:text-destructive">
+                    <Trash2 className="h-4 w-4" />
+                     <span className="sr-only">Delete</span>
+                  </Button>
                 </TableCell>
               </TableRow>
             )) : (
