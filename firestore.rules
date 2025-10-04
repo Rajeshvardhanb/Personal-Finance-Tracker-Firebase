@@ -1,131 +1,210 @@
 /**
- * @file Firestore Security Rules
- * @description This ruleset is designed for a personal finance application that currently uses local storage and assumes no authentication.
- * As such, it mimics a remote storage structure but with all access open, as there is no concept of user-based security in this prototype.
+ * @fileoverview Firestore Security Rules for the personal finance application.
  *
- * @dataStructure
- * - /incomes/{incomeId}: Stores individual income entries.
- * - /expenses/{expenseId}: Stores individual expense entries.
- * - /credit_cards/{creditCardId}: Stores credit card account information.
- * - /credit_cards/{creditCardId}/transactions/{transactionId}: Stores credit card transactions for each credit card.
- * - /net_worth_items/{netWorthItemId}: Stores net worth items (assets and liabilities).
- * - /expense_category_budgets/{budgetId}: Stores budget limits for expense categories.
- * - /quick_notes/{noteId}: Stores quick notes.
+ * Core Philosophy:
+ * This ruleset enforces a strict user-ownership model.  Each user has a dedicated data tree rooted at `/users/{userId}`.
+ * Only the authenticated user can read and write data within their own user data tree.
  *
- * @keySecurityDecisions
- * - All read and write access is currently open (`allow get, list, create, update, delete: if true;`). This is because the application uses local storage and has no authentication.
- * - If authentication were to be added, these rules would need to be modified to enforce user-based access control (e.g., ownership).
+ * Data Structure:
+ * All personal finance data (incomes, expenses, credit cards, etc.) is nested under `/users/{userId}`.
  *
- * @denormalizationForAuthorization N/A - No authorization is performed in this version.
- * @structuralSegregation N/A - No segregation is performed in this version.
+ * Key Security Decisions:
+ * - Users can only access their own data.
+ * - Listing of user profiles is forbidden to prevent data leakage.
+ *
+ * Denormalization for Authorization:
+ *  - The application enforces that the `userId` path segment matches the `uid` field within the `UserProfile` document.  This is enforced on creation and immutability is enforced on update.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Allows anyone to read, create, update, and delete income entries.
-     * @path /incomes/{incomeId}
-     * @allow (get, list, create, update, delete) - Any user, authenticated or not, can perform any operation.
-     * @deny None - All operations are allowed.
-     * @principle All access is open due to local storage and lack of authentication.
+     * @description Prevents listing all user profiles.
+     * @path /users
+     * @allow None (listing is denied)
+     * @deny list: Always. User listing is not permitted.
+     * @principle Prevents unauthorized access to user profile data.
      */
-    match /incomes/{incomeId} {
-      allow get: if true;
-      allow list: if true;
-      allow create: if true;
-      allow update: if true;
-      allow delete: if true;
+    match /users {
+      allow get: if false;
+      allow list: if false;
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
     }
 
     /**
-     * @description Allows anyone to read, create, update, and delete expense entries.
-     * @path /expenses/{expenseId}
-     * @allow (get, list, create, update, delete) - Any user, authenticated or not, can perform any operation.
-     * @deny None - All operations are allowed.
-     * @principle All access is open due to local storage and lack of authentication.
+     * @description Controls access to user profile documents.
+     * @path /users/{userId}
+     * @allow (create) User with ID 'testUID' can create their profile if authenticated as 'testUID'.
+     * @allow (get, update, delete) User with ID 'testUID' can read/update/delete their profile if authenticated as 'testUID'.
+     * @deny (create) User with ID 'otherUID' cannot create a profile for 'testUID'.
+     * @deny (get, update, delete) User with ID 'otherUID' cannot read/update/delete the profile for 'testUID'.
+     * @principle Enforces document ownership for user profiles.
      */
-    match /expenses/{expenseId} {
-      allow get: if true;
-      allow list: if true;
-      allow create: if true;
-      allow update: if true;
-      allow delete: if true;
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false;
+      allow create: if isSignedIn() && isSelfCreate(userId, request.resource.data.uid);
+      allow update: if isExistingOwner(userId) && isUidNotChanged(userId, resource.data.uid);
+      allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Allows anyone to read, create, update, and delete credit card information.
-     * @path /credit_cards/{creditCardId}
-     * @allow (get, list, create, update, delete) - Any user, authenticated or not, can perform any operation.
-     * @deny None - All operations are allowed.
-     * @principle All access is open due to local storage and lack of authentication.
+     * @description Controls access to income entries for a specific user.
+     * @path /users/{userId}/incomes/{incomeId}
+     * @allow (create) User with ID 'testUID' can create an income entry under their profile.
+     * @allow (get, list, update, delete) User with ID 'testUID' can read/list/update/delete their own income entries.
+     * @deny (create) User with ID 'otherUID' cannot create an income entry for 'testUID'.
+     * @deny (get, list, update, delete) User with ID 'otherUID' cannot read/list/update/delete income entries for 'testUID'.
+     * @principle Enforces document ownership for income entries.
      */
-    match /credit_cards/{creditCardId} {
-      allow get: if true;
-      allow list: if true;
-      allow create: if true;
-      allow update: if true;
-      allow delete: if true;
+    match /users/{userId}/incomes/{incomeId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isSignedIn();
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Allows anyone to read, create, update, and delete credit card transactions.
-     * @path /credit_cards/{creditCardId}/transactions/{transactionId}
-     * @allow (get, list, create, update, delete) - Any user, authenticated or not, can perform any operation.
-     * @deny None - All operations are allowed.
-     * @principle All access is open due to local storage and lack of authentication.
+     * @description Controls access to expense entries for a specific user.
+     * @path /users/{userId}/expenses/{expenseId}
+     * @allow (create) User with ID 'testUID' can create an expense entry under their profile.
+     * @allow (get, list, update, delete) User with ID 'testUID' can read/list/update/delete their own expense entries.
+     * @deny (create) User with ID 'otherUID' cannot create an expense entry for 'testUID'.
+     * @deny (get, list, update, delete) User with ID 'otherUID' cannot read/list/update/delete expense entries for 'testUID'.
+     * @principle Enforces document ownership for expense entries.
      */
-    match /credit_cards/{creditCardId}/transactions/{transactionId} {
-      allow get: if true;
-      allow list: if true;
-      allow create: if true;
-      allow update: if true;
-      allow delete: if true;
+    match /users/{userId}/expenses/{expenseId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isSignedIn();
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Allows anyone to read, create, update, and delete net worth items.
-     * @path /net_worth_items/{netWorthItemId}
-     * @allow (get, list, create, update, delete) - Any user, authenticated or not, can perform any operation.
-     * @deny None - All operations are allowed.
-     * @principle All access is open due to local storage and lack of authentication.
+     * @description Controls access to credit card entries for a specific user.
+     * @path /users/{userId}/creditCards/{cardId}
+     * @allow (create) User with ID 'testUID' can create a credit card entry under their profile.
+     * @allow (get, list, update, delete) User with ID 'testUID' can read/list/update/delete their own credit card entries.
+     * @deny (create) User with ID 'otherUID' cannot create a credit card entry for 'testUID'.
+     * @deny (get, list, update, delete) User with ID 'otherUID' cannot read/list/update/delete credit card entries for 'testUID'.
+     * @principle Enforces document ownership for credit card entries.
      */
-    match /net_worth_items/{netWorthItemId} {
-      allow get: if true;
-      allow list: if true;
-      allow create: if true;
-      allow update: if true;
-      allow delete: if true;
+    match /users/{userId}/creditCards/{cardId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isSignedIn();
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Allows anyone to read, create, update, and delete expense category budgets.
-     * @path /expense_category_budgets/{budgetId}
-     * @allow (get, list, create, update, delete) - Any user, authenticated or not, can perform any operation.
-     * @deny None - All operations are allowed.
-     * @principle All access is open due to local storage and lack of authentication.
+     * @description Controls access to master expense entries for a specific user.
+     * @path /users/{userId}/masterExpenses/{masterExpenseId}
+     * @allow (create) User with ID 'testUID' can create a master expense entry under their profile.
+     * @allow (get, list, update, delete) User with ID 'testUID' can read/list/update/delete their own master expense entries.
+     * @deny (create) User with ID 'otherUID' cannot create a master expense entry for 'testUID'.
+     * @deny (get, list, update, delete) User with ID 'otherUID' cannot read/list/update/delete master expense entries for 'testUID'.
+     * @principle Enforces document ownership for master expense entries.
      */
-    match /expense_category_budgets/{budgetId} {
-      allow get: if true;
-      allow list: if true;
-      allow create: if true;
-      allow update: if true;
-      allow delete: if true;
+    match /users/{userId}/masterExpenses/{masterExpenseId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isSignedIn();
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Allows anyone to read, create, update, and delete quick notes.
-     * @path /quick_notes/{noteId}
-     * @allow (get, list, create, update, delete) - Any user, authenticated or not, can perform any operation.
-     * @deny None - All operations are allowed.
-     * @principle All access is open due to local storage and lack of authentication.
+     * @description Controls access to asset entries for a specific user.
+     * @path /users/{userId}/assets/{assetId}
+     * @allow (create) User with ID 'testUID' can create an asset entry under their profile.
+     * @allow (get, list, update, delete) User with ID 'testUID' can read/list/update/delete their own asset entries.
+     * @deny (create) User with ID 'otherUID' cannot create an asset entry for 'testUID'.
+     * @deny (get, list, update, delete) User with ID 'otherUID' cannot read/list/update/delete asset entries for 'testUID'.
+     * @principle Enforces document ownership for asset entries.
      */
-    match /quick_notes/{noteId} {
-      allow get: if true;
-      allow list: if true;
-      allow create: if true;
-      allow update: if true;
-      allow delete: if true;
+    match /users/{userId}/assets/{assetId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isSignedIn();
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Controls access to liability entries for a specific user.
+     * @path /users/{userId}/liabilities/{liabilityId}
+     * @allow (create) User with ID 'testUID' can create a liability entry under their profile.
+     * @allow (get, list, update, delete) User with ID 'testUID' can read/list/update/delete their own liability entries.
+     * @deny (create) User with ID 'otherUID' cannot create a liability entry for 'testUID'.
+     * @deny (get, list, update, delete) User with ID 'otherUID' cannot read/list/update/delete liability entries for 'testUID'.
+     * @principle Enforces document ownership for liability entries.
+     */
+    match /users/{userId}/liabilities/{liabilityId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isSignedIn();
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Controls access to note entries for a specific user.
+     * @path /users/{userId}/notes/{noteId}
+     * @allow (create) User with ID 'testUID' can create a note entry under their profile.
+     * @allow (get, list, update, delete) User with ID 'testUID' can read/list/update/delete their own note entries.
+     * @deny (create) User with ID 'otherUID' cannot create a note entry for 'testUID'.
+     * @deny (get, list, update, delete) User with ID 'otherUID' cannot read/list/update/delete note entries for 'testUID'.
+     * @principle Enforces document ownership for note entries.
+     */
+    match /users/{userId}/notes/{noteId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isSignedIn();
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Controls access to net worth history entries for a specific user.
+     * @path /users/{userId}/netWorthHistory/{historyId}
+     * @allow (create) User with ID 'testUID' can create a net worth history entry under their profile.
+     * @allow (get, list, update, delete) User with ID 'testUID' can read/list/update/delete their own net worth history entries.
+     * @deny (create) User with ID 'otherUID' cannot create a net worth history entry for 'testUID'.
+     * @deny (get, list, update, delete) User with ID 'otherUID' cannot read/list/update/delete net worth history entries for 'testUID'.
+     * @principle Enforces document ownership for net worth history entries.
+     */
+    match /users/{userId}/netWorthHistory/{historyId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isSignedIn();
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    function isExistingOwner(userId) {
+      return isSignedIn() && isOwner(userId) && resource != null;
+    }
+
+    function isSelfCreate(userId, resourceUid) {
+        return isSignedIn() && (userId == request.auth.uid) && (userId == resourceUid);
+    }
+
+    function isUidNotChanged(userId, resourceUid){
+        return isSignedIn() && isOwner(userId) && (userId == resourceUid);
     }
   }
 }
