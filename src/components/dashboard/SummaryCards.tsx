@@ -2,22 +2,20 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/utils";
-import { Banknote, PiggyBank, TrendingDown, TrendingUp, CreditCard } from "lucide-react";
+import { TrendingDown, TrendingUp, Hourglass, CheckCircle } from "lucide-react";
 
 type SummaryCardsProps = {
   totalIncome: number;
+  totalExpenses: number;
   paidExpenses: number;
   unpaidExpenses: number;
-  savings: number;
-  creditCardSpending: number;
 };
 
 export default function SummaryCards({
   totalIncome,
+  totalExpenses,
   paidExpenses,
-  unpaidExpenses,
-  savings,
-  creditCardSpending,
+  unpaidExpenses
 }: SummaryCardsProps) {
   const summaryData = [
     {
@@ -29,20 +27,20 @@ export default function SummaryCards({
     {
       title: "Total Expenses",
       icon: TrendingDown,
-      value: paidExpenses + creditCardSpending,
+      value: totalExpenses,
       color: "text-chart-2",
     },
     {
-      title: "Credit Card",
-      icon: CreditCard,
-      value: creditCardSpending,
-      color: "text-chart-4",
-    },
-    {
-      title: "Savings",
-      icon: PiggyBank,
-      value: savings,
+      title: "Paid Expenses",
+      icon: CheckCircle,
+      value: paidExpenses,
       color: "text-chart-3",
+    },
+     {
+      title: "Unpaid Expenses",
+      icon: Hourglass,
+      value: unpaidExpenses,
+      color: "text-chart-5",
     },
   ];
 
@@ -58,9 +56,6 @@ export default function SummaryCards({
             <div className="text-2xl font-bold">
               {formatCurrency(item.value)}
             </div>
-            <p className="text-xs text-muted-foreground">
-              {/* You can add comparison logic here */}
-            </p>
           </CardContent>
         </Card>
       ))}

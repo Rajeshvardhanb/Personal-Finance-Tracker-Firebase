@@ -8,6 +8,9 @@ import RecentExpenses from "./RecentExpenses";
 import NotesWidget from "./NotesWidget";
 import SavingsForecast from "./SavingsForecast";
 import CreditCardSummary from "./CreditCardSummary";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatCurrency } from "@/lib/utils";
+import { CreditCard as CreditCardIcon } from "lucide-react";
 
 export default function DashboardClient() {
   const { data, selectedDate } = useFinances();
@@ -47,17 +50,49 @@ export default function DashboardClient() {
     .filter((e) => e.status === "Not Paid")
     .reduce((sum, e) => sum + e.amount, 0);
 
-  const savings = totalIncome - (paidExpenses + monthlyCardSpending);
+  const totalExpenses = paidExpenses + monthlyCardSpending;
 
   return (
     <div className="grid gap-6">
       <SummaryCards
         totalIncome={totalIncome}
+        totalExpenses={totalExpenses}
         paidExpenses={paidExpenses}
         unpaidExpenses={unpaidExpenses}
-        savings={savings}
-        creditCardSpending={monthlyCardSpending}
       />
+
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card className="lg:col-span-1">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Credit Card Spend</CardTitle>
+              <CreditCardIcon className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {formatCurrency(monthlyCardSpending)}
+              </div>
+            </CardContent>
+        </Card>
+        {data.creditCards.map(card => {
+           const monthlySpending = card.transactions
+            .filter(t => getMonth(new Date(t.date)) === currentMonth && getYear(new Date(t.date)) === currentYear)
+            .reduce((sum, t) => sum + t.amount, 0);
+          return (
+            <Card key={card.id}>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">{card.name}</CardTitle>
+                 <CreditCardIcon className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {formatCurrency(monthlySpending)}
+                </div>
+              </CardContent>
+            </Card>
+          )
+        })}
+      </div>
+
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2 grid gap-6">
           <DashboardCharts 
