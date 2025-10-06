@@ -57,13 +57,6 @@ export default function DashboardClient() {
     <div className="grid gap-6">
       <PageHeader title="Dashboard" />
       
-      <Card>
-        <CardContent className="p-6">
-          <h2 className="text-2xl font-bold">Welcome, {user?.email}!</h2>
-          <p className="text-muted-foreground">Here's your financial overview for the selected month.</p>
-        </CardContent>
-      </Card>
-
       <SummaryCards
         totalIncome={totalIncome}
         totalExpenses={totalExpenses}
@@ -72,7 +65,7 @@ export default function DashboardClient() {
       />
 
       <div className="grid gap-6 lg:grid-cols-5">
-        <div className="lg:col-span-3 grid gap-6">
+        <div className="lg:col-span-5 grid gap-6">
           <DashboardCharts 
             income={totalIncome} 
             expenses={totalExpenses} 
@@ -80,14 +73,12 @@ export default function DashboardClient() {
             expenseData={monthlyExpenses}
           />
         </div>
-        <div className="lg:col-span-2 grid gap-6 auto-rows-min">
-           <CreditCardSummary creditCards={data.creditCards} selectedDate={selectedDate} />
-        </div>
       </div>
 
        <div className="grid gap-6 lg:grid-cols-5">
         <div className="lg:col-span-3 grid gap-6">
            <RecentExpenses expenses={monthlyExpenses} />
+           <CreditCardSummary creditCards={data.creditCards} selectedDate={selectedDate} />
         </div>
         <div className="lg:col-span-2 grid gap-6 auto-rows-min">
             <SavingsForecast />
