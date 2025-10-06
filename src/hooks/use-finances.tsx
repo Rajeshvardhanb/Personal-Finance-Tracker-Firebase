@@ -95,6 +95,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     netWorthHistory: netWorthHistoryData || [],
     categoryBudgets: getDefaultData().categoryBudgets, // Assuming this is static for now
   }), [incomesData, expensesData, masterExpensesData, creditCardsData, assetsData, liabilitiesData, notesData, netWorthHistoryData]);
+  const { incomes, expenses, masterExpenses, creditCards, assets, liabilities, notes, netWorthHistory } = data;
 
   const getCollectionRef = (name: string) => user ? collection(firestore, 'users', user.uid, name) : null;
 
@@ -149,7 +150,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     await batch.commit();
   };
 
-  const addMasterExpenseTransaction = (masterExpenseId: string, transaction: Omit<MasterExpenseTransaction, 'id' | 'paidViaCard'>) => {
+  const addMasterExpenseTransaction = (masterExpenseId: string, transaction: Omit<MasterExpenseTransaction, 'id'>) => {
     if (!user) return;
     const masterExpense = data.masterExpenses.find(me => me.id === masterExpenseId);
     if (!masterExpense) return;
@@ -196,7 +197,8 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     if(transaction.masterExpenseId) {
       addMasterExpenseTransaction(transaction.masterExpenseId, {
         ...newTransaction,
-        status: 'Paid'
+        status: 'Paid',
+        paidViaCard: card.name
       })
     }
   };
@@ -256,13 +258,13 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
   };
   
   const snapshotNetWorth = useCallback(() => {
-    if (!user || !data.assets || !data.liabilities || !data.netWorthHistory) return;
-    const totalAssets = data.assets.reduce((sum, a) => sum + a.value, 0);
-    const totalLiabilities = data.liabilities.reduce((sum, l) => sum + l.value, 0);
+    if (!user || !assets || !liabilities || !netWorthHistory) return;
+    const totalAssets = assets.reduce((sum, a) => sum + a.value, 0);
+    const totalLiabilities = liabilities.reduce((sum, l) => sum + l.value, 0);
     const currentNetWorth = totalAssets - totalLiabilities;
     const currentMonthKey = format(new Date(), 'yyyy-MM');
 
-    const history = data.netWorthHistory || [];
+    const history = netWorthHistory || [];
     const existingEntry = history.find(h => h.date === currentMonthKey);
 
     if (!existingEntry) {
@@ -272,86 +274,13 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
        const ref = getCollectionRef('netWorthHistory');
       if (ref) updateDocumentNonBlocking(doc(ref, existingEntry.id), { value: currentNetWorth });
     }
-  }, [data?.assets, data?.liabilities, data?.netWorthHistory, user, firestore]);
-
-  useEffect(() => {
-    if (!user || !firestore || !data.masterExpenses) return;
-    const batch = writeBatch(firestore);
-    const month = getMonth(selectedDate);
-    const year = getYear(selectedDate);
-    
-    const generatedExpenseIds = new Set<string>();
-
-    data.masterExpenses.forEach(me => {
-      me.transactions
-        .filter(t => getMonth(new Date(t.date)) === month && getYear(new Date(t.date)) === year)
-        .forEach(t => {
-          const expId = `exp-from-${t.id}`;
-          generatedExpenseIds.add(expId);
-          const description = `${t.description}: ${me.name}`;
-          const expDocRef = doc(firestore, 'users', user.uid, 'expenses', expId);
-          const status: ExpenseStatus = t.paidViaCard ? `Paid by ${t.paidViaCard}` : t.status;
-          
-          batch.set(expDocRef, {
-            id: expId,
-            masterExpenseId: me.id,
-            description,
-            amount: t.amount,
-            category: 'Master Expense',
-            dueDate: t.date,
-            status: status,
-            isRecurring: false,
-          }, { merge: true });
-        });
-    });
-
-    data.expenses.forEach(exp => {
-      if (exp.masterExpenseId && !generatedExpenseIds.has(exp.id)) {
-          const oldExpDocRef = doc(firestore, 'users', user.uid, 'expenses', exp.id);
-          batch.delete(oldExpDocRef);
-      }
-    });
-
-    batch.commit().catch(e => console.error("Batch update for master expenses failed", e));
-    
-  }, [data.masterExpenses, selectedDate, user, firestore]);
-
+  }, [assets, liabilities, netWorthHistory, user, firestore]);
 
    useEffect(() => {
-    if (!user || !firestore || !data.creditCards) return;
-    const batch = writeBatch(firestore);
-    const month = getMonth(selectedDate);
-    const year = getYear(selectedDate);
-
-    data.creditCards.forEach(card => {
-      card.transactions
-        .filter(t => getMonth(new Date(t.date)) === month && getYear(new Date(t.date)) === year)
-        .forEach(t => {
-          // Only sync if it's not part of a master expense
-          if (!t.masterExpenseId) {
-            const expId = `exp-from-${t.id}`;
-            const expDocRef = doc(firestore, 'users', user.uid, 'expenses', expId);
-            batch.set(expDocRef, {
-              id: expId,
-              description: `${t.description}`,
-              amount: t.amount,
-              category: 'Credit Card',
-              dueDate: t.date,
-              status: `Paid by ${card.name}`,
-              isRecurring: false,
-            }, { merge: true });
-          }
-        });
-    });
-
-    batch.commit().catch(e => console.error("Batch update for credit card expenses failed", e));
-  }, [data.creditCards, selectedDate, user, firestore]);
-   
-  useEffect(() => {
-    if(data.assets.length || data.liabilities.length) {
+    if(assets.length || liabilities.length) {
       snapshotNetWorth();
     }
-  }, [data.assets, data.liabilities, snapshotNetWorth]);
+  }, [assets, liabilities, snapshotNetWorth]);
 
 
   const getFinancialDataForPastMonths = (numberOfMonths: number) => {
@@ -367,11 +296,11 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
             .reduce((acc, d) => acc + d.creditedAmount, 0);
 
         const expenses = data.expenses
-            .filter(d => getMonth(new Date(d.dueDate)) === month && getYear(new Date(d.dueDate)) === year && d.status === 'Paid')
+            .filter(d => getMonth(new Date(d.dueDate)) === month && getYear(new Date(d.dueDate)) === year && (d.status === 'Paid' || d.status === 'Paid by Credit Card'))
             .reduce((acc, d) => acc + d.amount, 0);
         
         const paidExpensesByCategory = data.expenses
-            .filter(d => getMonth(new Date(d.dueDate)) === month && getYear(new Date(d.dueDate)) === year && d.status === 'Paid')
+            .filter(d => getMonth(new Date(d.dueDate)) === month && getYear(new Date(d.dueDate)) === year && (d.status === 'Paid' || d.status === 'Paid by Credit Card'))
             .reduce((acc, d) => {
               acc[d.category] = (acc[d.category] || 0) + d.amount;
               return acc;
@@ -397,6 +326,76 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     return pastMonthsData;
   };
 
+  useEffect(() => {
+    if (!user || !firestore || !masterExpenses) return;
+    const batch = writeBatch(firestore);
+    const month = getMonth(selectedDate);
+    const year = getYear(selectedDate);
+
+    const generatedExpenseIds = new Set<string>();
+
+    masterExpenses.forEach(me => {
+      me.transactions
+        .filter(t => getMonth(new Date(t.date)) === month && getYear(new Date(t.date)) === year)
+        .forEach(t => {
+          const expId = `exp-from-${t.id}`;
+          generatedExpenseIds.add(expId);
+          const description = `${t.description}: ${me.name}`;
+          const expDocRef = doc(firestore, 'users', user.uid, 'expenses', expId);
+          const status: ExpenseStatus = t.paidViaCard ? `Paid by ${t.paidViaCard}` : t.status;
+          
+          batch.set(expDocRef, {
+            id: expId,
+            masterExpenseId: me.id,
+            description,
+            amount: t.amount,
+            category: 'Master Expense',
+            dueDate: t.date,
+            status: status,
+            isRecurring: false,
+          }, { merge: true });
+        });
+    });
+
+    expenses.forEach(exp => {
+      if (exp.masterExpenseId && !generatedExpenseIds.has(exp.id)) {
+          const oldExpDocRef = doc(firestore, 'users', user.uid, 'expenses', exp.id);
+          batch.delete(oldExpDocRef);
+      }
+    });
+
+    batch.commit().catch(e => console.error("Batch update for master expenses failed", e));
+  }, [masterExpenses, selectedDate, user, firestore, expenses]);
+
+  useEffect(() => {
+    if (!user || !firestore || !creditCards) return;
+    const batch = writeBatch(firestore);
+    const month = getMonth(selectedDate);
+    const year = getYear(selectedDate);
+    
+    creditCards.forEach(card => {
+      card.transactions
+        .filter(t => getMonth(new Date(t.date)) === month && getYear(new Date(t.date)) === year)
+        .forEach(t => {
+          // Only sync if it's not part of a master expense
+          if (!t.masterExpenseId) {
+            const expId = `exp-from-${t.id}`;
+            const expDocRef = doc(firestore, 'users', user.uid, 'expenses', expId);
+            batch.set(expDocRef, {
+              id: expId,
+              description: `${t.description}`,
+              amount: t.amount,
+              category: 'Credit Card',
+              dueDate: t.date,
+              status: `Paid by Credit Card`,
+              isRecurring: false,
+            }, { merge: true });
+          }
+        });
+    });
+
+    batch.commit().catch(e => console.error("Batch update for credit card expenses failed", e));
+  }, [creditCards, selectedDate, user, firestore]);
 
   const value = useMemo(() => ({
     data,

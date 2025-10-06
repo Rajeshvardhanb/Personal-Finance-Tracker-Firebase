@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Badge } from "@/components/ui/badge";
@@ -81,20 +82,22 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
             {type === 'expense' && (
                 <>
                     <span className="text-muted-foreground">{format(new Date(getDate()), 'dd MMM yyyy')}</span>
-                    {onToggleStatus && !transaction.masterExpenseId && !isPaidByCreditCard ? (
-                      <Badge 
-                          variant={status === 'Paid' ? 'default' : 'destructive'}
-                          className='cursor-pointer'
-                          onClick={onToggleStatus}
-                      >
-                          {status}
-                      </Badge>
-                    ) : (
-                      <Badge 
-                        variant={(status === 'Paid' || isPaidByCreditCard) ? 'default' : 'destructive'}
-                      >
-                          {status}
-                      </Badge>
+                    {status && (
+                      onToggleStatus && !transaction.masterExpenseId && status === 'Paid' ? (
+                          <Badge 
+                              variant={status === 'Paid' ? 'default' : 'destructive'}
+                              className='cursor-pointer'
+                              onClick={onToggleStatus}
+                          >
+                              {status}
+                          </Badge>
+                      ) : (
+                          <Badge 
+                              variant={(status === 'Paid' || isPaidByCreditCard) ? 'default' : 'destructive'}
+                          >
+                              {status}
+                          </Badge>
+                      )
                     )}
                 </>
             )}
