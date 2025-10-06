@@ -1,7 +1,7 @@
 
 "use client";
 
-import { Bar, BarChart, XAxis, YAxis, CartesianGrid, Cell, ResponsiveContainer } from "recharts";
+import { Bar, BarChart, XAxis, YAxis, CartesianGrid, Cell, ResponsiveContainer, LabelList } from "recharts";
 import {
   Card,
   CardContent,
@@ -69,6 +69,27 @@ export default function DashboardCharts({
   }, [expenseData]);
 
   const categoryBarChartHeight = Math.max(200, categoryChartData.length * 40);
+  
+  const CustomLabel = (props: any) => {
+    const { x, y, width, height, value } = props;
+    const formattedValue = formatCurrency(value);
+    
+    if(props.position === 'top') { // Vertical chart
+      return (
+        <text x={x + width / 2} y={y} dy={-4} fill="hsl(var(--muted-foreground))" fontSize={12} textAnchor="middle">
+          {formattedValue}
+        </text>
+      );
+    }
+    
+    // Horizontal chart
+    return (
+      <text x={x + width} y={y + height / 2} dx={4} dy={4} fill="hsl(var(--muted-foreground))" fontSize={12} textAnchor="start">
+        {formattedValue}
+      </text>
+    );
+  };
+
 
   return (
     <Card className="shadow-sm hover:shadow-lg transition-shadow">
@@ -84,7 +105,7 @@ export default function DashboardCharts({
             <BarChart
               accessibilityLayer
               data={barChartData}
-              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+              margin={{ top: 30, right: 30, left: 20, bottom: 5 }}
             >
               <CartesianGrid vertical={false} />
               <XAxis
@@ -111,6 +132,7 @@ export default function DashboardCharts({
                  {barChartData.map((entry) => (
                   <Cell key={`cell-${entry.name}`} fill={entry.fill} />
                 ))}
+                 <LabelList dataKey="value" content={<CustomLabel position="top" />} />
               </Bar>
             </BarChart>
           </ChartContainer>
@@ -124,7 +146,7 @@ export default function DashboardCharts({
                       accessibilityLayer
                       data={categoryChartData}
                       layout="vertical"
-                      margin={{ left: 20, right: 20 }}
+                      margin={{ left: 20, right: 100 }} // Increased right margin for labels
                     >
                       <CartesianGrid horizontal={false} />
                       <YAxis
@@ -150,6 +172,7 @@ export default function DashboardCharts({
                         {categoryChartData.map((entry) => (
                           <Cell key={`cell-${entry.name}`} fill={entry.fill} />
                         ))}
+                        <LabelList dataKey="amount" content={<CustomLabel position="right" />} />
                       </Bar>
                     </BarChart>
                 </ChartContainer>
