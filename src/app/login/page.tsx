@@ -32,66 +32,77 @@ export default function LoginPage() {
 
   return (
     <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2 xl:min-h-screen">
-      <div className="hidden bg-gradient-to-br from-indigo-700 via-purple-700 to-cyan-500 lg:flex lg:flex-col lg:items-center lg:justify-center p-8 text-white">
-        <div className="self-start">
+      <div className="hidden bg-secondary lg:flex lg:flex-col lg:items-center lg:justify-between p-8 text-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/5 via-purple-900/5 to-cyan-900/10"></div>
+        
+        <div className="self-start z-10">
           <AppLogo />
         </div>
-        <div className="flex-1 flex flex-col justify-center items-center text-center">
-            <h1 className="text-4xl font-bold tracking-tighter">
+        
+        <div className="z-10 text-center">
+            <h1 className="text-4xl font-bold tracking-tighter text-white drop-shadow-lg">
                 Welcome to Your Financial Hub
             </h1>
-            <p className="mt-4 text-lg max-w-md">
+            <p className="mt-4 text-lg text-white/80 max-w-md">
                 Track, manage, and forecast your finances with precision and ease.
             </p>
         </div>
+        <div className="self-end text-xs text-white/40 z-10">
+          Developed by Rajesh B.
+        </div>
       </div>
-      <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div className="mx-auto grid w-[350px] gap-6">
+      <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-background">
+        <div className="mx-auto grid w-[380px] gap-6">
            <div className="grid gap-2 text-center">
-             <h1 className="text-3xl font-bold">Login</h1>
+             <h1 className="text-3xl font-bold">Welcome!</h1>
              <p className="text-balance text-muted-foreground">
                 Enter your credentials to access your dashboard.
              </p>
            </div>
-           <form onSubmit={handleLogin} className="grid gap-4">
-              {error && (
-                <Alert variant="destructive">
-                    <AlertTitle>Login Failed</AlertTitle>
-                    <AlertDescription>{error}</AlertDescription>
-                </Alert>
-                )}
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="e.g., rajesh@example.com"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-              <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
-                </div>
-                <Input 
-                    id="password" 
-                    type="password" 
-                    required 
-                    placeholder="e.g., password123"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-              <Button type="submit" className="w-full" disabled={isAuthenticating}>
-                {isAuthenticating && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
-                Login
-              </Button>
-            </form>
-             <div className="mt-4 text-center text-xs text-muted-foreground">
-                <p>This application is proudly developed and maintained by Rajesh B.</p>
-            </div>
+           <Card>
+              <CardHeader>
+                  <CardTitle>Sign In</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleLogin} className="grid gap-4">
+                    {error && (
+                    <Alert variant="destructive">
+                        <AlertTitle>Login Failed</AlertTitle>
+                        <AlertDescription>{error}</AlertDescription>
+                    </Alert>
+                    )}
+                  <div className="grid gap-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="e.g., rajesh@example.com"
+                      required
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <div className="flex items-center">
+                      <Label htmlFor="password">Password</Label>
+                    </div>
+                    <Input 
+                        id="password" 
+                        type="password" 
+                        required 
+                        placeholder="e.g., password123"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                  </div>
+                  <Button type="submit" className="w-full" disabled={isAuthenticating}>
+                    {isAuthenticating && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
+                    Login
+                  </Button>
+                </form>
+              </CardContent>
+           </Card>
         </div>
       </div>
     </div>
