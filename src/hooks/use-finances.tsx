@@ -306,7 +306,17 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
         }
     }
 
-    const newTransaction: MasterExpenseTransaction = { ...transaction, id: crypto.randomUUID(), status: paidViaCard ? 'Paid' : (transaction.status as 'Paid' | 'Not Paid'), paidViaCard };
+    const newTransactionData: Omit<MasterExpenseTransaction, 'paidViaCard'> & { paidViaCard?: string } = { 
+        ...transaction, 
+        id: crypto.randomUUID(), 
+        status: paidViaCard ? 'Paid' : (transaction.status as 'Paid' | 'Not Paid'),
+    };
+
+    if (paidViaCard) {
+        newTransactionData.paidViaCard = paidViaCard;
+    }
+
+    const newTransaction = newTransactionData as MasterExpenseTransaction;
     const updatedTransactions = [...masterExpense.transactions, newTransaction];
     updateMasterExpense({ ...masterExpense, transactions: updatedTransactions });
 
@@ -511,3 +521,4 @@ export function useFinances() {
 }
 
     
+
