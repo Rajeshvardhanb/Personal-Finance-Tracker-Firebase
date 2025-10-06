@@ -156,7 +156,7 @@ export default function MasterExpenseTransactionForm({ isOpen, onClose, transact
                 render={({ field }) => (
                     <FormItem>
                     <FormLabel>Status</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select onValueChange={field.onChange} defaultValue={field.value} disabled={transaction?.paidViaCard ? true : false}>
                         <FormControl>
                         <SelectTrigger>
                             <SelectValue placeholder="Select a status" />
@@ -165,6 +165,7 @@ export default function MasterExpenseTransactionForm({ isOpen, onClose, transact
                         <SelectContent>
                             <SelectItem value="Paid">Paid</SelectItem>
                             <SelectItem value="Not Paid">Not Paid</SelectItem>
+                            {transaction?.paidViaCard && <SelectItem value="Paid by Credit Card">Paid by Credit Card</SelectItem>}
                         </SelectContent>
                     </Select>
                     <FormMessage />

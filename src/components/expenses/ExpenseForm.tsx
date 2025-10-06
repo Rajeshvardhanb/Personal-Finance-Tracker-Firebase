@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -79,7 +80,7 @@ export default function ExpenseForm({ isOpen, onClose, expense, addExpense, upda
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>{isEditing ? 'Edit' : 'Add'} Expense</DialogTitle>
+          <DialogTitle>{isEditing ? 'edit' : 'add'} expense</DialogTitle>
           <DialogDescription>
             Fill in the details for your expense. Click save when you're done.
           </DialogDescription>
@@ -190,6 +191,7 @@ export default function ExpenseForm({ isOpen, onClose, expense, addExpense, upda
                         <SelectContent>
                             <SelectItem value="Paid">Paid</SelectItem>
                             <SelectItem value="Not Paid">Not Paid</SelectItem>
+                            <SelectItem value="Paid by Credit Card" disabled>Paid by Credit Card</SelectItem>
                         </SelectContent>
                     </Select>
                     <FormMessage />

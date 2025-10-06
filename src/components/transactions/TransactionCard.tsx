@@ -60,9 +60,8 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
   return (
     <div className={cn(
       "flex items-center p-4 rounded-lg bg-card border-l-4",
-      status === 'Credited' && 'border-green-500',
+      (status === 'Credited' || status === 'Paid' || status === 'Paid by Credit Card') && 'border-green-500',
       status === 'Not Credited' && 'border-amber-500',
-      status === 'Paid' && 'border-green-500',
       status === 'Not Paid' && 'border-amber-500',
       type === 'credit-card' && 'border-indigo-500',
       !status && 'border-transparent'
@@ -81,7 +80,7 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
                     <span className="text-muted-foreground">{format(new Date(getDate()), 'dd MMM yyyy')}</span>
                     {onToggleStatus && !isManagedExpense ? (
                       <Badge 
-                          variant={status === 'Paid' ? 'default' : 'destructive'}
+                          variant={status === 'Paid' || status === 'Paid by Credit Card' ? 'default' : 'destructive'}
                           className='cursor-pointer'
                           onClick={onToggleStatus}
                       >
@@ -89,7 +88,7 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
                       </Badge>
                     ) : (
                       <Badge 
-                        variant={status === 'Paid' ? 'default' : 'destructive'}
+                        variant={status === 'Paid' || status === 'Paid by Credit Card' ? 'default' : 'destructive'}
                       >
                           {status}
                       </Badge>
@@ -107,7 +106,7 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
             )}
              {type === 'master-expense' && status && (
                  <Badge 
-                    variant={status === 'Paid' ? 'default' : 'destructive'}
+                    variant={status === 'Paid' || status === 'Paid by Credit Card' ? 'default' : 'destructive'}
                     className={cn(onToggleStatus && 'cursor-pointer')}
                     onClick={onToggleStatus}
                 >

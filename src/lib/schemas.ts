@@ -29,7 +29,7 @@ export const ExpenseSchema = z.object({
     description: z.string().min(2, { message: "Description is required." }),
     amount: z.coerce.number().min(1, { message: "Amount is required." }),
     dueDate: z.date({ required_error: "Please select a date."}),
-    status: z.enum(["Paid", "Not Paid"]),
+    status: z.enum(["Paid", "Not Paid", "Paid by Credit Card"]),
     isRecurring: z.boolean().default(false),
     category: z.string().min(1, { message: "Please select a category." }),
 });
@@ -66,7 +66,7 @@ export const MasterExpenseTransactionSchema = z.object({
     description: z.string().min(2, { message: "Description is required." }),
     amount: z.coerce.number().min(1, { message: "Amount must be greater than 0." }),
     date: z.date({ required_error: "Please select a date." }),
-    status: z.enum(["Paid", "Not Paid"]),
+    status: z.enum(["Paid", "Not Paid", "Paid by Credit Card"]),
 });
 
 export type MasterExpenseTransactionFormValues = z.infer<typeof MasterExpenseTransactionSchema>;

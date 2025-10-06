@@ -1,7 +1,7 @@
 
 
 export type TransactionStatus = 'Credited' | 'Not Credited';
-export type ExpenseStatus = 'Paid' | 'Not Paid';
+export type ExpenseStatus = 'Paid' | 'Not Paid' | 'Paid by Credit Card';
 
 export interface Income {
   id: string;
