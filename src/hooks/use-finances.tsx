@@ -100,42 +100,6 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
 
   const getCollectionRef = (name: string) => user ? collection(firestore, 'users', user.uid, name) : null;
   
-  // ONE-TIME CLEANUP EFFECT FOR BAD DATA
-  useEffect(() => {
-    const cleanupRanKey = `cleanup_master_expenses_${user?.uid}`;
-    
-    // Run only if we have a user, data, and the cleanup hasn't run before
-    if (user && expensesData && !localStorage.getItem(cleanupRanKey)) {
-      const cleanup = async () => {
-        console.log("Running one-time cleanup of master expense summaries...");
-        const batch = writeBatch(firestore);
-        
-        // Identify expenses that were auto-generated from master expenses
-        const summaryExpensesToDelete = expensesData.filter(exp => exp.masterExpenseId);
-
-        if (summaryExpensesToDelete.length > 0) {
-          summaryExpensesToDelete.forEach(exp => {
-            const expDocRef = doc(firestore, 'users', user.uid, 'expenses', exp.id);
-            batch.delete(expDocRef);
-          });
-
-          try {
-            await batch.commit();
-            console.log(`Successfully deleted ${summaryExpensesToDelete.length} summary expenses.`);
-          } catch (error) {
-            console.error("Error during cleanup:", error);
-            // If it fails, don't mark as run so it can retry
-            return;
-          }
-        }
-        
-        // Mark cleanup as complete for this user to prevent re-running
-        localStorage.setItem(cleanupRanKey, 'true');
-      };
-
-      cleanup();
-    }
-  }, [user, expensesData, firestore]);
 
   // --- CRUD Operations ---
 
@@ -161,10 +125,35 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     if (ref) updateDocumentNonBlocking(doc(ref, expense.id), expense);
   };
   const deleteExpense = (id: string) => {
+    if (!user || !expensesData || !creditCardsData) return;
+  
+    const expenseToDelete = expensesData.find(e => e.id === id);
+    if (!expenseToDelete) return;
+  
+    // Check if it's a credit card expense
+    const paidByPrefix = "Paid by ";
+    if (expenseToDelete.status.startsWith(paidByPrefix)) {
+      const cardName = expenseToDelete.status.substring(paidByPrefix.length);
+      const sourceCard = creditCardsData.find(c => c.name === cardName);
+  
+      if (sourceCard) {
+        // Find the matching transaction on the card to get its ID
+        const transactionToDelete = sourceCard.transactions.find(
+          t => t.description === expenseToDelete.description && t.amount === expenseToDelete.amount
+        );
+        
+        if (transactionToDelete) {
+          // Call deleteCreditCardTransaction to handle deletion from the card
+          deleteCreditCardTransaction(sourceCard.id, transactionToDelete.id);
+        }
+      }
+    }
+  
+    // Always delete the expense from the main expenses collection
     const ref = getCollectionRef('expenses');
     if (ref) deleteDocumentNonBlocking(doc(ref, id));
   };
-
+  
   const addMasterExpense = (expense: Omit<MasterExpense, 'id' | 'transactions' | 'userId'>) => {
     const ref = getCollectionRef('masterExpenses');
     if (ref) addDocumentNonBlocking(ref, { ...expense, transactions: [] });
@@ -176,15 +165,16 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
   const deleteMasterExpense = async (id: string) => {
     if (!user || !firestore) return;
     const batch = writeBatch(firestore);
-    // Delete the master expense doc
     const masterExpenseDocRef = doc(firestore, 'users', user.uid, 'masterExpenses', id);
     batch.delete(masterExpenseDocRef);
-    // Delete the associated summary expenses
-    const summaryExpensesToDelete = data.expenses.filter(e => e.masterExpenseId === id);
+
+    // Also delete any associated auto-generated expenses
+    const summaryExpensesToDelete = expenses.filter(e => e.masterExpenseId === id);
     summaryExpensesToDelete.forEach(exp => {
       const expDocRef = doc(firestore, 'users', user.uid, 'expenses', exp.id);
       batch.delete(expDocRef);
     });
+    
     await batch.commit();
   };
 
@@ -252,14 +242,26 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     if (!user) return;
     const card = data.creditCards.find(c => c.id === cardId);
     if (!card) return;
-    const deletedTransaction = card.transactions.find(t => t.id === transactionId);
+    const transactionToDelete = card.transactions.find(t => t.id === transactionId);
+    
+    // First, remove the transaction from the credit card's list
     const updatedTransactions = card.transactions.filter(t => t.id !== transactionId);
     updateCreditCard({ ...card, transactions: updatedTransactions });
 
-    if(deletedTransaction?.masterExpenseId) {
-      deleteMasterExpenseTransaction(deletedTransaction.masterExpenseId, transactionId);
+    // Then, find and delete the corresponding expense from the main expenses list
+    if (transactionToDelete) {
+        const correspondingExpense = expenses.find(exp => 
+            exp.description === transactionToDelete.description &&
+            exp.amount === transactionToDelete.amount &&
+            exp.status === `Paid by ${card.name}`
+        );
+        if (correspondingExpense) {
+            const ref = getCollectionRef('expenses');
+            if (ref) deleteDocumentNonBlocking(doc(ref, correspondingExpense.id));
+        }
     }
   };
+
 
   const addNote = (note: Omit<Note, 'id' | 'userId'>) => {
     const ref = getCollectionRef('notes');
@@ -313,7 +315,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
        const ref = getCollectionRef('netWorthHistory');
       if (ref) updateDocumentNonBlocking(doc(ref, existingEntry.id), { value: currentNetWorth });
     }
-  }, [assets, liabilities, netWorthHistory, user, firestore]);
+  }, [assets, liabilities, netWorthHistory, user]);
 
    useEffect(() => {
     if(assets.length || liabilities.length) {
@@ -334,7 +336,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
             .filter(d => getMonth(new Date(d.date)) === month && getYear(new Date(d.date)) === year && d.status === 'Credited')
             .reduce((acc, d) => acc + d.creditedAmount, 0);
 
-        const expenses = data.expenses
+        const expensesValue = data.expenses
             .filter(d => getMonth(new Date(d.dueDate)) === month && getYear(new Date(d.dueDate)) === year && d.status === 'Paid')
             .reduce((acc, d) => acc + d.amount, 0);
         
@@ -357,7 +359,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
         pastMonthsData.unshift({
             month: format(date, 'MMM yyyy'),
             income,
-            expenses,
+            expenses: expensesValue,
             creditCardSpending,
             overspendingCategories,
         });
@@ -380,7 +382,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     addLiability, updateLiability, deleteLiability,
     snapshotNetWorth,
     getFinancialDataForPastMonths,
-  }), [data, selectedDate, snapshotNetWorth, deleteMasterExpense, addCreditCardTransaction]);
+  }), [data, selectedDate, snapshotNetWorth, deleteMasterExpense, addCreditCardTransaction, deleteExpense]);
 
   return (
     <FinanceContext.Provider value={value}>
@@ -396,3 +398,5 @@ export function useFinances() {
   }
   return context;
 }
+
+    
