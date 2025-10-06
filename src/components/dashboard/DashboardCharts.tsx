@@ -99,8 +99,8 @@ export default function DashboardCharts({
           A visual summary of your income and expenses.
         </CardDescription>
       </CardHeader>
-      <CardContent className="grid gap-8 sm:grid-cols-2">
-        <div className="h-[400px]">
+      <CardContent className="grid gap-8 sm:grid-cols-3">
+        <div className="h-[400px] sm:col-span-1">
           <ChartContainer config={barChartConfig} className="w-full h-full">
             <BarChart
               accessibilityLayer
@@ -137,7 +137,7 @@ export default function DashboardCharts({
             </BarChart>
           </ChartContainer>
         </div>
-        <div className="h-[400px] flex flex-col">
+        <div className="h-[400px] flex flex-col sm:col-span-2">
            <h4 className="text-sm font-medium text-center mb-4">Expense Breakdown</h4>
            <ScrollArea className="h-full w-full">
              <div style={{height: `${categoryBarChartHeight}px`, minWidth: '500px'}}>
