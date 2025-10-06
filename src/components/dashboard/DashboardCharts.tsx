@@ -101,7 +101,7 @@ export default function DashboardCharts({
           A visual summary of your income and expenses.
         </CardDescription>
       </CardHeader>
-      <CardContent className="grid gap-8 sm:grid-cols-3">
+      <CardContent className="grid gap-8 grid-cols-1 sm:grid-cols-3">
         <div className="h-[400px] sm:col-span-1">
           <ChartContainer config={barChartConfig} className="w-full h-full">
             <BarChart
@@ -141,45 +141,47 @@ export default function DashboardCharts({
         </div>
         <div className="h-[400px] flex flex-col sm:col-span-2">
            <h4 className="text-sm font-medium text-center mb-4">Expense Breakdown</h4>
-           <ScrollArea className="h-full w-full">
-             <div style={{height: `${categoryBarChartHeight}px`, minWidth: '500px'}}>
-                <ChartContainer config={expenseChartConfig} className="w-full h-full">
-                  <BarChart
-                      accessibilityLayer
-                      data={categoryChartData}
-                      layout="vertical"
-                      margin={{ left: 20, right: 100 }} // Increased right margin for labels
-                    >
-                      <CartesianGrid horizontal={false} />
-                      <YAxis
-                        type="category"
-                        dataKey="name"
-                        tickLine={false}
-                        axisLine={false}
-                        stroke="hsl(var(--muted-foreground))"
-                        fontSize={12}
-                        interval={0}
-                        width={100}
-                        tick={{dx: -5}}
-                      />
-                      <XAxis type="number" hide />
-                      <ChartTooltip
-                        cursor={{ fill: 'hsl(var(--muted))' }}
-                        content={<ChartTooltipContent 
-                            formatter={(value) => formatCurrency(Number(value))}
-                            hideLabel 
-                        />}
-                      />
-                      <Bar dataKey="amount" layout="vertical" radius={5}>
-                        {categoryChartData.map((entry) => (
-                          <Cell key={`cell-${entry.name}`} fill={entry.fill} />
-                        ))}
-                        <LabelList dataKey="amount" content={<CustomLabel position="right" />} />
-                      </Bar>
-                    </BarChart>
-                </ChartContainer>
-             </div>
-           </ScrollArea>
+           <div className="w-full h-full relative">
+            <ScrollArea className="absolute inset-0">
+                <div style={{height: `${categoryBarChartHeight}px`}}>
+                    <ChartContainer config={expenseChartConfig} className="w-full h-full">
+                    <BarChart
+                        accessibilityLayer
+                        data={categoryChartData}
+                        layout="vertical"
+                        margin={{ left: 20, right: 100 }} // Increased right margin for labels
+                        >
+                        <CartesianGrid horizontal={false} />
+                        <YAxis
+                            type="category"
+                            dataKey="name"
+                            tickLine={false}
+                            axisLine={false}
+                            stroke="hsl(var(--muted-foreground))"
+                            fontSize={12}
+                            interval={0}
+                            width={100}
+                            tick={{dx: -5}}
+                        />
+                        <XAxis type="number" hide />
+                        <ChartTooltip
+                            cursor={{ fill: 'hsl(var(--muted))' }}
+                            content={<ChartTooltipContent 
+                                formatter={(value) => formatCurrency(Number(value))}
+                                hideLabel 
+                            />}
+                        />
+                        <Bar dataKey="amount" layout="vertical" radius={5}>
+                            {categoryChartData.map((entry) => (
+                            <Cell key={`cell-${entry.name}`} fill={entry.fill} />
+                            ))}
+                            <LabelList dataKey="amount" content={<CustomLabel position="right" />} />
+                        </Bar>
+                        </BarChart>
+                    </ChartContainer>
+                </div>
+            </ScrollArea>
+           </div>
         </div>
       </CardContent>
     </Card>
