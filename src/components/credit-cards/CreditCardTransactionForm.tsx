@@ -63,7 +63,7 @@ export default function CreditCardTransactionForm({ isOpen, onClose, transaction
     const dataToSubmit = {
       ...values,
       date: values.date.toISOString(),
-      masterExpenseId: values.masterExpenseId || undefined,
+      masterExpenseId: values.masterExpenseId === 'none' ? undefined : values.masterExpenseId,
     };
 
     if (isEditing && transaction) {
@@ -156,14 +156,14 @@ export default function CreditCardTransactionForm({ isOpen, onClose, transaction
                 render={({ field }) => (
                     <FormItem>
                     <FormLabel>Link to Master Expense (Optional)</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select onValueChange={field.onChange} defaultValue={field.value || 'none'}>
                         <FormControl>
                         <SelectTrigger>
                             <SelectValue placeholder="Select a master expense" />
                         </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="">None</SelectItem>
+                          <SelectItem value="none">None</SelectItem>
                           {data.masterExpenses.map((me) => (
                               <SelectItem key={me.id} value={me.id}>{me.name}</SelectItem>
                           ))}
