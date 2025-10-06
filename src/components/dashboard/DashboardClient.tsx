@@ -4,7 +4,6 @@
 import { useFinances } from "@/hooks/use-finances";
 import { getMonth, getYear } from "date-fns";
 import SummaryCards from "./SummaryCards";
-import DashboardCharts from "./DashboardCharts";
 import RecentExpenses from "./RecentExpenses";
 import NotesWidget from "./NotesWidget";
 import SavingsForecast from "./SavingsForecast";
@@ -12,6 +11,13 @@ import CreditCardSummary from "./CreditCardSummary";
 import PageHeader from "../PageHeader";
 import { useAuth } from "@/hooks/use-auth";
 import { Card, CardContent } from "@/components/ui/card";
+import dynamic from "next/dynamic";
+import { Skeleton } from "../ui/skeleton";
+
+const DashboardCharts = dynamic(() => import("./DashboardCharts"), {
+  ssr: false,
+  loading: () => <Skeleton className="h-[400px] w-full" />,
+});
 
 export default function DashboardClient() {
   const { data, selectedDate } = useFinances();
