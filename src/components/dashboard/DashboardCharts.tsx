@@ -1,7 +1,7 @@
 
 "use client";
 
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Pie, PieChart, Cell, Legend } from "recharts";
+import { Pie, PieChart, Cell } from "recharts";
 import {
   Card,
   CardContent,
@@ -11,6 +11,8 @@ import {
 } from "@/components/ui/card";
 import { Expense } from "@/lib/types";
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from "@/components/ui/chart";
+import { Bar, BarChart, XAxis, YAxis } from "recharts";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 type DashboardChartsProps = {
   income: number;
@@ -19,7 +21,7 @@ type DashboardChartsProps = {
   expenseData: Expense[];
 };
 
-const COLORS = ["#16a34a", "#dc2626", "#ea580c", "#facc15", "#6d28d9", "#1d4ed8"];
+const COLORS = ["#16a34a", "#dc2626", "#ea580c", "#facc15", "#6d28d9", "#1d4ed8", "#be185d", "#166534", "#b45309", "#581c87", "#1e40af", "#86198f"];
 
 const barChartConfig = {
   value: { label: "Amount" },
@@ -36,7 +38,6 @@ export default function DashboardCharts({ income, expenses, creditCardSpending, 
   ];
 
   const expenseByCategory = expenseData.reduce((acc, expense) => {
-    // We want to show all expenses in the pie chart, not just paid ones
     acc[expense.category] = (acc[expense.category] || 0) + expense.amount;
     return acc;
   }, {} as { [key: string]: number });
@@ -45,7 +46,7 @@ export default function DashboardCharts({ income, expenses, creditCardSpending, 
   
   const pieChartConfig = Object.fromEntries(
     pieChartData.map(({ name }, index) => [
-      name,
+      name.replace(/\s/g, ''), // Create valid keys for the config
       { label: name, color: COLORS[index % COLORS.length] },
     ])
   ) satisfies ChartConfig;
@@ -56,7 +57,7 @@ export default function DashboardCharts({ income, expenses, creditCardSpending, 
         <CardTitle className="font-headline">Monthly Overview</CardTitle>
         <CardDescription>A visual summary of your income vs. expenses.</CardDescription>
       </CardHeader>
-      <CardContent className="grid gap-6 sm:grid-cols-2">
+      <CardContent className="grid gap-8 sm:grid-cols-2">
         <div className="h-[300px]">
           <ChartContainer config={barChartConfig} className="w-full h-full">
             <BarChart accessibilityLayer data={barChartData}>
@@ -89,14 +90,34 @@ export default function DashboardCharts({ income, expenses, creditCardSpending, 
                   cursor={false}
                   content={<ChartTooltipContent hideLabel />}
                 />
-                <Pie data={pieChartData} dataKey="value" nameKey="name" innerRadius={50} outerRadius={90} strokeWidth={2}>
+                <Pie data={pieChartData} dataKey="value" nameKey="name" innerRadius={60} outerRadius={90} strokeWidth={2}>
                    {pieChartData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
                 <ChartLegend
-                  content={<ChartLegendContent nameKey="name" />}
-                  className="-translate-y-[10px] flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"
+                    content={({ payload }) => {
+                        return (
+                          <ScrollArea className="h-full w-full">
+                            <div className="flex flex-col space-y-2 pr-4">
+                                {payload?.map((item, index) => (
+                                    <div key={index} className="flex items-center gap-2 text-sm">
+                                        <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: item.color }} />
+                                        <span>{item.value}</span>
+                                    </div>
+                                ))}
+                            </div>
+                          </ScrollArea>
+                        );
+                    }}
+                    layout="vertical"
+                    align="right"
+                    verticalAlign="middle"
+                    wrapperStyle={{
+                        width: '35%',
+                        height: '80%',
+                        paddingLeft: '20px',
+                    }}
                 />
              </PieChart>
           </ChartContainer>
