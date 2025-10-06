@@ -55,7 +55,7 @@ interface FinanceContextType {
   addAsset: (asset: Omit<Asset, 'id' | 'lastUpdated' | 'userId'>) => void;
   updateAsset: (asset: Omit<Asset, 'lastUpdated' | 'userId'>) => void;
   deleteAsset: (id: string) => void;
-  addLiability: (liability: Omit<Liability, 'id' | 'lastUpdated' | 'userId'>) => void;
+  addLiability: (liability: Omit<Liability, 'id' | 'lastUpdated'| 'userId'>) => void;
   updateLiability: (liability: Omit<Liability, 'lastUpdated'| 'userId'>) => void;
   deleteLiability: (id: string) => void;
   snapshotNetWorth: () => void;
@@ -116,9 +116,49 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
   // Create a memoized data object
   const data: FinanceData = useMemo(() => {
     const defaultData = getDefaultData();
+    const currentMonth = getMonth(selectedDate);
+    const currentYear = getYear(selectedDate);
+
+    const aggregatedMasterExpenses: Expense[] = (masterExpensesData || []).flatMap(me => {
+      const paidTotal = me.transactions
+        .filter(t => t.status === 'Paid' && getMonth(new Date(t.date)) === currentMonth && getYear(new Date(t.date)) === currentYear)
+        .reduce((sum, t) => sum + t.amount, 0);
+      
+      const unpaidTotal = me.transactions
+        .filter(t => t.status === 'Not Paid' && getMonth(new Date(t.date)) === currentMonth && getYear(new Date(t.date)) === currentYear)
+        .reduce((sum, t) => sum + t.amount, 0);
+
+      const summaries: Expense[] = [];
+      if (paidTotal > 0) {
+        summaries.push({
+          id: `${me.id}-paid`,
+          masterExpenseId: me.id,
+          description: me.name,
+          category: 'Master Expense',
+          amount: paidTotal,
+          dueDate: new Date(currentYear, currentMonth, 1).toISOString(),
+          status: 'Paid',
+          isRecurring: false,
+        });
+      }
+      if (unpaidTotal > 0) {
+        summaries.push({
+          id: `${me.id}-unpaid`,
+          masterExpenseId: me.id,
+          description: me.name,
+          category: 'Master Expense',
+          amount: unpaidTotal,
+          dueDate: new Date(currentYear, currentMonth, 1).toISOString(),
+          status: 'Not Paid',
+          isRecurring: false,
+        });
+      }
+      return summaries;
+    });
+
     return {
       incomes: incomesData || [],
-      expenses: expensesData || [],
+      expenses: [...(expensesData || []), ...aggregatedMasterExpenses],
       masterExpenses: masterExpensesData || [],
       creditCards: creditCardsData || [],
       assets: assetsData || [],
@@ -128,7 +168,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
       netWorthHistory: netWorthHistoryData || [],
       categoryBudgets: defaultData.categoryBudgets, // Assuming this is static for now
     }
-  }, [incomesData, expensesData, masterExpensesData, creditCardsData, assetsData, liabilitiesData, notesData, netWorthHistoryData, expenseCategoriesData]);
+  }, [incomesData, expensesData, masterExpensesData, creditCardsData, assetsData, liabilitiesData, notesData, netWorthHistoryData, expenseCategoriesData, selectedDate]);
   
   const { assets, liabilities, netWorthHistory } = data;
 
@@ -292,7 +332,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     if (ref) deleteDocumentNonBlocking(doc(ref, id));
   };
 
-  const addMasterExpenseTransaction = useCallback((masterExpenseId: string, transaction: Omit<MasterExpenseTransaction, 'id' | 'paidViaCard'>) => {
+  const addMasterExpenseTransaction = useCallback((masterExpenseId: string, transaction: Omit<MasterExpenseTransaction, 'id'>) => {
     if (!user || !masterExpensesData) return;
     const masterExpense = masterExpensesData.find(me => me.id === masterExpenseId);
     if (!masterExpense) return;
@@ -306,7 +346,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
         }
     }
 
-    const newTransactionData: Omit<MasterExpenseTransaction, 'paidViaCard'> & { paidViaCard?: string } = { 
+    const newTransactionData: Partial<MasterExpenseTransaction> = { 
         ...transaction, 
         id: crypto.randomUUID(), 
         status: paidViaCard ? 'Paid' : (transaction.status as 'Paid' | 'Not Paid'),
@@ -314,6 +354,8 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
 
     if (paidViaCard) {
         newTransactionData.paidViaCard = paidViaCard;
+    } else {
+        delete newTransactionData.paidViaCard;
     }
 
     const newTransaction = newTransactionData as MasterExpenseTransaction;
@@ -521,4 +563,5 @@ export function useFinances() {
 }
 
     
+
 
