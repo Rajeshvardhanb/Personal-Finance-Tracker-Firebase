@@ -34,7 +34,7 @@
         "description": { "type": "string" },
         "amount": { "type": "number" },
         "dueDate": { "type": "string", "format": "date-time" },
-        "status": { "type": "string", "enum": ["Paid", "Unpaid"] },
+        "status": { "type": "string" },
         "isRecurring": { "type": "boolean" },
         "masterExpenseId": { "type": "string", "description": "Link to master expense" }
       },
@@ -88,7 +88,8 @@
         "description": { "type": "string" },
         "amount": { "type": "number" },
         "date": { "type": "string", "format": "date-time" },
-        "status": { "type": "string", "enum": ["Paid", "Unpaid"] }
+        "status": { "type": "string", "enum": ["Paid", "Not Paid"] },
+        "paidViaCard": { "type": "string" }
       },
       "required": ["id", "description", "amount", "date", "status"]
     },
