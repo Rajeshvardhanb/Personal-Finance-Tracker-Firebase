@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { LoaderCircle, Quote } from "lucide-react";
+import { LoaderCircle } from "lucide-react";
 import Image from "next/image";
 
 export default function LoginPage() {
