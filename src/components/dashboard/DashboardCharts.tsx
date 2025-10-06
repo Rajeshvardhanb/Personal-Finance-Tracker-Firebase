@@ -32,6 +32,7 @@ const barChartConfig = {
   value: { label: "Amount" },
   income: { label: "Income", color: "hsl(var(--chart-1))" },
   expenses: { label: "Expenses", color: "hsl(var(--chart-2))" },
+  creditCard: { label: "Credit Card", color: "hsl(var(--chart-3))" },
 } satisfies ChartConfig;
 
 
@@ -44,6 +45,7 @@ export default function DashboardCharts({
   const barChartData = [
     { name: "Income", value: income, fill: "var(--color-income)" },
     { name: "Expenses", value: expenses, fill: "var(--color-expenses)" },
+    { name: "Credit Card", value: creditCardSpending, fill: "var(--color-creditCard)"},
   ];
 
   const { categoryChartData, expenseChartConfig } = useMemo(() => {
