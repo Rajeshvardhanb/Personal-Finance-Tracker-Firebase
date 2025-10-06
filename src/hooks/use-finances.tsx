@@ -329,68 +329,75 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
 
   // Effect for Master Expenses
   useEffect(() => {
-    if (!user || !firestore || !masterExpenses) return;
+    if (!user || !firestore || !masterExpensesData) return;
 
     const syncMasterExpenses = async () => {
-      const batch = writeBatch(firestore);
-      const month = getMonth(selectedDate);
-      const year = getYear(selectedDate);
-      const allExpenses = expensesData || [];
-      const generatedExpenseIds = new Set<string>();
+        const batch = writeBatch(firestore);
+        const month = getMonth(selectedDate);
+        const year = getYear(selectedDate);
 
-      masterExpenses.forEach(me => {
-        me.transactions
-          .filter(t => getMonth(new Date(t.date)) === month && getYear(new Date(t.date)) === year)
-          .forEach(t => {
-            const expId = `exp-from-${t.id}`;
-            generatedExpenseIds.add(expId);
+        // A set to keep track of expense IDs that are generated from master expense transactions this run.
+        const generatedExpenseIds = new Set<string>();
 
-            const description = `${t.description}: ${me.name}`;
-            const expDocRef = doc(firestore, 'users', user.uid, 'expenses', expId);
-            const status: ExpenseStatus = t.paidViaCard ? `Paid by ${t.paidViaCard}` : t.status;
-            
-            batch.set(expDocRef, {
-              id: expId,
-              masterExpenseId: me.id,
-              description,
-              amount: t.amount,
-              category: 'Master Expense',
-              dueDate: t.date,
-              status: status,
-              isRecurring: false,
-            }, { merge: true });
-          });
-      });
+        masterExpensesData.forEach(me => {
+            me.transactions
+                .filter(t => getMonth(new Date(t.date)) === month && getYear(new Date(t.date)) === year)
+                .forEach(t => {
+                    const expId = `exp-from-${t.id}`;
+                    generatedExpenseIds.add(expId);
 
-      // Clean up old expenses that are no longer part of a master expense in the current month
-      allExpenses.forEach(exp => {
-        if (exp.masterExpenseId && !generatedExpenseIds.has(exp.id)) {
-          const expMonth = getMonth(new Date(exp.dueDate));
-          const expYear = getYear(new Date(exp.dueDate));
-          if (expMonth === month && expYear === year) {
-            const oldExpDocRef = doc(firestore, 'users', user.uid, 'expenses', exp.id);
-            batch.delete(oldExpDocRef);
-          }
+                    const description = `${t.description}: ${me.name}`;
+                    const expDocRef = doc(firestore, 'users', user.uid, 'expenses', expId);
+                    
+                    const status: ExpenseStatus = t.paidViaCard ? `Paid by ${t.paidViaCard}` : t.status;
+                    
+                    batch.set(expDocRef, {
+                        id: expId,
+                        masterExpenseId: me.id,
+                        description,
+                        amount: t.amount,
+                        category: 'Master Expense',
+                        dueDate: t.date,
+                        status: status,
+                        isRecurring: false,
+                    });
+                });
+        });
+
+        // Clean up old expenses that were derived from master expenses but are no longer relevant for the current month.
+        if (expensesData) {
+            expensesData.forEach(exp => {
+                if (exp.masterExpenseId && !generatedExpenseIds.has(exp.id)) {
+                    const expMonth = getMonth(new Date(exp.dueDate));
+                    const expYear = getYear(new Date(exp.dueDate));
+                    if (expMonth === month && expYear === year) {
+                        const oldExpDocRef = doc(firestore, 'users', user.uid, 'expenses', exp.id);
+                        batch.delete(oldExpDocRef);
+                    }
+                }
+            });
         }
-      });
-      
-      try {
-        await batch.commit();
-      } catch (e) {
-        if (e instanceof Error && e.message.includes('firestore/permission-denied')) {
-          console.error("Permission denied during master expense sync.");
-        } else {
-          console.error("Batch update for master expenses failed", e);
+        
+        try {
+            await batch.commit();
+        } catch (e) {
+            if (e instanceof Error && e.message.includes('firestore/permission-denied')) {
+                // This can happen in a loop scenario. Silently fail to prevent console spam.
+            } else {
+                console.error("Batch update for master expenses failed", e);
+            }
         }
-      }
     };
     
     syncMasterExpenses();
-  }, [masterExpenses, selectedDate, user, firestore, expensesData]);
+  }, [masterExpensesData, selectedDate, user, firestore]);
 
 
   // Effect for Credit Card Expenses
   useEffect(() => {
+    // This effect is currently disabled to prevent loops.
+    // It will be re-enabled with a stable fix.
+    /*
     if (!user || !firestore || !creditCards) return;
 
     const syncCreditCardExpenses = async () => {
@@ -431,6 +438,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     };
 
     syncCreditCardExpenses();
+    */
   }, [creditCards, selectedDate, user, firestore]);
 
   const value = useMemo(() => ({
