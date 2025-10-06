@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { CreditCardTransactionSchema, type CreditCardTransactionFormValues } from "@/lib/schemas";
 import type { CreditCardTransaction } from "@/lib/types";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useFinances } from "@/hooks/use-finances";
 
@@ -30,6 +30,7 @@ type CreditCardTransactionFormProps = {
 export default function CreditCardTransactionForm({ isOpen, onClose, transaction, cardId, addTransaction, updateTransaction }: CreditCardTransactionFormProps) {
   const isEditing = !!transaction;
   const { data } = useFinances();
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   const form = useForm<CreditCardTransactionFormValues>({
     resolver: zodResolver(CreditCardTransactionSchema),
@@ -46,14 +47,14 @@ export default function CreditCardTransactionForm({ isOpen, onClose, transaction
         form.reset({
           ...transaction,
           date: new Date(transaction.date),
-          masterExpenseId: transaction.masterExpenseId || "",
+          masterExpenseId: transaction.masterExpenseId || "none",
         });
       } else {
         form.reset({
           description: "",
           amount: 0,
           date: new Date(),
-          masterExpenseId: "",
+          masterExpenseId: "none",
         });
       }
     }
@@ -118,7 +119,7 @@ export default function CreditCardTransactionForm({ isOpen, onClose, transaction
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel>Transaction Date</FormLabel>
-                  <Popover>
+                  <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
@@ -141,7 +142,10 @@ export default function CreditCardTransactionForm({ isOpen, onClose, transaction
                       <Calendar
                         mode="single"
                         selected={field.value}
-                        onSelect={field.onChange}
+                        onSelect={(date) => {
+                          field.onChange(date);
+                          setIsCalendarOpen(false);
+                        }}
                         initialFocus
                       />
                     </PopoverContent>
@@ -156,7 +160,7 @@ export default function CreditCardTransactionForm({ isOpen, onClose, transaction
                 render={({ field }) => (
                     <FormItem>
                     <FormLabel>Link to Master Expense (Optional)</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value || 'none'}>
+                    <Select onValueChange={field.onChange} value={field.value || 'none'}>
                         <FormControl>
                         <SelectTrigger>
                             <SelectValue placeholder="Select a master expense" />

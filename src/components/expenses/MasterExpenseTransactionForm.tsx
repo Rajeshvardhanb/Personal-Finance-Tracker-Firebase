@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { MasterExpenseTransactionSchema, type MasterExpenseTransactionFormValues } from "@/lib/schemas";
 import type { MasterExpenseTransaction } from "@/lib/types";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useFinances } from "@/hooks/use-finances";
 
@@ -30,6 +30,7 @@ type MasterExpenseTransactionFormProps = {
 export default function MasterExpenseTransactionForm({ isOpen, onClose, transaction, masterExpenseId, addTransaction, updateTransaction }: MasterExpenseTransactionFormProps) {
   const isEditing = !!transaction;
   const { data: financeData } = useFinances();
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   const form = useForm<MasterExpenseTransactionFormValues>({
     resolver: zodResolver(MasterExpenseTransactionSchema),
@@ -116,7 +117,7 @@ export default function MasterExpenseTransactionForm({ isOpen, onClose, transact
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel>Transaction Date</FormLabel>
-                  <Popover>
+                  <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
@@ -139,7 +140,10 @@ export default function MasterExpenseTransactionForm({ isOpen, onClose, transact
                       <Calendar
                         mode="single"
                         selected={field.value}
-                        onSelect={field.onChange}
+                        onSelect={(date) => {
+                          field.onChange(date);
+                          setIsCalendarOpen(false);
+                        }}
                         initialFocus
                       />
                     </PopoverContent>

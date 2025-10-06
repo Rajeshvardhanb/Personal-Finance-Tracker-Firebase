@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,7 +14,7 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { CreditCardSchema, type CreditCardFormValues } from "@/lib/schemas";
 import type { CreditCard } from "@/lib/types";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 type CreditCardFormProps = {
   isOpen: boolean;
@@ -25,6 +26,7 @@ type CreditCardFormProps = {
 
 export default function CreditCardForm({ isOpen, onClose, card, addCreditCard, updateCreditCard }: CreditCardFormProps) {
   const isEditing = !!card;
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   const form = useForm<CreditCardFormValues>({
     resolver: zodResolver(CreditCardSchema),
@@ -109,7 +111,7 @@ export default function CreditCardForm({ isOpen, onClose, card, addCreditCard, u
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel>Next Bill Due Date</FormLabel>
-                  <Popover>
+                  <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
                     <PopoverTrigger asChild>
                       <FormControl>
                         <Button
@@ -132,7 +134,10 @@ export default function CreditCardForm({ isOpen, onClose, card, addCreditCard, u
                       <Calendar
                         mode="single"
                         selected={field.value}
-                        onSelect={field.onChange}
+                        onSelect={(date) => {
+                          field.onChange(date);
+                          setIsCalendarOpen(false);
+                        }}
                         initialFocus
                       />
                     </PopoverContent>
