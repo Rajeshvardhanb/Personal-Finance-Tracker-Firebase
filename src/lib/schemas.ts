@@ -69,3 +69,9 @@ export const MasterExpenseTransactionSchema = z.object({
 });
 
 export type MasterExpenseTransactionFormValues = z.infer<typeof MasterExpenseTransactionSchema>;
+
+export const ExpenseCategorySchema = z.object({
+    name: z.string().min(2, { message: "Category name must be at least 2 characters." }),
+});
+
+export type ExpenseCategoryFormValues = z.infer<typeof ExpenseCategorySchema>;

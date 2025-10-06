@@ -4,7 +4,7 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback } from 'react';
 import { FinanceData, getDefaultData } from '@/lib/data';
-import type { Income, Expense, Note, Asset, Liability, CreditCard, CreditCardTransaction, MasterExpense, MasterExpenseTransaction, ExpenseStatus, TransactionStatus } from '@/lib/types';
+import type { Income, Expense, Note, Asset, Liability, CreditCard, CreditCardTransaction, MasterExpense, MasterExpenseTransaction, ExpenseStatus, TransactionStatus, ExpenseCategory } from '@/lib/types';
 import { startOfMonth, getMonth, getYear, format, subMonths, isEqual, parse } from 'date-fns';
 import { useAuth } from './use-auth';
 import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
@@ -42,6 +42,10 @@ interface FinanceContextType {
   updateCreditCardTransaction: (cardId: string, transaction: CreditCardTransaction) => void;
   deleteCreditCardTransaction: (cardId: string, transactionId: string) => void;
 
+  // Expense Categories
+  addExpenseCategory: (category: Omit<ExpenseCategory, 'id'>) => void;
+  deleteExpenseCategory: (id: string) => void;
+
   // Notes
   addNote: (note: Omit<Note, 'id' | 'userId'>) => void;
   deleteNote: (id: string) => void;
@@ -73,6 +77,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
   const liabilitiesCol = useMemoFirebase(() => user ? collection(firestore, 'users', user.uid, 'liabilities') : null, [firestore, user]);
   const notesCol = useMemoFirebase(() => user ? collection(firestore, 'users', user.uid, 'notes') : null, [firestore, user]);
   const netWorthHistoryCol = useMemoFirebase(() => user ? collection(firestore, 'users', user.uid, 'netWorthHistory') : null, [firestore, user]);
+  const expenseCategoriesCol = useMemoFirebase(() => user ? collection(firestore, 'users', user.uid, 'expenseCategories') : null, [firestore, user]);
 
   // Fetching data
   const { data: incomesData } = useCollection<Income>(incomesCol);
@@ -83,19 +88,24 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
   const { data: liabilitiesData } = useCollection<Liability>(liabilitiesCol);
   const { data: notesData } = useCollection<Note>(notesCol);
   const { data: netWorthHistoryData } = useCollection<any>(netWorthHistoryCol);
-  
+  const { data: expenseCategoriesData } = useCollection<ExpenseCategory>(expenseCategoriesCol);
+
   // Create a memoized data object
-  const data: FinanceData = useMemo(() => ({
-    incomes: incomesData || [],
-    expenses: expensesData || [],
-    masterExpenses: masterExpensesData || [],
-    creditCards: creditCardsData || [],
-    assets: assetsData || [],
-    liabilities: liabilitiesData || [],
-    notes: notesData || [],
-    netWorthHistory: netWorthHistoryData || [],
-    categoryBudgets: getDefaultData().categoryBudgets, // Assuming this is static for now
-  }), [incomesData, expensesData, masterExpensesData, creditCardsData, assetsData, liabilitiesData, notesData, netWorthHistoryData]);
+  const data: FinanceData = useMemo(() => {
+    const defaultData = getDefaultData();
+    return {
+      incomes: incomesData || [],
+      expenses: expensesData || [],
+      masterExpenses: masterExpensesData || [],
+      creditCards: creditCardsData || [],
+      assets: assetsData || [],
+      liabilities: liabilitiesData || [],
+      notes: notesData || [],
+      expenseCategories: expenseCategoriesData?.length ? expenseCategoriesData : defaultData.expenseCategories,
+      netWorthHistory: netWorthHistoryData || [],
+      categoryBudgets: defaultData.categoryBudgets, // Assuming this is static for now
+    }
+  }, [incomesData, expensesData, masterExpensesData, creditCardsData, assetsData, liabilitiesData, notesData, netWorthHistoryData, expenseCategoriesData]);
   
   const { assets, liabilities, netWorthHistory } = data;
 
@@ -167,22 +177,12 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
                 description: newTransaction.description,
                 amount: newTransaction.amount,
                 date: newTransaction.date,
-                status: `Paid by ${card.name}` as 'Paid',
+                status: 'Paid',
+                paidViaCard: card.name
             };
             const updatedMasterTransactions = [...masterExpense.transactions, masterTransaction];
             updateMasterExpense({ ...masterExpense, transactions: updatedMasterTransactions });
         }
-    } else {
-        // Only add to general expenses if not part of a master expense
-        const expenseStatus: ExpenseStatus = `Paid by ${card.name}`;
-        addExpense({
-            category: 'Credit Card Payment',
-            description: newTransaction.description,
-            amount: newTransaction.amount,
-            dueDate: newTransaction.date,
-            status: expenseStatus,
-            isRecurring: false,
-        });
     }
   }, [user, creditCardsData, masterExpensesData, addExpense, firestore]);
 
@@ -222,18 +222,6 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
                 const updatedMasterTransactions = masterExpense.transactions.filter(t => t.id !== transactionId);
                 updateMasterExpense({ ...masterExpense, transactions: updatedMasterTransactions });
             }
-        } else {
-            // Otherwise, find and delete the corresponding expense from the main expenses list
-            const correspondingExpense = expensesData.find(exp =>
-                exp.description === transactionToDelete.description &&
-                exp.amount === transactionToDelete.amount &&
-                Math.abs(new Date(exp.dueDate).getTime() - new Date(transactionToDelete.date).getTime()) < 2000 && // 2s tolerance
-                exp.status === `Paid by ${card.name}`
-            );
-            if (correspondingExpense) {
-                const ref = getCollectionRef('expenses');
-                if (ref) deleteDocumentNonBlocking(doc(ref, correspondingExpense.id));
-            }
         }
     }
   }, [user, expensesData, creditCardsData, masterExpensesData, firestore]);
@@ -257,6 +245,9 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
             );
             if (transactionToDelete) {
                 deleteCreditCardTransaction(sourceCard.id, transactionToDelete.id);
+                // Also delete the main expense entry
+                const ref = getCollectionRef('expenses');
+                if (ref) deleteDocumentNonBlocking(doc(ref, id));
                 return; 
             }
         }
@@ -279,19 +270,27 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     if (ref) deleteDocumentNonBlocking(doc(ref, id));
   };
 
-  const addMasterExpenseTransaction = useCallback((masterExpenseId: string, transaction: Omit<MasterExpenseTransaction, 'id'>) => {
+  const addMasterExpenseTransaction = useCallback((masterExpenseId: string, transaction: Omit<MasterExpenseTransaction, 'id' | 'paidViaCard'>) => {
     if (!user || !masterExpensesData || !creditCardsData) return;
     const masterExpense = masterExpensesData.find(me => me.id === masterExpenseId);
     if (!masterExpense) return;
-
-    const newTransaction = { ...transaction, id: crypto.randomUUID() };
-    const updatedTransactions = [...masterExpense.transactions, newTransaction];
-    updateMasterExpense({ ...masterExpense, transactions: updatedTransactions });
-
+    
+    let paidViaCard: string | undefined = undefined;
     const paidByPrefix = "Paid by ";
     if (transaction.status.startsWith(paidByPrefix)) {
         const cardName = transaction.status.substring(paidByPrefix.length);
         const sourceCard = creditCardsData.find(c => c.name === cardName);
+        if(sourceCard) {
+            paidViaCard = sourceCard.name;
+        }
+    }
+
+    const newTransaction: MasterExpenseTransaction = { ...transaction, id: crypto.randomUUID(), status: paidViaCard ? 'Paid' : (transaction.status as 'Paid' | 'Not Paid'), paidViaCard };
+    const updatedTransactions = [...masterExpense.transactions, newTransaction];
+    updateMasterExpense({ ...masterExpense, transactions: updatedTransactions });
+
+    if (paidViaCard) {
+        const sourceCard = creditCardsData.find(c => c.name === paidViaCard);
         if (sourceCard) {
             addCreditCardTransaction(sourceCard.id, {
                 description: transaction.description,
@@ -311,11 +310,21 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     updateMasterExpense({ ...masterExpense, transactions: updatedTransactions });
   };
   const deleteMasterExpenseTransaction = (masterExpenseId: string, transactionId: string) => {
-    if (!user) return;
+    if (!user || !data.masterExpenses) return;
     const masterExpense = data.masterExpenses.find(me => me.id === masterExpenseId);
     if (!masterExpense) return;
+
+    const transactionToDelete = masterExpense.transactions.find(t => t.id === transactionId);
+
     const updatedTransactions = masterExpense.transactions.filter(t => t.id !== transactionId);
     updateMasterExpense({ ...masterExpense, transactions: updatedTransactions });
+
+    if(transactionToDelete?.paidViaCard && creditCardsData){
+        const sourceCard = creditCardsData.find(c => c.name === transactionToDelete.paidViaCard);
+        if(sourceCard) {
+            deleteCreditCardTransaction(sourceCard.id, transactionId);
+        }
+    }
   };
 
   const updateCreditCardTransaction = (cardId: string, transaction: CreditCardTransaction) => {
@@ -332,6 +341,16 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
   };
   const deleteNote = (id: string) => {
     const ref = getCollectionRef('notes');
+    if (ref) deleteDocumentNonBlocking(doc(ref, id));
+  };
+  
+  const addExpenseCategory = (category: Omit<ExpenseCategory, 'id'>) => {
+    const ref = getCollectionRef('expenseCategories');
+    if (ref) addDocumentNonBlocking(ref, category);
+  };
+
+  const deleteExpenseCategory = (id: string) => {
+    const ref = getCollectionRef('expenseCategories');
     if (ref) deleteDocumentNonBlocking(doc(ref, id));
   };
 
@@ -400,11 +419,11 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
             .reduce((acc, d) => acc + d.creditedAmount, 0);
 
         const expensesValue = data.expenses
-            .filter(d => getMonth(new Date(d.dueDate)) === month && getYear(new Date(d.dueDate)) === year && d.status === 'Paid')
+            .filter(d => getMonth(new Date(d.dueDate)) === month && getYear(new Date(d.dueDate)) === year && d.status.startsWith('Paid'))
             .reduce((acc, d) => acc + d.amount, 0);
         
         const paidExpensesByCategory = data.expenses
-            .filter(d => getMonth(new Date(d.dueDate)) === month && getYear(new Date(d.dueDate)) === year && d.status === 'Paid')
+            .filter(d => getMonth(new Date(d.dueDate)) === month && getYear(new Date(d.dueDate)) === year && d.status.startsWith('Paid'))
             .reduce((acc, d) => {
               acc[d.category] = (acc[d.category] || 0) + d.amount;
               return acc;
@@ -430,25 +449,6 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     return pastMonthsData;
   };
   
-   // One-time cleanup for old master expense summaries
-  useEffect(() => {
-    if (!user || !expensesData || !firestore) return;
-    
-    const cleanup = async () => {
-        const expensesToDelete = expensesData.filter(e => e.masterExpenseId && e.category === 'Master Expense');
-        if (expensesToDelete.length > 0) {
-            const batch = writeBatch(firestore);
-            const expensesRef = collection(firestore, 'users', user.uid, 'expenses');
-            expensesToDelete.forEach(expense => {
-                const docRef = doc(expensesRef, expense.id);
-                batch.delete(docRef);
-            });
-            await batch.commit();
-        }
-    };
-    cleanup();
-  }, [user, expensesData, firestore]);
-
   const value = useMemo(() => ({
     data,
     selectedDate,
@@ -461,11 +461,12 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     addCreditCard, updateCreditCard, deleteCreditCard,
     addCreditCardTransaction, updateCreditCardTransaction, deleteCreditCardTransaction,
     addNote, deleteNote,
+    addExpenseCategory, deleteExpenseCategory,
     addAsset, updateAsset, deleteAsset,
     addLiability, updateLiability, deleteLiability,
     snapshotNetWorth,
     getFinancialDataForPastMonths,
-  }), [data, selectedDate, snapshotNetWorth, deleteMasterExpense, addCreditCardTransaction, deleteExpense, user, expensesData, firestore, addExpenseWithCardSync, addMasterExpenseTransaction, deleteCreditCardTransaction, updateMasterExpense, updateExpense, addIncome, updateIncome, deleteIncome, addMasterExpense, addCreditCard, updateCreditCard, deleteCreditCard, updateCreditCardTransaction, addNote, deleteNote, addAsset, updateAsset, deleteAsset, addLiability, updateLiability, deleteLiability, getFinancialDataForPastMonths]);
+  }), [data, selectedDate, snapshotNetWorth, deleteMasterExpense, addCreditCardTransaction, deleteExpense, user, expensesData, firestore, addExpenseWithCardSync, addMasterExpenseTransaction, deleteCreditCardTransaction, updateMasterExpense, updateExpense, addIncome, updateIncome, deleteIncome, addMasterExpense, addCreditCard, updateCreditCard, deleteCreditCard, updateCreditCardTransaction, addNote, deleteNote, addAsset, updateAsset, deleteAsset, addLiability, updateLiability, deleteLiability, getFinancialDataForPastMonths, addExpenseCategory, deleteExpenseCategory]);
 
   return (
     <FinanceContext.Provider value={value}>

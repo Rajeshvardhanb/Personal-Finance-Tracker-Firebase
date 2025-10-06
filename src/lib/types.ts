@@ -83,6 +83,11 @@ export interface NetWorthHistory {
   value: number;
 }
 
+export interface ExpenseCategory {
+  id: string;
+  name: string;
+}
+
 export interface FinanceData {
   incomes: Income[];
   expenses: Expense[];
@@ -91,23 +96,10 @@ export interface FinanceData {
   assets: Asset[];
   liabilities: Liability[];
   notes: Note[];
+  expenseCategories: ExpenseCategory[];
   categoryBudgets: { [category: string]: number };
   netWorthHistory: NetWorthHistory[];
 }
-
-export const ExpenseCategories = [
-  'Groceries',
-  'Rent',
-  'Utilities',
-  'Transport',
-  'Entertainment',
-  'Healthcare',
-  'Dining Out',
-  'Shopping',
-  'EMI',
-  'Vacation',
-  'Other',
-] as const;
 
 export const AssetCategories = [
   'Gold',

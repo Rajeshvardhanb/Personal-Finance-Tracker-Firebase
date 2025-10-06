@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ExpenseSchema, type ExpenseFormValues } from "@/lib/schemas";
-import { ExpenseCategories, type Expense } from "@/lib/types";
+import type { Expense } from "@/lib/types";
 import { useEffect, useState } from "react";
 import { useFinances } from "@/hooks/use-finances";
 
@@ -128,8 +128,8 @@ export default function ExpenseForm({ isOpen, onClose, expense, addExpense, upda
                         </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                        {ExpenseCategories.map((cat) => (
-                            <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                        {financeData.expenseCategories.map((cat) => (
+                            <SelectItem key={cat.id} value={cat.name}>{cat.name}</SelectItem>
                         ))}
                         </SelectContent>
                     </Select>

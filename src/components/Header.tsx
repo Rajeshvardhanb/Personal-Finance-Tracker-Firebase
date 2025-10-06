@@ -32,7 +32,7 @@ import {
 import Image from "next/image";
 import MonthSelector from "./MonthSelector";
 import { AppLogo, AppLogoIcon } from "./icons";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
 
@@ -49,6 +49,7 @@ export default function Header() {
   const pathname = usePathname();
   const { user, logout } = useAuth();
   const [isClient, setIsClient] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setIsClient(true);
@@ -57,6 +58,8 @@ export default function Header() {
   if (!user) {
     return null;
   }
+
+  const goToSettings = () => router.push('/settings');
 
   return (
     <header className="sticky top-0 z-40 flex h-14 items-center gap-0 border-b border-transparent bg-gradient-to-r from-indigo-700 via-purple-700 to-cyan-500 sm:h-[60px]">
@@ -92,7 +95,7 @@ export default function Header() {
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuLabel className="font-normal">{user?.email}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuItem onClick={goToSettings}>
                     <Settings className="mr-2 h-4 w-4" />
                     <span>Settings</span>
                 </DropdownMenuItem>
@@ -143,8 +146,13 @@ export default function Header() {
                       ))}
                       <SheetClose asChild>
                         <Link
-                          href="#"
-                          className="flex items-center gap-4 px-2.5 text-muted-foreground/80 hover:text-primary-foreground"
+                          href="/settings"
+                          className={cn(
+                            "flex items-center gap-4 px-2.5",
+                            pathname === "/settings"
+                              ? "text-primary-foreground"
+                              : "text-muted-foreground/80 hover:text-primary-foreground"
+                          )}
                         >
                           <Settings className="h-5 w-5" />
                           Settings

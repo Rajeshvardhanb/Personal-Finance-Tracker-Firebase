@@ -63,7 +63,8 @@
         "id": { "type": "string" },
         "description": { "type": "string" },
         "amount": { "type": "number" },
-        "date": { "type": "string", "format": "date-time" }
+        "date": { "type": "string", "format": "date-time" },
+        "masterExpenseId": { "type": "string" }
       },
       "required": ["id", "description", "amount", "date"]
     },
@@ -130,6 +131,15 @@
         "value": { "type": "number" }
       },
       "required": ["date", "value"]
+    },
+    "ExpenseCategory": {
+      "title": "ExpenseCategory",
+      "type": "object",
+      "description": "Represents a user-defined expense category.",
+      "properties": {
+        "name": { "type": "string" }
+      },
+      "required": ["name"]
     }
   },
   "auth": {
@@ -171,6 +181,10 @@
     "/users/{userId}/netWorthHistory/{historyId}": {
       "schema": { "$ref": "#/entities/NetWorthHistory" },
       "description": "Stores a user's net worth history snapshots."
+    },
+    "/users/{userId}/expenseCategories/{categoryId}": {
+      "schema": { "$ref": "#/entities/ExpenseCategory" },
+      "description": "Stores a user's custom expense categories."
     }
   }
 }
