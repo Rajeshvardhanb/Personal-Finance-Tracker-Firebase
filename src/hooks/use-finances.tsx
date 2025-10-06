@@ -3,7 +3,7 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback } from 'react';
 import { FinanceData, getDefaultData } from '@/lib/data';
-import type { Income, Expense, Note, Asset, Liability, CreditCard, CreditCardTransaction, MasterExpense, MasterExpenseTransaction, ExpenseStatus } from '@/lib/types';
+import type { Income, Expense, Note, Asset, Liability, CreditCard, CreditCardTransaction, MasterExpense, MasterExpenseTransaction, ExpenseStatus, TransactionStatus } from '@/lib/types';
 import { startOfMonth, getMonth, getYear, format, subMonths, isEqual, parse } from 'date-fns';
 import { useAuth } from './use-auth';
 import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
@@ -29,7 +29,7 @@ interface FinanceContextType {
   addMasterExpense: (expense: Omit<MasterExpense, 'id' | 'transactions' | 'userId'>) => void;
   updateMasterExpense: (expense: Omit<MasterExpense, 'userId'>) => void;
   deleteMasterExpense: (id: string) => Promise<void>;
-  addMasterExpenseTransaction: (masterExpenseId: string, transaction: Omit<MasterExpenseTransaction, 'id'>) => void;
+  addMasterExpenseTransaction: (masterExpenseId: string, transaction: Omit<MasterExpenseTransaction, 'id' | 'paidViaCard'>) => void;
   updateMasterExpenseTransaction: (masterExpenseId: string, transaction: MasterExpenseTransaction) => void;
   deleteMasterExpenseTransaction: (masterExpenseId: string, transactionId: string) => void;
 
@@ -37,7 +37,7 @@ interface FinanceContextType {
   addCreditCard: (card: Omit<CreditCard, 'id' | 'transactions' | 'userId'>) => void;
   updateCreditCard: (card: Omit<CreditCard, 'userId'>) => void;
   deleteCreditCard: (id: string) => Promise<void>;
-  addCreditCardTransaction: (cardId: string, transaction: Omit<CreditCardTransaction, 'id'>) => void;
+  addCreditCardTransaction: (cardId: string, transaction: Omit<CreditCardTransaction, 'id'> & { masterExpenseId?: string }) => void;
   updateCreditCardTransaction: (cardId: string, transaction: CreditCardTransaction) => void;
   deleteCreditCardTransaction: (cardId: string, transactionId: string) => void;
 
@@ -149,7 +149,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     await batch.commit();
   };
 
-  const addMasterExpenseTransaction = (masterExpenseId: string, transaction: Omit<MasterExpenseTransaction, 'id'>) => {
+  const addMasterExpenseTransaction = (masterExpenseId: string, transaction: Omit<MasterExpenseTransaction, 'id' | 'paidViaCard'>) => {
     if (!user) return;
     const masterExpense = data.masterExpenses.find(me => me.id === masterExpenseId);
     if (!masterExpense) return;
@@ -196,8 +196,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     if(transaction.masterExpenseId) {
       addMasterExpenseTransaction(transaction.masterExpenseId, {
         ...newTransaction,
-        status: 'Paid',
-        paidViaCard: card.name
+        status: 'Paid'
       })
     }
   };
@@ -257,7 +256,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
   };
   
   const snapshotNetWorth = useCallback(() => {
-    if (!user || !data) return;
+    if (!user || !data.assets || !data.liabilities || !data.netWorthHistory) return;
     const totalAssets = data.assets.reduce((sum, a) => sum + a.value, 0);
     const totalLiabilities = data.liabilities.reduce((sum, l) => sum + l.value, 0);
     const currentNetWorth = totalAssets - totalLiabilities;
@@ -273,86 +272,79 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
        const ref = getCollectionRef('netWorthHistory');
       if (ref) updateDocumentNonBlocking(doc(ref, existingEntry.id), { value: currentNetWorth });
     }
-  }, [data, user, firestore]);
-
-   useEffect(() => {
-    const updateTotalFromMasterExpense = () => {
-      if (!user || !firestore || !data.masterExpenses) return;
-      const batch = writeBatch(firestore);
-      const month = getMonth(selectedDate);
-      const year = getYear(selectedDate);
-      
-      const generatedExpenseIds = new Set<string>();
-
-      data.masterExpenses.forEach(me => {
-        me.transactions
-          .filter(t => getMonth(new Date(t.date)) === month && getYear(new Date(t.date)) === year)
-          .forEach(t => {
-            const expId = `exp-from-${t.id}`;
-            generatedExpenseIds.add(expId);
-            const description = `${t.description}: ${me.name}`;
-            const expDocRef = doc(firestore, 'users', user.uid, 'expenses', expId);
-            const status: ExpenseStatus = t.paidViaCard ? `Paid by ${t.paidViaCard}` : t.status;
-            
-            batch.set(expDocRef, {
-              id: expId,
-              masterExpenseId: me.id,
-              description,
-              amount: t.amount,
-              category: 'Master Expense',
-              dueDate: t.date,
-              status: status,
-              isRecurring: false,
-            }, { merge: true });
-          });
-      });
-
-      // Delete old summary expenses that are no longer relevant
-      data.expenses.forEach(exp => {
-        if (exp.masterExpenseId && !generatedExpenseIds.has(exp.id)) {
-           const oldExpDocRef = doc(firestore, 'users', user.uid, 'expenses', exp.id);
-           batch.delete(oldExpDocRef);
-        }
-      });
-
-      batch.commit().catch(e => console.error("Batch update for master expenses failed", e));
-    };
-
-    updateTotalFromMasterExpense();
-  }, [data.masterExpenses, selectedDate, user, firestore, data.expenses]);
+  }, [data?.assets, data?.liabilities, data?.netWorthHistory, user, firestore]);
 
   useEffect(() => {
-    const syncCreditCardExpenses = () => {
-      if (!user || !firestore || !data.creditCards) return;
-      const batch = writeBatch(firestore);
-      const month = getMonth(selectedDate);
-      const year = getYear(selectedDate);
+    if (!user || !firestore || !data.masterExpenses) return;
+    const batch = writeBatch(firestore);
+    const month = getMonth(selectedDate);
+    const year = getYear(selectedDate);
+    
+    const generatedExpenseIds = new Set<string>();
 
-      data.creditCards.forEach(card => {
-        card.transactions
-          .filter(t => getMonth(new Date(t.date)) === month && getYear(new Date(t.date)) === year)
-          .forEach(t => {
-            // Only sync if it's not part of a master expense
-            if (!t.masterExpenseId) {
-              const expId = `exp-from-${t.id}`;
-              const expDocRef = doc(firestore, 'users', user.uid, 'expenses', expId);
-              batch.set(expDocRef, {
-                id: expId,
-                description: `${t.description}`,
-                amount: t.amount,
-                category: 'Credit Card',
-                dueDate: t.date,
-                status: `Paid by ${card.name}`,
-                isRecurring: false,
-              }, { merge: true });
-            }
-          });
-      });
+    data.masterExpenses.forEach(me => {
+      me.transactions
+        .filter(t => getMonth(new Date(t.date)) === month && getYear(new Date(t.date)) === year)
+        .forEach(t => {
+          const expId = `exp-from-${t.id}`;
+          generatedExpenseIds.add(expId);
+          const description = `${t.description}: ${me.name}`;
+          const expDocRef = doc(firestore, 'users', user.uid, 'expenses', expId);
+          const status: ExpenseStatus = t.paidViaCard ? `Paid by ${t.paidViaCard}` : t.status;
+          
+          batch.set(expDocRef, {
+            id: expId,
+            masterExpenseId: me.id,
+            description,
+            amount: t.amount,
+            category: 'Master Expense',
+            dueDate: t.date,
+            status: status,
+            isRecurring: false,
+          }, { merge: true });
+        });
+    });
 
-      batch.commit().catch(e => console.error("Batch update for credit card expenses failed", e));
-    };
+    data.expenses.forEach(exp => {
+      if (exp.masterExpenseId && !generatedExpenseIds.has(exp.id)) {
+          const oldExpDocRef = doc(firestore, 'users', user.uid, 'expenses', exp.id);
+          batch.delete(oldExpDocRef);
+      }
+    });
 
-    syncCreditCardExpenses();
+    batch.commit().catch(e => console.error("Batch update for master expenses failed", e));
+    
+  }, [data.masterExpenses, selectedDate, user, firestore]);
+
+
+   useEffect(() => {
+    if (!user || !firestore || !data.creditCards) return;
+    const batch = writeBatch(firestore);
+    const month = getMonth(selectedDate);
+    const year = getYear(selectedDate);
+
+    data.creditCards.forEach(card => {
+      card.transactions
+        .filter(t => getMonth(new Date(t.date)) === month && getYear(new Date(t.date)) === year)
+        .forEach(t => {
+          // Only sync if it's not part of a master expense
+          if (!t.masterExpenseId) {
+            const expId = `exp-from-${t.id}`;
+            const expDocRef = doc(firestore, 'users', user.uid, 'expenses', expId);
+            batch.set(expDocRef, {
+              id: expId,
+              description: `${t.description}`,
+              amount: t.amount,
+              category: 'Credit Card',
+              dueDate: t.date,
+              status: `Paid by ${card.name}`,
+              isRecurring: false,
+            }, { merge: true });
+          }
+        });
+    });
+
+    batch.commit().catch(e => console.error("Batch update for credit card expenses failed", e));
   }, [data.creditCards, selectedDate, user, firestore]);
    
   useEffect(() => {

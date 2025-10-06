@@ -1,7 +1,7 @@
 
 
 export type TransactionStatus = 'Credited' | 'Not Credited';
-export type ExpenseStatus = 'Paid' | 'Not Paid';
+export type ExpenseStatus = 'Paid' | 'Not Paid' | string; // Allow for 'Paid by [Card Name]'
 
 export interface Income {
   id: string;
@@ -29,6 +29,7 @@ export interface CreditCardTransaction {
   description: string;
   amount: number;
   date: string; // ISO 8601 format
+  masterExpenseId?: string;
 }
 
 export interface CreditCard {
@@ -44,7 +45,8 @@ export interface MasterExpenseTransaction {
   description: string;
   amount: number;
   date: string; // ISO 8601 format
-  status: ExpenseStatus;
+  status: 'Paid' | 'Not Paid';
+  paidViaCard?: string;
 }
 
 export interface MasterExpense {

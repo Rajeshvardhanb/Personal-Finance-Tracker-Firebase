@@ -56,7 +56,7 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
   
   const status = getStatus();
 
-  const isPaidByCreditCard = status?.startsWith('Paid by');
+  const isPaidByCreditCard = typeof status === 'string' && status.startsWith('Paid by');
 
   return (
     <div className={cn(
@@ -91,7 +91,7 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
                       </Badge>
                     ) : (
                       <Badge 
-                        variant={status === 'Paid' || isPaidByCreditCard ? 'default' : 'destructive'}
+                        variant={(status === 'Paid' || isPaidByCreditCard) ? 'default' : 'destructive'}
                       >
                           {status}
                       </Badge>
@@ -109,7 +109,7 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
             )}
              {type === 'master-expense' && status && (
                  <Badge 
-                    variant={status === 'Paid' || isPaidByCreditCard ? 'default' : 'destructive'}
+                    variant={(status === 'Paid' || isPaidByCreditCard) ? 'default' : 'destructive'}
                     className={cn(onToggleStatus && 'cursor-pointer')}
                     onClick={onToggleStatus}
                 >
