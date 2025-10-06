@@ -31,80 +31,57 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2 xl:min-h-screen">
-      <div className="hidden bg-secondary lg:flex lg:flex-col lg:items-center lg:justify-between p-8 text-white relative overflow-hidden">
+    <div className="relative min-h-screen w-full flex flex-col items-center justify-center p-4 bg-gradient-to-br from-indigo-900 via-purple-900 to-cyan-900 overflow-hidden">
         <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/5 via-purple-900/5 to-cyan-900/10"></div>
-        
-        <div className="self-start z-10">
-          <AppLogo />
-        </div>
-        
-        <div className="z-10 text-center">
-            <h1 className="text-4xl font-bold tracking-tighter text-white drop-shadow-lg">
-                Welcome to Your Financial Hub
-            </h1>
-            <p className="mt-4 text-lg text-white/80 max-w-md">
-                Track, manage, and forecast your finances with precision and ease.
-            </p>
-        </div>
-        <div className="self-end text-xs text-white/40 z-10">
-          Developed by Rajesh B.
-        </div>
-      </div>
-      <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-background">
-        <div className="mx-auto grid w-[380px] gap-6">
-           <div className="grid gap-2 text-center">
-             <h1 className="text-3xl font-bold">Welcome!</h1>
-             <p className="text-balance text-muted-foreground">
-                Enter your credentials to access your dashboard.
-             </p>
-           </div>
-           <Card>
-              <CardHeader>
-                  <CardTitle>Sign In</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleLogin} className="grid gap-4">
-                    {error && (
-                    <Alert variant="destructive">
-                        <AlertTitle>Login Failed</AlertTitle>
-                        <AlertDescription>{error}</AlertDescription>
-                    </Alert>
-                    )}
-                  <div className="grid gap-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="e.g., rajesh@example.com"
-                      required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <div className="flex items-center">
-                      <Label htmlFor="password">Password</Label>
+        <div className="z-10 flex flex-col items-center gap-8">
+            <AppLogo />
+            <Card className="w-full max-w-sm bg-white/10 backdrop-blur-lg border-white/20 text-white shadow-2xl">
+                <CardHeader className="text-center">
+                    <CardTitle className="text-3xl font-bold text-white">Welcome Back</CardTitle>
+                    <CardDescription className="text-white/80">
+                        Enter your credentials to access your dashboard.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <form onSubmit={handleLogin} className="grid gap-4">
+                        {error && (
+                        <Alert variant="destructive" className="bg-red-500/80 border-red-400/80 text-white">
+                            <AlertTitle>Login Failed</AlertTitle>
+                            <AlertDescription>{error}</AlertDescription>
+                        </Alert>
+                        )}
+                    <div className="grid gap-2">
+                        <Label htmlFor="email" >Email</Label>
+                        <Input
+                        id="email"
+                        type="email"
+                        placeholder="e.g., rajesh@example.com"
+                        required
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="bg-white/10 border-white/20 placeholder:text-white/50 focus:bg-white/20"
+                        />
                     </div>
-                    <Input 
-                        id="password" 
-                        type="password" 
-                        required 
-                        placeholder="e.g., password123"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                  </div>
-                  <Button type="submit" className="w-full" disabled={isAuthenticating}>
-                    {isAuthenticating && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
-                    Login
-                  </Button>
-                </form>
-              </CardContent>
-           </Card>
+                    <div className="grid gap-2">
+                        <Label htmlFor="password">Password</Label>
+                        <Input 
+                            id="password" 
+                            type="password" 
+                            required 
+                            placeholder="e.g., password123"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="bg-white/10 border-white/20 placeholder:text-white/50 focus:bg-white/20"
+                        />
+                    </div>
+                    <Button type="submit" className="w-full mt-2 bg-cyan-500 hover:bg-cyan-600 text-black font-bold" disabled={isAuthenticating}>
+                        {isAuthenticating && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
+                        Sign In
+                    </Button>
+                    </form>
+                </CardContent>
+            </Card>
         </div>
-      </div>
     </div>
   );
 }
