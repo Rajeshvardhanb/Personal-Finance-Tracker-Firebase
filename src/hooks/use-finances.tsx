@@ -95,6 +95,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     netWorthHistory: netWorthHistoryData || [],
     categoryBudgets: getDefaultData().categoryBudgets, // Assuming this is static for now
   }), [incomesData, expensesData, masterExpensesData, creditCardsData, assetsData, liabilitiesData, notesData, netWorthHistoryData]);
+  
   const { incomes, expenses, masterExpenses, creditCards, assets, liabilities, notes, netWorthHistory } = data;
 
   const getCollectionRef = (name: string) => user ? collection(firestore, 'users', user.uid, name) : null;
@@ -296,11 +297,11 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
             .reduce((acc, d) => acc + d.creditedAmount, 0);
 
         const expenses = data.expenses
-            .filter(d => getMonth(new Date(d.dueDate)) === month && getYear(new Date(d.dueDate)) === year && (d.status === 'Paid' || d.status === 'Paid by Credit Card'))
+            .filter(d => getMonth(new Date(d.dueDate)) === month && getYear(new Date(d.dueDate)) === year && d.status === 'Paid')
             .reduce((acc, d) => acc + d.amount, 0);
         
         const paidExpensesByCategory = data.expenses
-            .filter(d => getMonth(new Date(d.dueDate)) === month && getYear(new Date(d.dueDate)) === year && (d.status === 'Paid' || d.status === 'Paid by Credit Card'))
+            .filter(d => getMonth(new Date(d.dueDate)) === month && getYear(new Date(d.dueDate)) === year && d.status === 'Paid')
             .reduce((acc, d) => {
               acc[d.category] = (acc[d.category] || 0) + d.amount;
               return acc;
@@ -357,7 +358,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
         });
     });
 
-    expenses.forEach(exp => {
+    data.expenses.forEach(exp => {
       if (exp.masterExpenseId && !generatedExpenseIds.has(exp.id)) {
           const oldExpDocRef = doc(firestore, 'users', user.uid, 'expenses', exp.id);
           batch.delete(oldExpDocRef);
@@ -365,7 +366,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     });
 
     batch.commit().catch(e => console.error("Batch update for master expenses failed", e));
-  }, [masterExpenses, selectedDate, user, firestore, expenses]);
+  }, [masterExpenses, selectedDate, user, firestore]);
 
   useEffect(() => {
     if (!user || !firestore || !creditCards) return;

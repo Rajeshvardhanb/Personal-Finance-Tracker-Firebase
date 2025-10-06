@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,28 +7,28 @@ import { Expense } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import TransactionCard from "../transactions/TransactionCard";
 
 type RecentExpensesProps = {
   expenses: Expense[];
 };
 
 export default function RecentExpenses({ expenses }: RecentExpensesProps) {
-  const paidExpenses = expenses.filter((e) => e.status === "Paid").sort((a,b) => new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime());
+  const paidExpenses = expenses.filter((e) => e.status.startsWith("Paid")).sort((a,b) => new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime());
   const unpaidExpenses = expenses.filter((e) => e.status === "Not Paid").sort((a,b) => new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime());
 
-  const ExpenseList = ({ expenses }: { expenses: Expense[] }) => (
+  const ExpenseList = ({ expenses, onEdit, onDelete, onToggleStatus }: { expenses: Expense[], onEdit: (expense: Expense) => void, onDelete: (id: string) => void, onToggleStatus: (expense: Expense) => void }) => (
     <ScrollArea className="h-72">
       <div className="space-y-3 pr-4">
         {expenses.length > 0 ? expenses.map((expense) => (
-          <div key={expense.id} className="flex items-center p-3 rounded-lg bg-background">
-            <div className="flex-1">
-              <p className="font-medium">{expense.description}</p>
-              <p className="text-sm text-muted-foreground">{expense.category}</p>
-            </div>
-            <div className="text-right">
-              <p className="font-semibold text-base">{formatCurrency(expense.amount)}</p>
-            </div>
-          </div>
+          <TransactionCard 
+            key={expense.id}
+            type="expense"
+            transaction={expense}
+            onEdit={() => onEdit(expense)}
+            onDelete={() => onDelete(expense.id)}
+            onToggleStatus={() => onToggleStatus(expense)}
+          />
         )) : (
           <p className="text-sm text-muted-foreground text-center py-8">No expenses in this category for this month.</p>
         )}
@@ -50,10 +51,32 @@ export default function RecentExpenses({ expenses }: RecentExpensesProps) {
             <TabsTrigger value="paid">Paid</TabsTrigger>
           </TabsList>
           <TabsContent value="unpaid">
-            <ExpenseList expenses={unpaidExpenses} />
+             {unpaidExpenses.length > 0 ? unpaidExpenses.map((expense) => (
+              <TransactionCard
+                key={expense.id}
+                type="expense"
+                transaction={expense}
+                onEdit={() => {}}
+                onDelete={() => {}}
+                onToggleStatus={() => {}}
+              />
+            )) : (
+              <p className="text-sm text-muted-foreground text-center py-8">No expenses in this category for this month.</p>
+            )}
           </TabsContent>
           <TabsContent value="paid">
-            <ExpenseList expenses={paidExpenses} />
+             {paidExpenses.length > 0 ? paidExpenses.map((expense) => (
+              <TransactionCard
+                key={expense.id}
+                type="expense"
+                transaction={expense}
+                onEdit={() => {}}
+                onDelete={() => {}}
+                onToggleStatus={() => {}}
+              />
+            )) : (
+              <p className="text-sm text-muted-foreground text-center py-8">No expenses in this category for this month.</p>
+            )}
           </TabsContent>
         </Tabs>
       </CardContent>

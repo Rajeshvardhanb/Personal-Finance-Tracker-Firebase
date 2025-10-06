@@ -65,7 +65,7 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
       status === 'Credited' && 'border-green-500',
       status === 'Not Credited' && 'border-amber-500',
       status === 'Paid' && 'border-green-500',
-      isPaidByCreditCard && 'border-green-500',
+      isPaidByCreditCard && 'border-indigo-500',
       status === 'Not Paid' && 'border-amber-500',
       type === 'credit-card' && 'border-indigo-500',
       !status && 'border-transparent'
@@ -95,7 +95,7 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
                           <Badge 
                               variant={(status === 'Paid' || isPaidByCreditCard) ? 'default' : 'destructive'}
                           >
-                              {status}
+                              {isPaidByCreditCard ? 'Paid by Card' : status}
                           </Badge>
                       )
                     )}
