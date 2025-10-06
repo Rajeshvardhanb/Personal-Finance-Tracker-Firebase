@@ -141,46 +141,44 @@ export default function DashboardCharts({
         </div>
         <div className="flex flex-col sm:col-span-2">
            <h4 className="text-sm font-medium text-center mb-4">Expense Breakdown</h4>
-           <div className="relative">
-            <ScrollArea className="h-[350px] w-full whitespace-nowrap">
-              <div className="pr-4" style={{ height: `${categoryBarChartHeight}px`, minWidth: '600px' }}>
-                <ChartContainer config={expenseChartConfig} className="w-full h-full">
-                  <BarChart
-                    accessibilityLayer
-                    data={categoryChartData}
-                    layout="vertical"
-                    margin={{ left: 20, right: 100 }} // Increased right margin for labels
-                  >
-                    <CartesianGrid horizontal={false} />
-                    <YAxis
-                      type="category"
-                      dataKey="name"
-                      tickLine={false}
-                      axisLine={false}
-                      stroke="hsl(var(--muted-foreground))"
-                      fontSize={12}
-                      interval={0}
-                      width={100}
-                      tick={{ dx: -5 }}
-                    />
-                    <XAxis type="number" hide />
-                    <ChartTooltip
-                      cursor={{ fill: 'hsl(var(--muted))' }}
-                      content={<ChartTooltipContent
-                        formatter={(value) => formatCurrency(Number(value))}
-                        hideLabel
-                      />}
-                    />
-                    <Bar dataKey="amount" layout="vertical" radius={5}>
-                      {categoryChartData.map((entry) => (
-                        <Cell key={`cell-${entry.name}`} fill={entry.fill} />
-                      ))}
-                      <LabelList dataKey="amount" content={<CustomLabel position="right" />} />
-                    </Bar>
-                  </BarChart>
-                </ChartContainer>
-              </div>
-            </ScrollArea>
+           <div className="relative h-[350px] w-full overflow-x-auto">
+            <div style={{ height: `${categoryBarChartHeight}px`, minWidth: '600px' }}>
+              <ChartContainer config={expenseChartConfig} className="w-full h-full">
+                <BarChart
+                  accessibilityLayer
+                  data={categoryChartData}
+                  layout="vertical"
+                  margin={{ left: 20, right: 100 }} // Increased right margin for labels
+                >
+                  <CartesianGrid horizontal={false} />
+                  <YAxis
+                    type="category"
+                    dataKey="name"
+                    tickLine={false}
+                    axisLine={false}
+                    stroke="hsl(var(--muted-foreground))"
+                    fontSize={12}
+                    interval={0}
+                    width={100}
+                    tick={{ dx: -5 }}
+                  />
+                  <XAxis type="number" hide />
+                  <ChartTooltip
+                    cursor={{ fill: 'hsl(var(--muted))' }}
+                    content={<ChartTooltipContent
+                      formatter={(value) => formatCurrency(Number(value))}
+                      hideLabel
+                    />}
+                  />
+                  <Bar dataKey="amount" layout="vertical" radius={5}>
+                    {categoryChartData.map((entry) => (
+                      <Cell key={`cell-${entry.name}`} fill={entry.fill} />
+                    ))}
+                    <LabelList dataKey="amount" content={<CustomLabel position="right" />} />
+                  </Bar>
+                </BarChart>
+              </ChartContainer>
+            </div>
            </div>
         </div>
       </CardContent>
