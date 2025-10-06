@@ -1,7 +1,7 @@
 
 "use client";
 
-import { Bar, BarChart, XAxis, YAxis, CartesianGrid } from "recharts";
+import { Bar, BarChart, XAxis, YAxis, CartesianGrid, Pie, PieChart, Legend, RadialBar, RadialBarChart } from "recharts";
 import {
   Card,
   CardContent,
@@ -15,9 +15,13 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
 } from "@/components/ui/chart";
 import { formatCurrency } from "@/lib/utils";
 import { ScrollArea } from "../ui/scroll-area";
+import { useMemo } from "react";
+
 
 type DashboardChartsProps = {
   income: number;
@@ -33,12 +37,6 @@ const barChartConfig = {
   credit: { label: "Credit Cards", color: "hsl(var(--chart-4))" },
 } satisfies ChartConfig;
 
-const expenseChartConfig = {
-  amount: {
-    label: "Amount",
-    color: "hsl(var(--chart-2))",
-  },
-} satisfies ChartConfig;
 
 export default function DashboardCharts({
   income,
@@ -56,14 +54,26 @@ export default function DashboardCharts({
     },
   ];
 
-  const expenseByCategory = expenseData.reduce((acc, expense) => {
-    acc[expense.category] = (acc[expense.category] || 0) + expense.amount;
-    return acc;
-  }, {} as { [key: string]: number });
+  const { categoryChartData, expenseChartConfig } = useMemo(() => {
+    const expenseByCategory = expenseData.reduce((acc, expense) => {
+      acc[expense.category] = (acc[expense.category] || 0) + expense.amount;
+      return acc;
+    }, {} as { [key: string]: number });
+  
+    const chartData = Object.entries(expenseByCategory)
+      .map(([name, amount], index) => ({ name, amount, fill: `var(--color-${name.replace(/ /g, '')})` }))
+      .sort((a, b) => b.amount - a.amount);
+      
+    const chartConfig = chartData.reduce((acc, item, index) => {
+      acc[item.name.replace(/ /g, '')] = {
+        label: item.name,
+        color: `hsl(var(--chart-${(index % 5) + 1}))`
+      }
+      return acc;
+    }, {} as ChartConfig);
 
-  const categoryChartData = Object.entries(expenseByCategory)
-    .map(([name, amount]) => ({ name, amount }))
-    .sort((a, b) => b.amount - a.amount);
+    return { categoryChartData: chartData, expenseChartConfig: chartConfig };
+  }, [expenseData]);
 
   return (
     <Card className="shadow-sm hover:shadow-lg transition-shadow">
@@ -73,8 +83,8 @@ export default function DashboardCharts({
           A visual summary of your income vs. expenses.
         </CardDescription>
       </CardHeader>
-      <CardContent className="grid gap-8 sm:grid-cols-2">
-        <div className="h-[400px]">
+      <CardContent className="grid gap-6 sm:grid-cols-2">
+        <div className="h-[300px]">
           <ChartContainer config={barChartConfig} className="w-full h-full">
             <BarChart accessibilityLayer data={barChartData}>
               <XAxis
@@ -99,44 +109,26 @@ export default function DashboardCharts({
             </BarChart>
           </ChartContainer>
         </div>
-        <div className="h-[400px]">
-           <ChartContainer config={expenseChartConfig} className="w-full h-full">
-            <ScrollArea className="h-full">
-              <div style={{ height: `${Math.max(400, categoryChartData.length * 40)}px` }}>
-                <BarChart
-                  data={categoryChartData}
-                  layout="vertical"
-                  margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                >
-                  <CartesianGrid horizontal={false} strokeDasharray="3 3" />
-                  <XAxis 
-                    type="number" 
-                    tickFormatter={(value) => formatCurrency(Number(value))}
-                    stroke="hsl(var(--muted-foreground))"
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
-                  />
-                  <YAxis
-                    dataKey="name"
-                    type="category"
-                    width={100}
-                    tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }}
-                    axisLine={false}
-                    tickLine={false}
-                  />
-                  <ChartTooltip
-                    cursor={false}
+        <div className="h-[300px]">
+          <ChartContainer config={expenseChartConfig} className="w-full h-full">
+             <RadialBarChart 
+                data={categoryChartData} 
+                innerRadius="20%"
+                outerRadius="100%"
+                startAngle={90}
+                endAngle={-270}
+             >
+                <ChartTooltip 
+                    cursor={false} 
                     content={<ChartTooltipContent 
-                        labelKey="name" 
-                        formatter={(value) => formatCurrency(Number(value))}
-                    />}
-                  />
-                  <Bar dataKey="amount" fill="hsl(var(--chart-2))" radius={4} />
-                </BarChart>
-              </div>
-            </ScrollArea>
-           </ChartContainer>
+                        formatter={(value, name) => [formatCurrency(Number(value)), name]}
+                        labelKey="name"
+                        hideIndicator
+                    />} 
+                />
+                <RadialBar dataKey="amount" background />
+            </RadialBarChart>
+          </ChartContainer>
         </div>
       </CardContent>
     </Card>
