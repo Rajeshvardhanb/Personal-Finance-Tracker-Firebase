@@ -38,7 +38,6 @@ export default function LoginPage() {
             alt="Infinity Cloud Labs Logo"
             width={200}
             height={200}
-            className="rounded-full"
         />
         <div className="text-center">
             <h1 className="text-4xl font-bold tracking-tight">
