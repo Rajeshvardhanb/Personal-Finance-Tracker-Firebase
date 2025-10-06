@@ -68,7 +68,7 @@ export default function Header() {
            <AppLogo />
         </div>
         <div className="flex-1 text-center hidden sm:block">
-            <h1 className="text-xl font-semibold uppercase tracking-wider text-white/90">FINANCE TRACKER</h1>
+            <h1 className="text-xl font-semibold uppercase tracking-wider text-white/90">TRACKER</h1>
         </div>
         <div className="flex items-center justify-end gap-4 md:gap-2 lg:gap-4">
             <div className="hidden sm:block">

@@ -24,7 +24,7 @@ export function AppLogo(props: React.HTMLAttributes<HTMLSpanElement>) {
     <span {...props} className="flex items-center gap-2">
       <AppLogoIcon className="h-8 w-8 text-white" />
       <span className="whitespace-nowrap text-primary-foreground font-bold text-lg tracking-wide">
-        INFINITY CLOUD LABS
+        PERSONAL FINANCE
       </span>
     </span>
   );
