@@ -71,7 +71,7 @@ export default function DashboardCharts({
   const categoryBarChartHeight = Math.max(200, categoryChartData.length * 40);
 
   return (
-    <Card className="shadow-sm hover:shadow-lg transition-shadow lg:col-span-5">
+    <Card className="shadow-sm hover:shadow-lg transition-shadow">
       <CardHeader>
         <CardTitle className="font-headline">Monthly Overview</CardTitle>
         <CardDescription>
