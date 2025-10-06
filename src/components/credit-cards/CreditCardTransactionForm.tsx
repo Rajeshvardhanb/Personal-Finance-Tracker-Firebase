@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,6 +15,8 @@ import { format } from "date-fns";
 import { CreditCardTransactionSchema, type CreditCardTransactionFormValues } from "@/lib/schemas";
 import type { CreditCardTransaction } from "@/lib/types";
 import { useEffect } from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useFinances } from "@/hooks/use-finances";
 
 type CreditCardTransactionFormProps = {
   isOpen: boolean;
@@ -26,12 +29,14 @@ type CreditCardTransactionFormProps = {
 
 export default function CreditCardTransactionForm({ isOpen, onClose, transaction, cardId, addTransaction, updateTransaction }: CreditCardTransactionFormProps) {
   const isEditing = !!transaction;
+  const { data } = useFinances();
 
   const form = useForm<CreditCardTransactionFormValues>({
     resolver: zodResolver(CreditCardTransactionSchema),
     defaultValues: {
       description: "",
       amount: 0,
+      masterExpenseId: "",
     },
   });
 
@@ -41,12 +46,14 @@ export default function CreditCardTransactionForm({ isOpen, onClose, transaction
         form.reset({
           ...transaction,
           date: new Date(transaction.date),
+          masterExpenseId: transaction.masterExpenseId || "",
         });
       } else {
         form.reset({
           description: "",
           amount: 0,
           date: new Date(),
+          masterExpenseId: "",
         });
       }
     }
@@ -56,6 +63,7 @@ export default function CreditCardTransactionForm({ isOpen, onClose, transaction
     const dataToSubmit = {
       ...values,
       date: values.date.toISOString(),
+      masterExpenseId: values.masterExpenseId || undefined,
     };
 
     if (isEditing && transaction) {
@@ -141,6 +149,29 @@ export default function CreditCardTransactionForm({ isOpen, onClose, transaction
                   <FormMessage />
                 </FormItem>
               )}
+            />
+            <FormField
+                control={form.control}
+                name="masterExpenseId"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Link to Master Expense (Optional)</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select a master expense" />
+                        </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="">None</SelectItem>
+                          {data.masterExpenses.map((me) => (
+                              <SelectItem key={me.id} value={me.id}>{me.name}</SelectItem>
+                          ))}
+                        </SelectContent>
+                    </Select>
+                    <FormMessage />
+                    </FormItem>
+                )}
             />
             <DialogFooter>
               <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
