@@ -11,39 +11,12 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { LoaderCircle, Quote } from "lucide-react";
 import Image from "next/image";
 
-const quotes = [
-  {
-    quote: "An investment in knowledge pays the best interest.",
-    author: "Benjamin Franklin"
-  },
-  {
-    quote: "Financial peace isn't the acquisition of stuff. It's learning to live on less than you make, so you can give money back and have money to invest.",
-    author: "Dave Ramsey"
-  },
-  {
-    quote: "The goal isn't more money. The goal is living life on your own terms.",
-    author: "Chris Brogan"
-  },
-  {
-    quote: "Beware of little expenses. A small leak will sink a great ship.",
-    author: "Benjamin Franklin"
-  }
-];
-
 export default function LoginPage() {
   const [email, setEmail] = useState("rajesh@example.com");
   const [password, setPassword] = useState("password123");
   const [error, setError] = useState("");
   const { login, isAuthenticating } = useAuth();
   const router = useRouter();
-  const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentQuoteIndex((prevIndex) => (prevIndex + 1) % quotes.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,13 +31,13 @@ export default function LoginPage() {
 
   return (
     <main className="flex min-h-screen w-full bg-white">
-      <div className="hidden lg:flex w-1/2 relative flex-col justify-start bg-[#020617] p-12 overflow-hidden">
+      <div className="hidden lg:flex w-1/2 relative flex-col justify-center items-center bg-[#020617] p-12 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <svg viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice" className="w-full h-full">
             <defs>
               <linearGradient id="waveGradientDarker" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" style={{stopColor: 'rgba(99, 102, 241, 0.6)'}} />
-                <stop offset="100%" style={{stopColor: 'rgba(56, 189, 248, 0.6)'}} />
+                <stop offset="0%" style={{stopColor: 'rgba(99, 102, 241, 0.3)'}} />
+                <stop offset="100%" style={{stopColor: 'rgba(56, 189, 248, 0.3)'}} />
               </linearGradient>
             </defs>
             <path d="M0 300 Q 200 420, 400 300 T 800 300 V 600 H 0 Z" fill="url(#waveGradientDarker)" opacity="0.3"/>
