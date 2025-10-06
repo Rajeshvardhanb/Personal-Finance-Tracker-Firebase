@@ -67,6 +67,8 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
   const firestore = useFirestore();
   const [selectedDate, setSelectedDate] = useState<Date>(startOfMonth(new Date()));
+  const [hasCheckedCategories, setHasCheckedCategories] = useState(false);
+
 
   // Base collection references
   const incomesCol = useMemoFirebase(() => user ? collection(firestore, 'users', user.uid, 'incomes') : null, [firestore, user]);
@@ -88,7 +90,28 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
   const { data: liabilitiesData } = useCollection<Liability>(liabilitiesCol);
   const { data: notesData } = useCollection<Note>(notesCol);
   const { data: netWorthHistoryData } = useCollection<any>(netWorthHistoryCol);
-  const { data: expenseCategoriesData } = useCollection<ExpenseCategory>(expenseCategoriesCol);
+  const { data: expenseCategoriesData, isLoading: expenseCategoriesLoading } = useCollection<ExpenseCategory>(expenseCategoriesCol);
+
+  // One-time check to populate default expense categories
+  useEffect(() => {
+    if (user && !expenseCategoriesLoading && expenseCategoriesData && !hasCheckedCategories) {
+      const defaultCategories = getDefaultData().expenseCategories;
+      const userCategoryNames = new Set(expenseCategoriesData.map(c => c.name));
+      const missingCategories = defaultCategories.filter(dc => !userCategoryNames.has(dc.name));
+
+      if (missingCategories.length > 0) {
+        const batch = writeBatch(firestore);
+        const categoriesRef = collection(firestore, 'users', user.uid, 'expenseCategories');
+        missingCategories.forEach(category => {
+          // We don't need a specific doc ID, Firestore will generate one
+          const docRef = doc(categoriesRef);
+          batch.set(docRef, { name: category.name });
+        });
+        batch.commit();
+      }
+      setHasCheckedCategories(true);
+    }
+  }, [user, firestore, expenseCategoriesData, expenseCategoriesLoading, hasCheckedCategories]);
 
   // Create a memoized data object
   const data: FinanceData = useMemo(() => {
@@ -101,7 +124,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
       assets: assetsData || [],
       liabilities: liabilitiesData || [],
       notes: notesData || [],
-      expenseCategories: expenseCategoriesData?.length ? expenseCategoriesData : defaultData.expenseCategories,
+      expenseCategories: expenseCategoriesData || [],
       netWorthHistory: netWorthHistoryData || [],
       categoryBudgets: defaultData.categoryBudgets, // Assuming this is static for now
     }
@@ -184,7 +207,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
             updateMasterExpense({ ...masterExpense, transactions: updatedMasterTransactions });
         }
     }
-  }, [user, creditCardsData, masterExpensesData, addExpense, firestore]);
+  }, [user, creditCardsData, masterExpensesData, firestore]);
 
   const addExpenseWithCardSync = useCallback((expense: Omit<Expense, 'id' | 'userId'>) => {
     if (!creditCardsData) return;
@@ -205,7 +228,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
   }, [creditCardsData, addExpense, addCreditCardTransaction]);
 
   const deleteCreditCardTransaction = useCallback((cardId: string, transactionId: string) => {
-    if (!user || !expensesData || !creditCardsData || !masterExpensesData) return;
+    if (!user || !creditCardsData || !masterExpensesData) return;
     const card = creditCardsData.find(c => c.id === cardId);
     if (!card) return;
     const transactionToDelete = card.transactions.find(t => t.id === transactionId);
@@ -224,7 +247,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
             }
         }
     }
-  }, [user, expensesData, creditCardsData, masterExpensesData, firestore]);
+  }, [user, creditCardsData, masterExpensesData, firestore]);
   
  const deleteExpense = useCallback((id: string) => {
     if (!user || !expensesData || !creditCardsData) return;
@@ -245,10 +268,6 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
             );
             if (transactionToDelete) {
                 deleteCreditCardTransaction(sourceCard.id, transactionToDelete.id);
-                // Also delete the main expense entry
-                const ref = getCollectionRef('expenses');
-                if (ref) deleteDocumentNonBlocking(doc(ref, id));
-                return; 
             }
         }
     }
