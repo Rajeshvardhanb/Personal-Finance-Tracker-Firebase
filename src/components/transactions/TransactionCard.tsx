@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import { Badge } from "@/components/ui/badge";
@@ -49,6 +50,8 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
   const status = getStatus();
 
   const isPaidByCreditCard = typeof status === 'string' && status.toLowerCase().startsWith('paid by');
+
+  const showActions = type === 'expense' && 'masterExpenseId' in transaction && transaction.masterExpenseId ? false : true;
 
   return (
     <div className={cn(
@@ -120,7 +123,7 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
       
       {/* Actions */}
       <div className="ml-4 flex items-center">
-        {!('masterExpenseId' in transaction && transaction.masterExpenseId) ? (
+        {showActions ? (
             <>
             <Button variant="ghost" size="icon" onClick={onEdit} className="h-8 w-8">
                 <Pencil className="h-4 w-4" />
