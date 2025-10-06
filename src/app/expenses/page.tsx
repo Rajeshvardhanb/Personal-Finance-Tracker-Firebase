@@ -1,6 +1,6 @@
 
 "use client";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import PageHeader from "@/components/PageHeader";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
@@ -12,6 +12,7 @@ import MasterExpenseForm from "@/components/expenses/MasterExpenseForm";
 import MasterExpenseTile from "@/components/expenses/MasterExpenseTile";
 import type { Expense, MasterExpense } from "@/lib/types";
 import TransactionCard from "@/components/transactions/TransactionCard";
+import TransactionSorter, { type SortBy, type SortOrder } from "@/components/transactions/TransactionSorter";
 
 export default function ExpensesPage() {
   const { data, selectedDate, addExpense, updateExpense, deleteExpense, addMasterExpense, updateMasterExpense, deleteMasterExpense } = useFinances();
@@ -19,15 +20,29 @@ export default function ExpensesPage() {
   const [isMasterExpenseFormOpen, setIsMasterExpenseFormOpen] = useState(false);
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
   const [editingMasterExpense, setEditingMasterExpense] = useState<MasterExpense | null>(null);
+  const [sortBy, setSortBy] = useState<SortBy>('date');
+  const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
 
-  const currentMonth = getMonth(selectedDate);
-  const currentYear = getYear(selectedDate);
 
-  const monthlyExpenses = data.expenses.filter(
-    (exp) =>
-      getMonth(new Date(exp.dueDate)) === currentMonth &&
-      getYear(new Date(exp.dueDate)) === currentYear
-  );
+  const monthlyExpenses = useMemo(() => {
+    const currentMonth = getMonth(selectedDate);
+    const currentYear = getYear(selectedDate);
+
+    return data.expenses.filter(
+      (exp) =>
+        getMonth(new Date(exp.dueDate)) === currentMonth &&
+        getYear(new Date(exp.dueDate)) === currentYear
+    ).sort((a, b) => {
+      const aValue = sortBy === 'date' ? new Date(a.dueDate).getTime() : a.amount;
+      const bValue = sortBy === 'date' ? new Date(b.dueDate).getTime() : b.amount;
+      
+      if (sortOrder === 'asc') {
+          return aValue - bValue;
+      } else {
+          return bValue - aValue;
+      }
+    });
+  }, [data.expenses, selectedDate, sortBy, sortOrder]);
 
   const handleAddExpense = () => {
     setEditingExpense(null);
@@ -104,6 +119,17 @@ export default function ExpensesPage() {
           ))}
         </div>
       )}
+
+      <Card>
+        <CardContent className="p-4 flex justify-end">
+            <TransactionSorter 
+                sortBy={sortBy}
+                sortOrder={sortOrder}
+                onSortByChange={setSortBy}
+                onSortOrderChange={setSortOrder}
+            />
+        </CardContent>
+      </Card>
 
       <div className="space-y-3">
          {monthlyExpenses.length > 0 ? monthlyExpenses.map((expense) => (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useParams, notFound, useRouter } from "next/navigation";
 import { useFinances } from "@/hooks/use-finances";
 import PageHeader from "@/components/PageHeader";
@@ -10,8 +10,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { formatCurrency } from "@/lib/utils";
 import CreditCardTransactionForm from "@/components/credit-cards/CreditCardTransactionForm";
 import { CreditCardTransaction } from "@/lib/types";
-import { getMonth, getYear, format } from "date-fns";
+import { getMonth, getYear } from "date-fns";
 import TransactionCard from "@/components/transactions/TransactionCard";
+import TransactionSorter, { type SortBy, type SortOrder } from "@/components/transactions/TransactionSorter";
 
 export default function CreditCardDetailPage() {
     const { id } = useParams();
@@ -19,6 +20,8 @@ export default function CreditCardDetailPage() {
     const { data, selectedDate, addCreditCardTransaction, updateCreditCardTransaction, deleteCreditCardTransaction } = useFinances();
     const [isFormOpen, setIsFormOpen] = useState(false);
     const [editingTransaction, setEditingTransaction] = useState<CreditCardTransaction | null>(null);
+    const [sortBy, setSortBy] = useState<SortBy>('date');
+    const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
 
     const card = data.creditCards.find(c => c.id === id);
 
@@ -26,14 +29,25 @@ export default function CreditCardDetailPage() {
         notFound();
     }
 
-    const currentMonth = getMonth(selectedDate);
-    const currentYear = getYear(selectedDate);
+    const monthlyTransactions = useMemo(() => {
+        const currentMonth = getMonth(selectedDate);
+        const currentYear = getYear(selectedDate);
 
-    const monthlyTransactions = card.transactions.filter(
-        (t) =>
-            getMonth(new Date(t.date)) === currentMonth &&
-            getYear(new Date(t.date)) === currentYear
-    );
+        return card.transactions.filter(
+            (t) =>
+                getMonth(new Date(t.date)) === currentMonth &&
+                getYear(new Date(t.date)) === currentYear
+        ).sort((a, b) => {
+            const aValue = sortBy === 'date' ? new Date(a.date).getTime() : a.amount;
+            const bValue = sortBy === 'date' ? new Date(b.date).getTime() : b.amount;
+            
+            if (sortOrder === 'asc') {
+                return aValue - bValue;
+            } else {
+                return bValue - aValue;
+            }
+        });
+    }, [card.transactions, selectedDate, sortBy, sortOrder]);
     
     const monthlySpending = monthlyTransactions.reduce((sum, t) => sum + t.amount, 0);
 
@@ -99,11 +113,19 @@ export default function CreditCardDetailPage() {
             </div>
 
             <Card>
-                <CardHeader>
-                    <CardTitle>Transactions</CardTitle>
-                    <CardDescription>
-                        A list of transactions for this month.
-                    </CardDescription>
+                <CardHeader className="flex-row items-center justify-between">
+                    <div>
+                        <CardTitle>Transactions</CardTitle>
+                        <CardDescription>
+                            A list of transactions for this month.
+                        </CardDescription>
+                    </div>
+                    <TransactionSorter 
+                        sortBy={sortBy}
+                        sortOrder={sortOrder}
+                        onSortByChange={setSortBy}
+                        onSortOrderChange={setSortOrder}
+                    />
                 </CardHeader>
                 <CardContent className="space-y-3">
                     {monthlyTransactions.length > 0 ? monthlyTransactions.map((transaction) => (

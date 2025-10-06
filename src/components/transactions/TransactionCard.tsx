@@ -1,3 +1,5 @@
+
+
 "use client";
 
 import { Badge } from "@/components/ui/badge";
@@ -36,19 +38,29 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
   }
   
   const getSubtext = () => {
-    if ('category' in transaction) return transaction.category; // Expense
-    if (type === 'income') return format(new Date(getDate()), 'dd MMM yyyy');
-    if (type === 'credit-card') return format(new Date(getDate()), 'dd MMM yyyy');
-    if (type === 'master-expense') return format(new Date(getDate()), 'dd MMM yyyy');
-    return null;
+    if ('category' in transaction && transaction.category) return transaction.category; // Expense
+    return format(new Date(getDate()), 'dd MMM yyyy');
   }
 
   const getStatus = () => {
     if ('status' in transaction) return transaction.status;
+    // For credit card transactions added directly, we can imply a status
+    if (type === 'credit-card') {
+      return `Paid by Credit Card`;
+    }
     return null;
   }
   
   const status = getStatus();
+
+  const isPaidByCreditCard = typeof status === 'string' && status.toLowerCase().startsWith('paid by');
+  const isMasterExpenseSummary = type === 'expense' && 'masterExpenseId' in transaction && transaction.masterExpenseId ? true : false;
+  
+  const canBeEdited = !isMasterExpenseSummary;
+  const canBeDeleted = !isMasterExpenseSummary;
+
+  // An expense can be toggled if onToggleStatus is provided and it's not a managed master expense entry
+  const isToggleable = !!onToggleStatus && type !== 'credit-card' && !isMasterExpenseSummary;
 
   return (
     <div className={cn(
@@ -56,6 +68,7 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
       status === 'Credited' && 'border-green-500',
       status === 'Not Credited' && 'border-amber-500',
       status === 'Paid' && 'border-green-500',
+      isPaidByCreditCard && 'border-indigo-500',
       status === 'Not Paid' && 'border-amber-500',
       type === 'credit-card' && 'border-indigo-500',
       !status && 'border-transparent'
@@ -64,35 +77,29 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
         {/* Main Info */}
         <div className="md:col-span-1">
           <p className="font-semibold">{getTitle()}</p>
-          {getSubtext() && <p className="text-sm text-muted-foreground">{getSubtext()}</p>}
+          <p className="text-sm text-muted-foreground">{getSubtext()}</p>
         </div>
 
         {/* Date and Status */}
         <div className="md:col-span-1 flex items-center gap-4 text-sm">
-            {type === 'expense' && (
+            {(type === 'expense' || type === 'credit-card') && (
                 <>
                     <span className="text-muted-foreground">{format(new Date(getDate()), 'dd MMM yyyy')}</span>
-                    {onToggleStatus && !transaction.masterExpenseId ? (
-                      <Badge 
-                          variant={status === 'Paid' ? 'default' : 'destructive'}
-                          className='cursor-pointer'
-                          onClick={onToggleStatus}
-                      >
-                          {status}
-                      </Badge>
-                    ) : (
-                      <Badge 
-                        variant={status === 'Paid' ? 'default' : 'destructive'}
-                      >
-                          {status}
-                      </Badge>
+                    {status && (
+                       <Badge 
+                            variant={(status === 'Paid' || isPaidByCreditCard) ? 'default' : 'destructive'}
+                            className={cn(isToggleable && 'cursor-pointer')}
+                            onClick={isToggleable ? onToggleStatus : undefined}
+                        >
+                            {status}
+                        </Badge>
                     )}
                 </>
             )}
              {type === 'income' && status && (
                 <Badge 
                     variant={status === 'Credited' ? 'default' : 'destructive'}
-                    className={cn(onToggleStatus && 'cursor-pointer')}
+                    className={cn(isToggleable && 'cursor-pointer')}
                     onClick={onToggleStatus}
                 >
                     {status}
@@ -100,8 +107,8 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
             )}
              {type === 'master-expense' && status && (
                  <Badge 
-                    variant={status === 'Paid' ? 'default' : 'destructive'}
-                    className={cn(onToggleStatus && 'cursor-pointer')}
+                    variant={(status === 'Paid' || isPaidByCreditCard) ? 'default' : 'destructive'}
+                    className={cn(isToggleable && 'cursor-pointer')}
                     onClick={onToggleStatus}
                 >
                     {status}
@@ -117,19 +124,19 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
       
       {/* Actions */}
       <div className="ml-4 flex items-center">
-        {!('masterExpenseId' in transaction && transaction.masterExpenseId) ? (
+        {!isMasterExpenseSummary ? (
             <>
-            <Button variant="ghost" size="icon" onClick={onEdit} className="h-8 w-8">
+            <Button variant="ghost" size="icon" onClick={onEdit} className="h-8 w-8" disabled={!canBeEdited}>
                 <Pencil className="h-4 w-4" />
                 <span className="sr-only">Edit</span>
             </Button>
-            <Button variant="ghost" size="icon" onClick={onDelete} className="h-8 w-8 text-destructive hover:text-destructive">
+            <Button variant="ghost" size="icon" onClick={onDelete} className="h-8 w-8 text-destructive hover:text-destructive" disabled={!canBeDeleted}>
                 <Trash2 className="h-4 w-4" />
                 <span className="sr-only">Delete</span>
             </Button>
             </>
         ) : (
-             <div className="w-16 text-center">
+             <div className="w-20 text-center">
                 <Badge variant="outline">Managed</Badge>
              </div>
         )}

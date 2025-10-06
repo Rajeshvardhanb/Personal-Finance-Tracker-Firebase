@@ -64,10 +64,13 @@ export default function AppSidebar() {
       </nav>
       <nav className="mt-auto flex flex-col items-stretch gap-2 p-2 sm:py-3">
         <Link
-          href="#"
+          href="/settings"
           className={cn(
             "flex items-center gap-3 rounded-lg px-3 py-2 text-white/80 transition-all hover:bg-white/10",
-            state === 'expanded' ? "justify-start" : "justify-center"
+            state === 'expanded' ? "justify-start" : "justify-center",
+            pathname === "/settings"
+              ? "bg-white/20 text-white shadow-lg"
+              : "text-white/80 hover:bg-white/10"
           )}
         >
           <Settings className="h-5 w-5 shrink-0" />

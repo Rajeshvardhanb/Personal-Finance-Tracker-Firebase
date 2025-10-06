@@ -1,7 +1,7 @@
 
 
 export type TransactionStatus = 'Credited' | 'Not Credited';
-export type ExpenseStatus = 'Paid' | 'Not Paid';
+export type ExpenseStatus = 'Paid' | 'Not Paid' | string; // Allow for 'Paid by [Card Name]'
 
 export interface Income {
   id: string;
@@ -29,6 +29,7 @@ export interface CreditCardTransaction {
   description: string;
   amount: number;
   date: string; // ISO 8601 format
+  masterExpenseId?: string;
 }
 
 export interface CreditCard {
@@ -44,7 +45,8 @@ export interface MasterExpenseTransaction {
   description: string;
   amount: number;
   date: string; // ISO 8601 format
-  status: ExpenseStatus;
+  status: 'Paid' | 'Not Paid';
+  paidViaCard?: string;
 }
 
 export interface MasterExpense {
@@ -81,6 +83,11 @@ export interface NetWorthHistory {
   value: number;
 }
 
+export interface ExpenseCategory {
+  id: string;
+  name: string;
+}
+
 export interface FinanceData {
   incomes: Income[];
   expenses: Expense[];
@@ -89,23 +96,10 @@ export interface FinanceData {
   assets: Asset[];
   liabilities: Liability[];
   notes: Note[];
+  expenseCategories: ExpenseCategory[];
   categoryBudgets: { [category: string]: number };
   netWorthHistory: NetWorthHistory[];
 }
-
-export const ExpenseCategories = [
-  'Groceries',
-  'Rent',
-  'Utilities',
-  'Transport',
-  'Entertainment',
-  'Healthcare',
-  'Dining Out',
-  'Shopping',
-  'EMI',
-  'Vacation',
-  'Other',
-] as const;
 
 export const AssetCategories = [
   'Gold',

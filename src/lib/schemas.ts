@@ -28,7 +28,7 @@ export const ExpenseSchema = z.object({
     description: z.string().min(2, { message: "Description is required." }),
     amount: z.coerce.number().min(1, { message: "Amount is required." }),
     dueDate: z.date({ required_error: "Please select a date."}),
-    status: z.enum(["Paid", "Not Paid"]),
+    status: z.string().min(1, { message: "Status is required." }),
     isRecurring: z.boolean().default(false),
     category: z.string().min(1, { message: "Please select a category." }),
 });
@@ -48,6 +48,7 @@ export const CreditCardTransactionSchema = z.object({
     description: z.string().min(2, { message: "Description is required." }),
     amount: z.coerce.number().min(1, { message: "Amount must be greater than 0." }),
     date: z.date({ required_error: "Please select a date." }),
+    masterExpenseId: z.string().optional().default('none'),
 });
 
 export type CreditCardTransactionFormValues = z.infer<typeof CreditCardTransactionSchema>;
@@ -64,7 +65,13 @@ export const MasterExpenseTransactionSchema = z.object({
     description: z.string().min(2, { message: "Description is required." }),
     amount: z.coerce.number().min(1, { message: "Amount must be greater than 0." }),
     date: z.date({ required_error: "Please select a date." }),
-    status: z.enum(["Paid", "Not Paid"]),
+    status: z.string().min(1, { message: "Status is required." }),
 });
 
 export type MasterExpenseTransactionFormValues = z.infer<typeof MasterExpenseTransactionSchema>;
+
+export const ExpenseCategorySchema = z.object({
+    name: z.string().min(2, { message: "Category name must be at least 2 characters." }),
+});
+
+export type ExpenseCategoryFormValues = z.infer<typeof ExpenseCategorySchema>;
