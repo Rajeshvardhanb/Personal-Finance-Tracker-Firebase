@@ -99,6 +99,43 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
   const { incomes, expenses, masterExpenses, creditCards, assets, liabilities, notes, netWorthHistory } = data;
 
   const getCollectionRef = (name: string) => user ? collection(firestore, 'users', user.uid, name) : null;
+  
+  // ONE-TIME CLEANUP EFFECT FOR BAD DATA
+  useEffect(() => {
+    const cleanupRanKey = `cleanup_master_expenses_${user?.uid}`;
+    
+    // Run only if we have a user, data, and the cleanup hasn't run before
+    if (user && expensesData && !localStorage.getItem(cleanupRanKey)) {
+      const cleanup = async () => {
+        console.log("Running one-time cleanup of master expense summaries...");
+        const batch = writeBatch(firestore);
+        
+        // Identify expenses that were auto-generated from master expenses
+        const summaryExpensesToDelete = expensesData.filter(exp => exp.masterExpenseId);
+
+        if (summaryExpensesToDelete.length > 0) {
+          summaryExpensesToDelete.forEach(exp => {
+            const expDocRef = doc(firestore, 'users', user.uid, 'expenses', exp.id);
+            batch.delete(expDocRef);
+          });
+
+          try {
+            await batch.commit();
+            console.log(`Successfully deleted ${summaryExpensesToDelete.length} summary expenses.`);
+          } catch (error) {
+            console.error("Error during cleanup:", error);
+            // If it fails, don't mark as run so it can retry
+            return;
+          }
+        }
+        
+        // Mark cleanup as complete for this user to prevent re-running
+        localStorage.setItem(cleanupRanKey, 'true');
+      };
+
+      cleanup();
+    }
+  }, [user, expensesData, firestore]);
 
   // --- CRUD Operations ---
 
@@ -194,14 +231,15 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     const newTransaction: CreditCardTransaction = { ...transaction, id: crypto.randomUUID() };
     const updatedTransactions = [...card.transactions, newTransaction];
     updateCreditCard({ ...card, transactions: updatedTransactions });
-
-    if(transaction.masterExpenseId) {
-      addMasterExpenseTransaction(transaction.masterExpenseId, {
-        ...newTransaction,
-        status: 'Paid',
-        paidViaCard: card.name
-      })
-    }
+    const expenseStatus: ExpenseStatus = `Paid by ${card.name}`;
+    addExpense({
+      category: 'Credit Card',
+      description: newTransaction.description,
+      amount: newTransaction.amount,
+      dueDate: newTransaction.date,
+      status: expenseStatus,
+      isRecurring: false,
+    });
   };
   const updateCreditCardTransaction = (cardId: string, transaction: CreditCardTransaction) => {
     if (!user) return;
@@ -326,12 +364,6 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     }
     return pastMonthsData;
   };
-
-  // Effect for Credit Card Expenses
-  useEffect(() => {
-    // This effect is commented out to prevent infinite loops.
-    // The logic has been moved to where credit card transactions are added/deleted.
-  }, []);
 
   const value = useMemo(() => ({
     data,
