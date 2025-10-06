@@ -44,6 +44,10 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
 
   const getStatus = () => {
     if ('status' in transaction) return transaction.status;
+    // For credit card transactions added directly, we can imply a status
+    if (type === 'credit-card') {
+      return `Paid by Credit Card`;
+    }
     return null;
   }
   
@@ -78,7 +82,7 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
 
         {/* Date and Status */}
         <div className="md:col-span-1 flex items-center gap-4 text-sm">
-            {type === 'expense' && (
+            {(type === 'expense' || type === 'credit-card') && (
                 <>
                     <span className="text-muted-foreground">{format(new Date(getDate()), 'dd MMM yyyy')}</span>
                     {status && (

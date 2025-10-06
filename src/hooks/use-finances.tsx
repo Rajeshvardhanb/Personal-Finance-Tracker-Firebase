@@ -195,6 +195,17 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     const updatedCardTransactions = [...card.transactions, newTransaction];
     updateCreditCard({ ...card, transactions: updatedCardTransactions });
 
+    // Also create a corresponding expense
+    const expense: Omit<Expense, 'id'> = {
+        description: newTransaction.description,
+        amount: newTransaction.amount,
+        dueDate: newTransaction.date,
+        status: `Paid by ${card.name}`,
+        category: 'Credit Card',
+        isRecurring: false,
+    };
+    addExpense(expense);
+
     // Link to Master Expense if ID is provided
     if (newTransaction.masterExpenseId && masterExpensesData) {
         const masterExpense = masterExpensesData.find(me => me.id === newTransaction.masterExpenseId);
