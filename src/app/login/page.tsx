@@ -11,12 +11,40 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { LoaderCircle } from "lucide-react";
 import Image from "next/image";
 
+const quotes = [
+    {
+        text: "The best investment you can make, is an investment in yourself. The more you learn, the more you'll earn.",
+        author: "Warren Buffett"
+    },
+    {
+        text: "Financial peace isn't the acquisition of stuff. It's learning to live on less than you make, so you can give money back and have money to invest. You can't win until you do this.",
+        author: "Dave Ramsey"
+    },
+    {
+        text: "An investment in knowledge pays the best interest.",
+        author: "Benjamin Franklin"
+    },
+     {
+        text: "The stock market is a device for transferring money from the impatient to the patient.",
+        author: "Warren Buffett"
+    }
+];
+
+
 export default function LoginPage() {
   const [email, setEmail] = useState("rajesh@example.com");
   const [password, setPassword] = useState("password123");
   const [error, setError] = useState("");
   const { login, isAuthenticating } = useAuth();
   const router = useRouter();
+  const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+        setCurrentQuoteIndex((prevIndex) => (prevIndex + 1) % quotes.length);
+    }, 5000); // Change quote every 5 seconds
+    return () => clearInterval(interval);
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,43 +59,123 @@ export default function LoginPage() {
 
   return (
     <main className="flex min-h-screen w-full bg-white">
-      <div className="hidden lg:flex w-1/2 relative flex-col justify-center items-center bg-[#020617] p-12 overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <svg viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice" className="w-full h-full">
+      <div className="hidden lg:flex w-1/2 relative flex-col justify-center items-center bg-[#020617] p-12 overflow-hidden text-white">
+         <div className="absolute inset-0 z-0">
+           <svg
+            viewBox="0 0 800 600"
+            preserveAspectRatio="xMidYMid slice"
+            className="w-full h-full"
+          >
             <defs>
-              <linearGradient id="waveGradientDarker" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" style={{stopColor: 'rgba(99, 102, 241, 0.3)'}} />
-                <stop offset="100%" style={{stopColor: 'rgba(56, 189, 248, 0.3)'}} />
+              <linearGradient
+                id="waveGradientDarker"
+                x1="0%"
+                y1="0%"
+                x2="100%"
+                y2="0%"
+              >
+                <stop
+                  offset="0%"
+                  style={{ stopColor: "rgba(99, 102, 241, 0.4)" }}
+                />
+                <stop
+                  offset="100%"
+                  style={{ stopColor: "rgba(56, 189, 248, 0.4)" }}
+                />
               </linearGradient>
             </defs>
-            <path d="M0 300 Q 200 420, 400 300 T 800 300 V 600 H 0 Z" fill="url(#waveGradientDarker)" opacity="0.3"/>
-            <path d="M0 310 Q 200 190, 400 310 T 800 310 V 600 H 0 Z" fill="url(#waveGradientDarker)" opacity="0.3"/>
-            <path d="M0 290 Q 200 430, 400 290 T 800 290 V 600 H 0 Z" fill="url(#waveGradientDarker)" opacity="0.2"/>
-            
-            <path d="M0 300 Q 100 250, 200 300 T 400 300 T 600 300 T 800 300" fill="none" stroke="url(#waveGradientDarker)" strokeWidth="0.7" opacity="0.5"/>
-            <path d="M0 310 Q 100 360, 200 310 T 400 310 T 600 310 T 800 310" fill="none" stroke="url(#waveGradientDarker)" strokeWidth="0.7" opacity="0.6"/>
-            <path d="M0 290 Q 100 240, 200 290 T 400 290 T 600 290 T 800 290" fill="none" stroke="url(#waveGradientDarker)" strokeWidth="0.7" opacity="0.55"/>
-            <path d="M0 280 Q 100 330, 200 280 T 400 280 T 600 280 T 800 280" fill="none" stroke="url(#waveGradientDarker)" strokeWidth="0.7" opacity="0.4"/>
-            <path d="M0 320 Q 100 270, 200 320 T 400 320 T 600 320 T 800 320" fill="none" stroke="url(#waveGradientDarker)" strokeWidth="0.7" opacity="0.45"/>
-
-            <path d="M-100 150 Q 100 350, 300 150 T 700 150 T 900 150" fill="none" stroke="url(#waveGradientDarker)" strokeWidth="0.7" opacity="0.4"/>
-            <path d="M-100 450 Q 100 250, 300 450 T 700 450 T 900 450" fill="none" stroke="url(#waveGradientDarker)" strokeWidth="0.7" opacity="0.4"/>
+            <path
+              d="M0 300 Q 200 420, 400 300 T 800 300 V 600 H 0 Z"
+              fill="url(#waveGradientDarker)"
+              opacity="0.3"
+            />
+            <path
+              d="M0 310 Q 200 190, 400 310 T 800 310 V 600 H 0 Z"
+              fill="url(#waveGradientDarker)"
+              opacity="0.3"
+            />
+            <path
+              d="M0 290 Q 200 430, 400 290 T 800 290 V 600 H 0 Z"
+              fill="url(#waveGradientDarker)"
+              opacity="0.2"
+            />
+            <path
+              d="M0 300 Q 100 250, 200 300 T 400 300 T 600 300 T 800 300"
+              fill="none"
+              stroke="url(#waveGradientDarker)"
+              strokeWidth="0.7"
+              opacity="0.5"
+            />
+            <path
+              d="M0 310 Q 100 360, 200 310 T 400 310 T 600 310 T 800 310"
+              fill="none"
+              stroke="url(#waveGradientDarker)"
+              strokeWidth="0.7"
+              opacity="0.6"
+            />
+            <path
+              d="M0 290 Q 100 240, 200 290 T 400 290 T 600 290 T 800 290"
+              fill="none"
+              stroke="url(#waveGradientDarker)"
+              strokeWidth="0.7"
+              opacity="0.55"
+            />
+            <path
+              d="M0 280 Q 100 330, 200 280 T 400 280 T 600 280 T 800 280"
+              fill="none"
+              stroke="url(#waveGradientDarker)"
+              strokeWidth="0.7"
+              opacity="0.4"
+            />
+            <path
+              d="M0 320 Q 100 270, 200 320 T 400 320 T 600 320 T 800 320"
+              fill="none"
+              stroke="url(#waveGradientDarker)"
+              strokeWidth="0.7"
+              opacity="0.45"
+            />
+            <path
+              d="M-100 150 Q 100 350, 300 150 T 700 150 T 900 150"
+              fill="none"
+              stroke="url(#waveGradientDarker)"
+              strokeWidth="0.7"
+              opacity="0.4"
+            />
+            <path
+              d="M-100 450 Q 100 250, 300 450 T 700 450 T 900 450"
+              fill="none"
+              stroke="url(#waveGradientDarker)"
+              strokeWidth="0.7"
+              opacity="0.4"
+            />
           </svg>
         </div>
-        <div className="relative z-10 flex flex-col items-center justify-start text-center w-full h-full pt-8">
+        <div className="relative z-10 flex flex-col items-center justify-center text-center w-full h-full gap-8">
             <Image
                 src="/Infinity Cloud Labs PNG.png"
                 alt="Infinity Cloud Labs Logo"
-                width={400}
-                height={200}
+                width={250}
+                height={125}
             />
+             <div>
+                <h1 className="text-3xl font-bold">Personal Finance Tracker</h1>
+                <p className="text-lg text-white/80">Designed By Rajesh</p>
+            </div>
+             <div className="w-full max-w-lg">
+                <p className="text-lg italic text-white/90">
+                    "{quotes[currentQuoteIndex].text}"
+                </p>
+                <p className="mt-4 text-md font-semibold text-cyan-400">
+                    - {quotes[currentQuoteIndex].author}
+                </p>
+            </div>
         </div>
       </div>
       <div className="flex w-full lg:w-1/2 items-center justify-center p-8 bg-background bg-grid-pattern">
-        <div className="w-full max-w-sm space-y-6 bg-white p-10 rounded-2xl shadow-xl">
+        <div className="w-full max-w-sm space-y-6 bg-card p-10 rounded-2xl shadow-xl">
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-900">Sign In</h1>
-            <p className="text-gray-500">
+            <h1 className="text-3xl font-bold text-foreground">Sign In</h1>
+            <p className="text-muted-foreground">
               Welcome back! Please enter your credentials.
             </p>
           </div>
@@ -87,7 +195,7 @@ export default function LoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="bg-gray-100 border-gray-300"
+                className="bg-muted/50 border-border"
               />
             </div>
             <div className="space-y-1">
@@ -98,7 +206,7 @@ export default function LoginPage() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="bg-gray-100 border-gray-300"
+                className="bg-muted/50 border-border"
               />
             </div>
             <Button
@@ -111,7 +219,7 @@ export default function LoginPage() {
             </Button>
           </form>
           <div className="text-center text-sm">
-            <a href="#" className="text-blue-600 hover:underline">
+            <a href="#" className="text-primary hover:underline">
               Forgot Password?
             </a>
           </div>
