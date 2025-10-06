@@ -1,7 +1,7 @@
 
 "use client";
 
-import { Bar, BarChart, XAxis, YAxis, CartesianGrid, Pie, PieChart, Legend, RadialBar, RadialBarChart, Cell, ResponsiveContainer } from "recharts";
+import { Bar, BarChart, XAxis, YAxis, CartesianGrid, Cell, ResponsiveContainer } from "recharts";
 import {
   Card,
   CardContent,
@@ -90,11 +90,10 @@ export default function DashboardCharts({
             <BarChart
               accessibilityLayer
               data={barChartData}
-              layout="vertical" // Use vertical layout for horizontal bars
-              margin={{ left: 10, right: 30 }}
+              margin={{ top: 20, right: 20, left: 20, bottom: 5 }}
             >
-              <YAxis
-                type="category"
+              <CartesianGrid vertical={false} />
+              <XAxis
                 dataKey="name"
                 stroke="hsl(var(--muted-foreground))"
                 fontSize={12}
@@ -102,8 +101,7 @@ export default function DashboardCharts({
                 axisLine={false}
                 interval={0}
               />
-              <XAxis
-                type="number"
+              <YAxis
                 stroke="hsl(var(--muted-foreground))"
                 fontSize={12}
                 tickLine={false}
@@ -130,7 +128,7 @@ export default function DashboardCharts({
                   accessibilityLayer
                   data={categoryChartData}
                   layout="vertical"
-                  margin={{ left: 20, right: 20 }}
+                  margin={{ left: 20, right: 40 }}
                 >
                   <YAxis
                     type="category"
