@@ -14,7 +14,6 @@ export function AppLogoIcon(props: SVGProps<SVGSVGElement>) {
       {...props}
     >
       <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z" />
-      <path d="M10.24 19.52c-1.29.28-2.5.0-3.52-.82-2.2-1.74-2.64-4.88-.9-7.08 1.74-2.2 4.88-2.64 7.08-.9 1.29.98 1.94 2.59 1.62 4.14" />
     </svg>
   );
 }
@@ -24,7 +23,7 @@ export function AppLogo(props: React.HTMLAttributes<HTMLSpanElement>) {
     <span {...props} className="flex items-center gap-2">
       <AppLogoIcon className="h-8 w-8 text-white" />
       <span className="whitespace-nowrap text-primary-foreground font-bold text-lg tracking-wide">
-        PERSONAL FINANCE
+        INFINITY CLOUD LABS
       </span>
     </span>
   );

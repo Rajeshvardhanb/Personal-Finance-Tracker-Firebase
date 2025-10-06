@@ -16,7 +16,7 @@ const fontSans = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'PERSONAL FINANCE TRACKER',
+  title: "Rajesh's Personal Finance Tracker",
   description: 'A personal finance dashboard to track your income, expenses, and net worth.',
 };
 

@@ -63,14 +63,16 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-40 flex h-14 items-center gap-0 border-b border-transparent bg-gradient-to-r from-indigo-700 via-purple-700 to-cyan-500 sm:h-[60px]">
-      <div className="flex w-full items-center justify-between px-4 sm:px-6">
+      <div className="flex w-full items-center justify-between px-4 sm:px-6 relative">
         <div className="flex items-center gap-4">
            <AppLogo />
         </div>
-        <div className="flex-1 text-center hidden sm:block">
-            <h1 className="text-xl font-semibold uppercase tracking-wider text-white/90">TRACKER</h1>
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:block">
+            <span className="whitespace-nowrap text-primary-foreground font-bold text-xl tracking-wider">
+                PERSONAL FINANCE TRACKER
+            </span>
         </div>
-        <div className="flex items-center justify-end gap-4 md:gap-2 lg:gap-4">
+        <div className="flex flex-1 items-center justify-end gap-4 md:gap-2 lg:gap-4">
             <div className="hidden sm:block">
               <MonthSelector />
             </div>
