@@ -92,7 +92,7 @@ export default function LoginPage() {
             </p>
         </div>
       </div>
-      <div className="flex w-full lg:w-1/2 items-center justify-center p-8 bg-grid-pattern bg-[#f0f2f5]">
+      <div className="flex w-full lg:w-1/2 items-center justify-center p-8 bg-grid-pattern">
         <div className="w-full max-w-sm space-y-6 bg-white p-10 rounded-2xl shadow-xl">
           <div className="text-center">
             <h1 className="text-3xl font-bold text-gray-900">Sign In</h1>
