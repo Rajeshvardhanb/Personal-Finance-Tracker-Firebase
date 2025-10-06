@@ -1,5 +1,6 @@
 
 
+
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback } from 'react';
@@ -117,10 +118,27 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     if (ref) deleteDocumentNonBlocking(doc(ref, id));
   };
   
-  const addExpense = (expense: Omit<Expense, 'id' | 'userId'>) => {
+  const addExpense = useCallback((expense: Omit<Expense, 'id' | 'userId'>) => {
+    if (!user || !creditCardsData) return;
     const ref = getCollectionRef('expenses');
-    if (ref) addDocumentNonBlocking(ref, expense);
-  };
+    if (!ref) return;
+
+    addDocumentNonBlocking(ref, expense);
+
+    const paidByPrefix = "Paid by ";
+    if (expense.status.startsWith(paidByPrefix)) {
+        const cardName = expense.status.substring(paidByPrefix.length);
+        const sourceCard = creditCardsData.find(c => c.name === cardName);
+        if (sourceCard) {
+            addCreditCardTransaction(sourceCard.id, {
+                description: expense.description,
+                amount: expense.amount,
+                date: expense.dueDate,
+            }, false); // Pass false to prevent recursion
+        }
+    }
+  }, [user, creditCardsData, firestore]);
+
   const updateExpense = (expense: Omit<Expense, 'userId'>) => {
     const ref = getCollectionRef('expenses');
     if (ref) updateDocumentNonBlocking(doc(ref, expense.id), expense);
@@ -171,13 +189,30 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     if (ref) deleteDocumentNonBlocking(doc(ref, id));
   };
 
-  const addMasterExpenseTransaction = (masterExpenseId: string, transaction: Omit<MasterExpenseTransaction, 'id'>) => {
-    if (!user) return;
-    const masterExpense = data.masterExpenses.find(me => me.id === masterExpenseId);
+  const addMasterExpenseTransaction = useCallback((masterExpenseId: string, transaction: Omit<MasterExpenseTransaction, 'id'>) => {
+    if (!user || !masterExpensesData || !creditCardsData) return;
+    const masterExpense = masterExpensesData.find(me => me.id === masterExpenseId);
     if (!masterExpense) return;
-    const updatedTransactions = [...masterExpense.transactions, { ...transaction, id: crypto.randomUUID() }];
+
+    const newTransaction = { ...transaction, id: crypto.randomUUID() };
+    const updatedTransactions = [...masterExpense.transactions, newTransaction];
     updateMasterExpense({ ...masterExpense, transactions: updatedTransactions });
-  };
+
+    const paidByPrefix = "Paid by ";
+    if (transaction.status.startsWith(paidByPrefix)) {
+        const cardName = transaction.status.substring(paidByPrefix.length);
+        const sourceCard = creditCardsData.find(c => c.name === cardName);
+        if (sourceCard) {
+            addCreditCardTransaction(sourceCard.id, {
+                description: transaction.description,
+                amount: transaction.amount,
+                date: transaction.date,
+                masterExpenseId: masterExpenseId,
+            }, true);
+        }
+    }
+  }, [user, masterExpensesData, creditCardsData, firestore]);
+
   const updateMasterExpenseTransaction = (masterExpenseId: string, transaction: MasterExpenseTransaction) => {
     if (!user) return;
     const masterExpense = data.masterExpenses.find(me => me.id === masterExpenseId);
@@ -207,39 +242,29 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     if (ref) deleteDocumentNonBlocking(doc(ref, id));
   };
   
-  const addCreditCardTransaction = (cardId: string, transaction: Omit<CreditCardTransaction, 'id'> & { masterExpenseId?: string }) => {
-    if (!user) return;
-    const card = data.creditCards.find(c => c.id === cardId);
+  const addCreditCardTransaction = useCallback((cardId: string, transaction: Omit<CreditCardTransaction, 'id'> & { masterExpenseId?: string }, syncToExpenses: boolean = true) => {
+    if (!user || !creditCardsData) return;
+    const card = creditCardsData.find(c => c.id === cardId);
     if (!card) return;
 
     const newTransaction: CreditCardTransaction = { ...transaction, id: crypto.randomUUID() };
     
-    // Add to credit card transactions
     const updatedCardTransactions = [...card.transactions, newTransaction];
     updateCreditCard({ ...card, transactions: updatedCardTransactions });
 
-    // Add to main expenses list
-    const expenseStatus: ExpenseStatus = `Paid by ${card.name}`;
-    addExpense({
-      category: 'Credit Card',
-      description: newTransaction.description,
-      amount: newTransaction.amount,
-      dueDate: newTransaction.date,
-      status: expenseStatus,
-      isRecurring: false,
-    });
-
-    // If linked to a master expense, add it there too
-    if (transaction.masterExpenseId) {
-      addMasterExpenseTransaction(transaction.masterExpenseId, {
-        description: transaction.description,
-        amount: transaction.amount,
-        date: transaction.date,
-        status: 'Paid',
-        paidViaCard: card.name,
-      })
+    if (syncToExpenses) {
+      const expenseStatus: ExpenseStatus = `Paid by ${card.name}`;
+      addExpense({
+        category: 'Credit Card Payment',
+        description: newTransaction.description,
+        amount: newTransaction.amount,
+        dueDate: newTransaction.date,
+        status: expenseStatus,
+        isRecurring: false,
+      });
     }
-  };
+  }, [user, creditCardsData, addExpense]);
+
   const updateCreditCardTransaction = (cardId: string, transaction: CreditCardTransaction) => {
     if (!user) return;
     const card = data.creditCards.find(c => c.id === cardId);
@@ -247,9 +272,10 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     const updatedTransactions = card.transactions.map(t => t.id === transaction.id ? transaction : t);
     updateCreditCard({ ...card, transactions: updatedTransactions });
   };
+  
   const deleteCreditCardTransaction = (cardId: string, transactionId: string) => {
-    if (!user || !expensesData) return;
-    const card = data.creditCards.find(c => c.id === cardId);
+    if (!user || !expensesData || !creditCardsData) return;
+    const card = creditCardsData.find(c => c.id === cardId);
     if (!card) return;
     const transactionToDelete = card.transactions.find(t => t.id === transactionId);
     
@@ -411,7 +437,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     addLiability, updateLiability, deleteLiability,
     snapshotNetWorth,
     getFinancialDataForPastMonths,
-  }), [data, selectedDate, snapshotNetWorth, deleteMasterExpense, addCreditCardTransaction, deleteExpense, user, expensesData, firestore]);
+  }), [data, selectedDate, snapshotNetWorth, deleteMasterExpense, addCreditCardTransaction, deleteExpense, user, expensesData, firestore, addExpense, addMasterExpenseTransaction, deleteCreditCardTransaction]);
 
   return (
     <FinanceContext.Provider value={value}>

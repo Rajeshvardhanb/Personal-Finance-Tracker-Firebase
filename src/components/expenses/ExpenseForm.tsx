@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,6 +17,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ExpenseSchema, type ExpenseFormValues } from "@/lib/schemas";
 import { ExpenseCategories, type Expense } from "@/lib/types";
 import { useEffect } from "react";
+import { useFinances } from "@/hooks/use-finances";
 
 type ExpenseFormProps = {
   isOpen: boolean;
@@ -27,6 +29,7 @@ type ExpenseFormProps = {
 
 export default function ExpenseForm({ isOpen, onClose, expense, addExpense, updateExpense }: ExpenseFormProps) {
   const isEditing = !!expense;
+  const { data: financeData } = useFinances();
 
   const form = useForm<ExpenseFormValues>({
     resolver: zodResolver(ExpenseSchema),
@@ -186,6 +189,11 @@ export default function ExpenseForm({ isOpen, onClose, expense, addExpense, upda
                         <SelectContent>
                             <SelectItem value="Paid">Paid</SelectItem>
                             <SelectItem value="Not Paid">Not Paid</SelectItem>
+                             {financeData.creditCards.map(card => (
+                                <SelectItem key={card.id} value={`Paid by ${card.name}`}>
+                                    Paid by {card.name}
+                                </SelectItem>
+                            ))}
                         </SelectContent>
                     </Select>
                     <FormMessage />

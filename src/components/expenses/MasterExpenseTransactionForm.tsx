@@ -16,6 +16,7 @@ import { MasterExpenseTransactionSchema, type MasterExpenseTransactionFormValues
 import type { MasterExpenseTransaction } from "@/lib/types";
 import { useEffect } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useFinances } from "@/hooks/use-finances";
 
 type MasterExpenseTransactionFormProps = {
   isOpen: boolean;
@@ -28,6 +29,7 @@ type MasterExpenseTransactionFormProps = {
 
 export default function MasterExpenseTransactionForm({ isOpen, onClose, transaction, masterExpenseId, addTransaction, updateTransaction }: MasterExpenseTransactionFormProps) {
   const isEditing = !!transaction;
+  const { data: financeData } = useFinances();
 
   const form = useForm<MasterExpenseTransactionFormValues>({
     resolver: zodResolver(MasterExpenseTransactionSchema),
@@ -161,6 +163,11 @@ export default function MasterExpenseTransactionForm({ isOpen, onClose, transact
                         <SelectContent>
                             <SelectItem value="Paid">Paid</SelectItem>
                             <SelectItem value="Not Paid">Not Paid</SelectItem>
+                             {financeData.creditCards.map(card => (
+                                <SelectItem key={card.id} value={`Paid by ${card.name}`}>
+                                    Paid by {card.name}
+                                </SelectItem>
+                            ))}
                         </SelectContent>
                     </Select>
                     <FormMessage />
