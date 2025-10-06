@@ -31,15 +31,15 @@ export default function LoginPage() {
 
   return (
     <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2 xl:min-h-screen">
-      <div className="hidden bg-muted lg:flex lg:flex-col lg:items-start lg:justify-between p-8 bg-gradient-to-br from-indigo-600 via-purple-600 to-cyan-500 text-white">
+      <div className="hidden bg-muted lg:flex lg:flex-col lg:items-start lg:justify-between p-8 bg-gradient-to-br from-purple-600 via-indigo-600 to-cyan-500 text-white">
         <AppLogo />
         <div className="space-y-4">
             <h1 className="text-5xl font-bold">Welcome to Your Financial Hub</h1>
             <p className="text-lg text-white/80">
-                Track, manage, and forecast your finances with precision and ease.
+                Track, manage, and forecast your finances with precision and ease, an app by Rajesh.
             </p>
         </div>
-        <div className="w-8 h-8 rounded-full bg-black flex items-center justify-center font-bold text-white text-sm">N</div>
+        <div className="w-8 h-8 rounded-full bg-black flex items-center justify-center font-bold text-white text-sm">R</div>
       </div>
       <div className="flex items-center justify-center py-12">
         <div className="mx-auto grid w-[350px] gap-6">
