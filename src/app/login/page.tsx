@@ -68,35 +68,25 @@ export default function LoginPage() {
                 className="mb-8"
             />
 
-            <div className="w-full my-4">
-                 <svg viewBox="0 0 800 100" preserveAspectRatio="none" className="w-full h-auto">
+            <div className="w-full my-8 h-24">
+                 <svg viewBox="0 0 800 120" preserveAspectRatio="xMidYMid meet" className="w-full h-full">
                     <defs>
                       <linearGradient id="waveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" style={{stopColor: 'rgba(99, 102, 241, 0.5)'}} />
-                        <stop offset="100%" style={{stopColor: 'rgba(56, 189, 248, 0.5)'}} />
+                        <stop offset="0%" style={{stopColor: 'rgba(99, 102, 241, 0.6)'}} />
+                        <stop offset="100%" style={{stopColor: 'rgba(56, 189, 248, 0.6)'}} />
                       </linearGradient>
                     </defs>
                     
-                    {Array.from({ length: 10 }).map((_, i) => (
-                        <path 
-                            key={`wave1-${i}`}
-                            d={`M0,${50 + i*2} C150,${100 + i*2} 350,${0 + i*2} 500,${50 + i*2} C650,${100 + i*2} 850,${0 + i*2} 1000,${50 + i*2}`} 
-                            fill="none" 
-                            stroke="url(#waveGradient)" 
-                            strokeWidth="0.5"
-                            style={{transform: `translateX(${-i * 10}px)`, opacity: 1 - i*0.05}}
-                        />
-                    ))}
-                    {Array.from({ length: 8 }).map((_, i) => (
-                        <path 
-                            key={`wave2-${i}`}
-                            d={`M-100,${55 - i*1.5} C100,${-10 - i*1.5} 300,${110 - i*1.5} 450,${55 - i*1.5} C600,${0 - i*1.5} 750,${110 - i*1.5} 900,${55 - i*1.5}`} 
-                            fill="none" 
-                            stroke="url(#waveGradient)"
-                            strokeWidth="0.5"
-                            style={{opacity: 0.5 - i*0.04}}
-                        />
-                    ))}
+                    <path d="M0 60 Q 200 120, 400 60 T 800 60" fill="none" stroke="url(#waveGradient)" strokeWidth="0.5" opacity="0.3"/>
+                    <path d="M0 65 Q 200 10, 400 65 T 800 65" fill="none" stroke="url(#waveGradient)" strokeWidth="0.5" opacity="0.4"/>
+                    <path d="M0 70 Q 200 130, 400 70 T 800 70" fill="none" stroke="url(#waveGradient)" strokeWidth="0.5" opacity="0.2"/>
+                    <path d="M0 75 Q 200 20, 400 75 T 800 75" fill="none" stroke="url(#waveGradient)" strokeWidth="0.5" opacity="0.5"/>
+                    <path d="M0 80 Q 200 140, 400 80 T 800 80" fill="none" stroke="url(#waveGradient)" strokeWidth="0.5" opacity="0.1"/>
+                    <path d="M0 55 Q 200 0, 400 55 T 800 55" fill="none" stroke="url(#waveGradient)" strokeWidth="0.5" opacity="0.6"/>
+                    <path d="M0 50 Q 200 110, 400 50 T 800 50" fill="none" stroke="url(#waveGradient)" strokeWidth="0.5" opacity="0.3"/>
+                    <path d="M0 45 Q 200 5, 400 45 T 800 45" fill="none" stroke="url(#waveGradient)" strokeWidth="0.5" opacity="0.7"/>
+                    <path d="M0 40 Q 200 100, 400 40 T 800 40" fill="none" stroke="url(#waveGradient)" strokeWidth="0.5" opacity="0.4"/>
+                    <path d="M0 35 Q 200 -10, 400 35 T 800 35" fill="none" stroke="url(#waveGradient)" strokeWidth="0.5" opacity="0.5"/>
                 </svg>
             </div>
 
@@ -117,7 +107,7 @@ export default function LoginPage() {
             </p>
         </div>
       </div>
-      <div className="flex w-full lg:w-1/2 items-center justify-center p-8 bg-grid-pattern bg-background">
+      <div className="flex w-full lg:w-1/2 items-center justify-center p-8 bg-background bg-grid-pattern">
         <div className="w-full max-w-sm space-y-6 bg-white p-10 rounded-2xl shadow-xl">
           <div className="text-center">
             <h1 className="text-3xl font-bold text-gray-900">Sign In</h1>
@@ -174,5 +164,3 @@ export default function LoginPage() {
     </main>
   );
 }
-
-    
