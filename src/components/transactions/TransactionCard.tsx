@@ -22,9 +22,6 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
 
   const getTitle = () => {
     if ('source' in transaction) return transaction.source; // Income
-    if ('description' in transaction && transaction.description.includes(':')) {
-        return transaction.description.split(':')[0].trim();
-    }
     return transaction.description; // Expense, CreditCard, MasterExpense
   }
 
@@ -40,14 +37,8 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
   }
   
   const getSubtext = () => {
-    if ('description' in transaction && transaction.description.includes(':')) {
-        return transaction.description.split(':')[1].trim();
-    }
-    if ('category' in transaction) return transaction.category; // Expense
-    if (type === 'income') return format(new Date(getDate()), 'dd MMM yyyy');
-    if (type === 'credit-card') return format(new Date(getDate()), 'dd MMM yyyy');
-    if (type === 'master-expense') return format(new Date(getDate()), 'dd MMM yyyy');
-    return null;
+    if ('category' in transaction && transaction.category) return transaction.category; // Expense
+    return format(new Date(getDate()), 'dd MMM yyyy');
   }
 
   const getStatus = () => {
@@ -74,7 +65,7 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
         {/* Main Info */}
         <div className="md:col-span-1">
           <p className="font-semibold">{getTitle()}</p>
-          {getSubtext() && <p className="text-sm text-muted-foreground">{getSubtext()}</p>}
+          <p className="text-sm text-muted-foreground">{getSubtext()}</p>
         </div>
 
         {/* Date and Status */}

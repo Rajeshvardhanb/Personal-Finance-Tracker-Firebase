@@ -336,7 +336,6 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
         const month = getMonth(selectedDate);
         const year = getYear(selectedDate);
 
-        // A set to keep track of expense IDs that are generated from master expense transactions this run.
         const generatedExpenseIds = new Set<string>();
 
         masterExpensesData.forEach(me => {
@@ -354,7 +353,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
                     batch.set(expDocRef, {
                         id: expId,
                         masterExpenseId: me.id,
-                        description,
+                        description: description,
                         amount: t.amount,
                         category: 'Master Expense',
                         dueDate: t.date,
@@ -363,8 +362,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
                     });
                 });
         });
-
-        // Clean up old expenses that were derived from master expenses but are no longer relevant for the current month.
+        
         if (expensesData) {
             expensesData.forEach(exp => {
                 if (exp.masterExpenseId && !generatedExpenseIds.has(exp.id)) {
@@ -381,10 +379,9 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
         try {
             await batch.commit();
         } catch (e) {
-            if (e instanceof Error && e.message.includes('firestore/permission-denied')) {
-                // This can happen in a loop scenario. Silently fail to prevent console spam.
-            } else {
-                console.error("Batch update for master expenses failed", e);
+            // Silently fail on permission denied to avoid console spam during loops
+            if (!(e instanceof Error && e.message.includes('firestore/permission-denied'))) {
+               console.error("Batch update for master expenses failed", e);
             }
         }
     };
@@ -395,51 +392,60 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
 
   // Effect for Credit Card Expenses
   useEffect(() => {
-    // This effect is currently disabled to prevent loops.
-    // It will be re-enabled with a stable fix.
-    /*
-    if (!user || !firestore || !creditCards) return;
+    if (!user || !firestore || !creditCardsData) return;
 
     const syncCreditCardExpenses = async () => {
-      const batch = writeBatch(firestore);
-      const month = getMonth(selectedDate);
-      const year = getYear(selectedDate);
-      
-      creditCards.forEach(card => {
-        card.transactions
-          .filter(t => getMonth(new Date(t.date)) === month && getYear(new Date(t.date)) === year)
-          .forEach(t => {
-            // Only sync if it's not part of a master expense
-            if (!t.masterExpenseId) {
-              const expId = `exp-from-${t.id}`;
-              const expDocRef = doc(firestore, 'users', user.uid, 'expenses', expId);
-              batch.set(expDocRef, {
-                id: expId,
-                description: `${t.description}`,
-                amount: t.amount,
-                category: 'Credit Card',
-                dueDate: t.date,
-                status: `Paid by Credit Card`,
-                isRecurring: false,
-              }, { merge: true });
-            }
-          });
-      });
+        const batch = writeBatch(firestore);
+        const month = getMonth(selectedDate);
+        const year = getYear(selectedDate);
+        const generatedExpenseIds = new Set<string>();
+
+        creditCardsData.forEach(card => {
+            card.transactions
+                .filter(t => getMonth(new Date(t.date)) === month && getYear(new Date(t.date)) === year)
+                .forEach(t => {
+                    if (!t.masterExpenseId) { // Only process if not part of a master expense
+                        const expId = `exp-from-cc-${t.id}`;
+                        generatedExpenseIds.add(expId);
+                        const expDocRef = doc(firestore, 'users', user.uid, 'expenses', expId);
+                        batch.set(expDocRef, {
+                            id: expId,
+                            description: t.description,
+                            amount: t.amount,
+                            category: "Credit Card",
+                            dueDate: t.date,
+                            status: `Paid by Credit Card`,
+                            isRecurring: false,
+                        });
+                    }
+                });
+        });
+
+        if (expensesData) {
+            expensesData.forEach(exp => {
+                const isCreditCardExpense = exp.status === 'Paid by Credit Card' || exp.id.startsWith('exp-from-cc-');
+                if (isCreditCardExpense && !generatedExpenseIds.has(exp.id)) {
+                    const expMonth = getMonth(new Date(exp.dueDate));
+                    const expYear = getYear(new Date(exp.dueDate));
+                    if (expMonth === month && expYear === year) {
+                        const oldExpDocRef = doc(firestore, 'users', user.uid, 'expenses', exp.id);
+                        batch.delete(oldExpDocRef);
+                    }
+                }
+            });
+        }
       
       try {
         await batch.commit();
       } catch (e) {
-         if (e instanceof Error && e.message.includes('firestore/permission-denied')) {
-          console.error("Permission denied during credit card expense sync.");
-        } else {
+         if (!(e instanceof Error && e.message.includes('firestore/permission-denied'))) {
           console.error("Batch update for credit card expenses failed", e);
         }
       }
     };
 
     syncCreditCardExpenses();
-    */
-  }, [creditCards, selectedDate, user, firestore]);
+  }, [creditCardsData, selectedDate, user, firestore]);
 
   const value = useMemo(() => ({
     data,
