@@ -51,8 +51,12 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
 
   const isPaidByCreditCard = typeof status === 'string' && status.toLowerCase().startsWith('paid by');
   const isMasterExpenseSummary = type === 'expense' && 'masterExpenseId' in transaction && transaction.masterExpenseId ? true : false;
-  const showActions = !isMasterExpenseSummary;
-  const isToggleable = onToggleStatus && type === 'expense' && !isMasterExpenseSummary && !isPaidByCreditCard;
+  
+  const canBeEdited = !isMasterExpenseSummary;
+  const canBeDeleted = !isMasterExpenseSummary;
+
+  // An expense can be toggled if onToggleStatus is provided and it's not a managed master expense entry
+  const isToggleable = !!onToggleStatus && type !== 'credit-card' && !isMasterExpenseSummary;
 
   return (
     <div className={cn(
@@ -91,7 +95,7 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
              {type === 'income' && status && (
                 <Badge 
                     variant={status === 'Credited' ? 'default' : 'destructive'}
-                    className={cn(onToggleStatus && 'cursor-pointer')}
+                    className={cn(isToggleable && 'cursor-pointer')}
                     onClick={onToggleStatus}
                 >
                     {status}
@@ -100,7 +104,7 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
              {type === 'master-expense' && status && (
                  <Badge 
                     variant={(status === 'Paid' || isPaidByCreditCard) ? 'default' : 'destructive'}
-                    className={cn(onToggleStatus && 'cursor-pointer')}
+                    className={cn(isToggleable && 'cursor-pointer')}
                     onClick={onToggleStatus}
                 >
                     {status}
@@ -116,19 +120,19 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
       
       {/* Actions */}
       <div className="ml-4 flex items-center">
-        {showActions ? (
+        {!isMasterExpenseSummary ? (
             <>
-            <Button variant="ghost" size="icon" onClick={onEdit} className="h-8 w-8">
+            <Button variant="ghost" size="icon" onClick={onEdit} className="h-8 w-8" disabled={!canBeEdited}>
                 <Pencil className="h-4 w-4" />
                 <span className="sr-only">Edit</span>
             </Button>
-            <Button variant="ghost" size="icon" onClick={onDelete} className="h-8 w-8 text-destructive hover:text-destructive">
+            <Button variant="ghost" size="icon" onClick={onDelete} className="h-8 w-8 text-destructive hover:text-destructive" disabled={!canBeDeleted}>
                 <Trash2 className="h-4 w-4" />
                 <span className="sr-only">Delete</span>
             </Button>
             </>
         ) : (
-             <div className="w-16 text-center">
+             <div className="w-20 text-center">
                 <Badge variant="outline">Managed</Badge>
              </div>
         )}
