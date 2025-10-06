@@ -309,21 +309,23 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     } else if (existingEntry.value !== currentNetWorth) {
         updateDocumentNonBlocking(doc(ref, existingEntry.id), { value: currentNetWorth });
     }
-}, [user, firestore, assets, liabilities, netWorthHistory]);
+  }, [user, firestore, assets, liabilities, netWorthHistory]);
 
-useEffect(() => {
+  useEffect(() => {
     snapshotNetWorth();
-}, [assets, liabilities, snapshotNetWorth]);
+  }, [assets, liabilities, snapshotNetWorth]);
 
 
-  const updateTotalFromMasterExpense = useCallback(() => {
+  // Effect to sync master expense totals to the main expenses list
+  useEffect(() => {
     if (!user || !masterExpenses) return;
-    const expenses = data.expenses || [];
+
+    const currentExpenses = expenses || [];
     const batch = writeBatch(firestore);
     const month = getMonth(selectedDate);
     const year = getYear(selectedDate);
 
-    const existingSummaries = expenses.filter(e => e.masterExpenseId);
+    const existingSummaries = currentExpenses.filter(e => e.masterExpenseId);
     const summaryMap = new Map(existingSummaries.map(e => [e.id, e]));
 
     masterExpenses.forEach(me => {
@@ -358,20 +360,22 @@ useEffect(() => {
     });
 
     batch.commit().catch(e => console.error("Batch update for master expenses failed", e));
-  }, [selectedDate, user, firestore, masterExpenses, data.expenses]);
+  }, [user, firestore, masterExpenses, selectedDate, expenses]);
 
-  const syncCreditCardExpenses = useCallback(() => {
+  // Effect to sync credit card transactions to the main expenses list
+  useEffect(() => {
     if (!user || !creditCards) return;
-    const expenses = data.expenses || [];
+
+    const currentExpenses = expenses || [];
 
     const allCreditCardTransactions = creditCards.flatMap(card => 
       card.transactions.map(t => ({...t, cardName: card.name}))
     );
     
-    // Ignore transactions that are part of a master expense
+    // Ignore transactions that are part of a master expense to avoid conflicts
     const transactionsToSync = allCreditCardTransactions.filter(t => !t.masterExpenseId);
     
-    const existingCCExpenses = expenses.filter(e => e.paidViaCard);
+    const existingCCExpenses = currentExpenses.filter(e => e.paidViaCard);
 
     const batch = writeBatch(firestore);
     const expensesRef = collection(firestore, 'users', user.uid, 'expenses');
@@ -385,7 +389,7 @@ useEffect(() => {
             description: transaction.description,
             amount: transaction.amount,
             dueDate: transaction.date,
-            status: 'Paid by Credit Card', // New status
+            status: 'Paid by Credit Card',
             isRecurring: false,
             category: 'Credit Card',
             paidViaCard: transaction.cardName,
@@ -403,23 +407,7 @@ useEffect(() => {
     }
 
     batch.commit().catch(e => console.error("Batch update for credit card expenses failed", e));
-  }, [user, firestore, creditCards, data.expenses]);
-
-  useEffect(() => {
-    if (!user) return;
-    
-    const runUpdates = () => {
-      if(masterExpenses) {
-        updateTotalFromMasterExpense();
-      }
-      if(creditCards) {
-        syncCreditCardExpenses();
-      }
-    }
-    
-    runUpdates();
-
-  }, [user, masterExpenses, creditCards, selectedDate, updateTotalFromMasterExpense, syncCreditCardExpenses]);
+  }, [user, firestore, creditCards, expenses]);
 
 
   const getFinancialDataForPastMonths = (numberOfMonths: number) => {
@@ -434,11 +422,11 @@ useEffect(() => {
             .reduce((acc, d) => acc + d.creditedAmount, 0);
 
         const expenses = data.expenses
-            .filter(d => getMonth(new Date(d.dueDate)) === month && getYear(new Date(d.dueDate)) === year && (d.status === 'Paid' || d.status === 'Paid by Credit Card'))
+            .filter(d => getMonth(new Date(d.dueDate)) === month && getYear(new Date(d.dueDate)) === year && d.status !== 'Paid by Credit Card')
             .reduce((acc, d) => acc + d.amount, 0);
         
         const paidExpensesByCategory = data.expenses
-            .filter(d => getMonth(new Date(d.dueDate)) === month && getYear(new Date(d.dueDate)) === year && (d.status === 'Paid' || d.status === 'Paid by Credit Card'))
+            .filter(d => getMonth(new Date(d.dueDate)) === month && getYear(new Date(d.dueDate)) === year && d.status !== 'Paid by Credit Card')
             .reduce((acc, d) => {
               acc[d.category] = (acc[d.category] || 0) + d.amount;
               return acc;
@@ -481,7 +469,7 @@ useEffect(() => {
     snapshotNetWorth,
     getFinancialDataForPastMonths,
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }), [data, selectedDate]);
+  }), [data, selectedDate, snapshotNetWorth]);
 
   return (
     <FinanceContext.Provider value={value}>
