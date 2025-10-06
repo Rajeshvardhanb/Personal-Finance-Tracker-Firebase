@@ -1,7 +1,7 @@
 
 "use client";
 
-import { Bar, BarChart, XAxis, YAxis, CartesianGrid, Cell, ResponsiveContainer, LabelList } from "recharts";
+import { Bar, BarChart, XAxis, YAxis, CartesianGrid, Cell, ResponsiveContainer } from "recharts";
 import {
   Card,
   CardContent,
@@ -84,20 +84,18 @@ export default function DashboardCharts({
             <BarChart
               accessibilityLayer
               data={barChartData}
-              layout="vertical"
               margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
             >
-              <CartesianGrid horizontal={false} />
-              <YAxis
+              <CartesianGrid vertical={false} />
+              <XAxis
                 dataKey="name"
-                type="category"
                 stroke="hsl(var(--muted-foreground))"
                 fontSize={12}
                 tickLine={false}
                 axisLine={false}
                 interval={0}
               />
-              <XAxis
+              <YAxis
                 type="number"
                 stroke="hsl(var(--muted-foreground))"
                 fontSize={12}
@@ -110,13 +108,6 @@ export default function DashboardCharts({
                 content={<ChartTooltipContent hideLabel formatter={(value) => formatCurrency(Number(value))}/>}
               />
               <Bar dataKey="value" radius={5}>
-                <LabelList 
-                  dataKey="value" 
-                  position="insideTop" 
-                  offset={8}
-                  formatter={(value: number) => formatCurrency(value)} 
-                  className="fill-primary-foreground font-medium text-xs"
-                />
                  {barChartData.map((entry) => (
                   <Cell key={`cell-${entry.name}`} fill={entry.fill} />
                 ))}
@@ -133,8 +124,9 @@ export default function DashboardCharts({
                       accessibilityLayer
                       data={categoryChartData}
                       layout="vertical"
-                      margin={{ left: 20, right: 50 }}
+                      margin={{ left: 20, right: 20 }}
                     >
+                      <CartesianGrid horizontal={false} />
                       <YAxis
                         type="category"
                         dataKey="name"
@@ -155,13 +147,6 @@ export default function DashboardCharts({
                         />}
                       />
                       <Bar dataKey="amount" layout="vertical" radius={5}>
-                        <LabelList 
-                            dataKey="amount" 
-                            position="insideRight" 
-                            offset={8}
-                            formatter={(value: number) => formatCurrency(value)} 
-                            className="fill-primary-foreground font-medium text-xs"
-                        />
                         {categoryChartData.map((entry) => (
                           <Cell key={`cell-${entry.name}`} fill={entry.fill} />
                         ))}
