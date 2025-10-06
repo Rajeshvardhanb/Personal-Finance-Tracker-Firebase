@@ -10,9 +10,8 @@ import SavingsForecast from "./SavingsForecast";
 import CreditCardSummary from "./CreditCardSummary";
 import PageHeader from "../PageHeader";
 import { useAuth } from "@/hooks/use-auth";
-import { Card, CardContent } from "@/components/ui/card";
-import dynamic from "next/dynamic";
 import { Skeleton } from "../ui/skeleton";
+import dynamic from "next/dynamic";
 
 const DashboardCharts = dynamic(() => import("./DashboardCharts"), {
   ssr: false,
@@ -70,25 +69,26 @@ export default function DashboardClient() {
         unpaidExpenses={unpaidExpenses}
       />
 
-      <div className="grid gap-6 lg:grid-cols-5">
-        <div className="lg:col-span-5 grid gap-6">
+      <div className="grid gap-6 lg:grid-cols-2">
+        <CreditCardSummary creditCards={data.creditCards} selectedDate={selectedDate} />
+        <NotesWidget />
+      </div>
+
+      <div className="grid gap-6">
           <DashboardCharts 
             income={totalIncome} 
             expenses={totalExpenses} 
             creditCardSpending={monthlyCardSpending} 
             expenseData={monthlyExpenses}
           />
-        </div>
       </div>
 
        <div className="grid gap-6 lg:grid-cols-5">
         <div className="lg:col-span-3 grid gap-6">
            <RecentExpenses expenses={monthlyExpenses} />
-           <CreditCardSummary creditCards={data.creditCards} selectedDate={selectedDate} />
         </div>
         <div className="lg:col-span-2 grid gap-6 auto-rows-min">
             <SavingsForecast />
-           <NotesWidget />
         </div>
       </div>
     </div>
