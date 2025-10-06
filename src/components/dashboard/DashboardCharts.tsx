@@ -139,10 +139,10 @@ export default function DashboardCharts({
             </BarChart>
           </ChartContainer>
         </div>
-        <div className="h-[400px] flex flex-col sm:col-span-2">
+        <div className="flex flex-col sm:col-span-2">
            <h4 className="text-sm font-medium text-center mb-4">Expense Breakdown</h4>
            <div className="flex-1 relative">
-            <ScrollArea className="absolute inset-0">
+            <ScrollArea className="h-[350px] w-full">
                 <div style={{height: `${categoryBarChartHeight}px`, minWidth: '600px'}}>
                     <ChartContainer config={expenseChartConfig} className="w-full h-full">
                     <BarChart
