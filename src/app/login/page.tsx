@@ -5,7 +5,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -31,57 +30,65 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="relative min-h-screen w-full flex flex-col items-center justify-center p-4 bg-gradient-to-br from-indigo-900 via-purple-900 to-cyan-900 overflow-hidden">
-        <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
-        <div className="z-10 flex flex-col items-center gap-8">
-            <AppLogo />
-            <Card className="w-full max-w-sm bg-white/10 backdrop-blur-lg border-white/20 text-white shadow-2xl">
-                <CardHeader className="text-center">
-                    <CardTitle className="text-3xl font-bold text-white">Welcome Back</CardTitle>
-                    <CardDescription className="text-white/80">
-                        Enter your credentials to access your dashboard.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <form onSubmit={handleLogin} className="grid gap-4">
-                        {error && (
-                        <Alert variant="destructive" className="bg-red-500/80 border-red-400/80 text-white">
-                            <AlertTitle>Login Failed</AlertTitle>
-                            <AlertDescription>{error}</AlertDescription>
-                        </Alert>
-                        )}
-                    <div className="grid gap-2">
-                        <Label htmlFor="email" >Email</Label>
-                        <Input
-                        id="email"
-                        type="email"
-                        placeholder="e.g., rajesh@example.com"
-                        required
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="bg-white/10 border-white/20 placeholder:text-white/50 focus:bg-white/20"
-                        />
-                    </div>
-                    <div className="grid gap-2">
-                        <Label htmlFor="password">Password</Label>
-                        <Input 
-                            id="password" 
-                            type="password" 
-                            required 
-                            placeholder="e.g., password123"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="bg-white/10 border-white/20 placeholder:text-white/50 focus:bg-white/20"
-                        />
-                    </div>
-                    <Button type="submit" className="w-full mt-2 bg-cyan-500 hover:bg-cyan-600 text-black font-bold" disabled={isAuthenticating}>
-                        {isAuthenticating && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
-                        Sign In
-                    </Button>
-                    </form>
-                </CardContent>
-            </Card>
+    <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2 xl:min-h-screen">
+      <div className="hidden bg-muted lg:flex lg:flex-col lg:items-start lg:justify-between p-8 bg-gradient-to-br from-indigo-600 via-purple-600 to-cyan-500 text-white">
+        <AppLogo />
+        <div className="space-y-4">
+            <h1 className="text-5xl font-bold">Welcome to Your Financial Hub</h1>
+            <p className="text-lg text-white/80">
+                Track, manage, and forecast your finances with precision and ease.
+            </p>
         </div>
+        <div className="w-8 h-8 rounded-full bg-black flex items-center justify-center font-bold text-white text-sm">N</div>
+      </div>
+      <div className="flex items-center justify-center py-12">
+        <div className="mx-auto grid w-[350px] gap-6">
+          <div className="grid gap-2 text-center">
+            <h1 className="text-3xl font-bold">Login</h1>
+            <p className="text-balance text-muted-foreground">
+              Enter your credentials to access your dashboard.
+            </p>
+          </div>
+          <form onSubmit={handleLogin} className="grid gap-4">
+            {error && (
+                <Alert variant="destructive" className="bg-red-500/20 border-red-500/40 text-red-700">
+                    <AlertTitle>Login Failed</AlertTitle>
+                    <AlertDescription>{error}</AlertDescription>
+                </Alert>
+            )}
+            <div className="grid gap-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="rajesh@example.com"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div className="grid gap-2">
+              <div className="flex items-center">
+                <Label htmlFor="password">Password</Label>
+              </div>
+              <Input 
+                id="password" 
+                type="password" 
+                required 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <Button type="submit" className="w-full" disabled={isAuthenticating}>
+              {isAuthenticating && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
+              Login
+            </Button>
+          </form>
+           <p className="mt-4 text-center text-sm text-muted-foreground">
+            This application is proudly developed and maintained by Rajesh B.
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
