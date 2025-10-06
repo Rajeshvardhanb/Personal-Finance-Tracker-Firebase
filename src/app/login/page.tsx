@@ -45,8 +45,8 @@ export default function LoginPage() {
       <div className="flex items-center justify-center py-12">
         <div className="mx-auto grid w-[350px] gap-6">
           <div className="grid gap-2 text-center">
-            <div className="flex justify-center">
-              <Image src="/Infinity Cloud Labs PNG.png" alt="Infinity Cloud Labs Logo" width="100" height="100" className="rounded-full" />
+            <div className="flex justify-center mb-4">
+              <Image src="/Infinity Cloud Labs PNG.png" alt="Infinity Cloud Labs Logo" width="120" height="120" className="rounded-full" />
             </div>
             <h1 className="text-3xl font-bold">Login</h1>
             <p className="text-balance text-muted-foreground">
