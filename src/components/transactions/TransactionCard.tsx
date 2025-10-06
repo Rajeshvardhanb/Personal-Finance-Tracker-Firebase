@@ -21,6 +21,9 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
 
   const getTitle = () => {
     if ('source' in transaction) return transaction.source; // Income
+    if ('description' in transaction && transaction.description.includes(':')) {
+        return transaction.description.split(':')[0].trim();
+    }
     return transaction.description; // Expense, CreditCard, MasterExpense
   }
 
@@ -36,6 +39,9 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
   }
   
   const getSubtext = () => {
+    if ('description' in transaction && transaction.description.includes(':')) {
+        return transaction.description.split(':')[1].trim();
+    }
     if ('category' in transaction) return transaction.category; // Expense
     if (type === 'income') return format(new Date(getDate()), 'dd MMM yyyy');
     if (type === 'credit-card') return format(new Date(getDate()), 'dd MMM yyyy');
@@ -50,12 +56,15 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
   
   const status = getStatus();
 
+  const isPaidByCreditCard = status?.startsWith('Paid by');
+
   return (
     <div className={cn(
       "flex items-center p-4 rounded-lg bg-card border-l-4",
       status === 'Credited' && 'border-green-500',
       status === 'Not Credited' && 'border-amber-500',
       status === 'Paid' && 'border-green-500',
+      isPaidByCreditCard && 'border-green-500',
       status === 'Not Paid' && 'border-amber-500',
       type === 'credit-card' && 'border-indigo-500',
       !status && 'border-transparent'
@@ -72,7 +81,7 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
             {type === 'expense' && (
                 <>
                     <span className="text-muted-foreground">{format(new Date(getDate()), 'dd MMM yyyy')}</span>
-                    {onToggleStatus && !transaction.masterExpenseId ? (
+                    {onToggleStatus && !transaction.masterExpenseId && !isPaidByCreditCard ? (
                       <Badge 
                           variant={status === 'Paid' ? 'default' : 'destructive'}
                           className='cursor-pointer'
@@ -82,7 +91,7 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
                       </Badge>
                     ) : (
                       <Badge 
-                        variant={status === 'Paid' ? 'default' : 'destructive'}
+                        variant={status === 'Paid' || isPaidByCreditCard ? 'default' : 'destructive'}
                       >
                           {status}
                       </Badge>
@@ -100,7 +109,7 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
             )}
              {type === 'master-expense' && status && (
                  <Badge 
-                    variant={status === 'Paid' ? 'default' : 'destructive'}
+                    variant={status === 'Paid' || isPaidByCreditCard ? 'default' : 'destructive'}
                     className={cn(onToggleStatus && 'cursor-pointer')}
                     onClick={onToggleStatus}
                 >
