@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AppLogo } from "@/components/icons";
+import { AppLogo, AppLogoIcon } from "@/components/icons";
 import { LoaderCircle } from "lucide-react";
 import Image from "next/image";
 
@@ -32,10 +32,24 @@ export default function LoginPage() {
 
   return (
     <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2 xl:min-h-screen">
-      <div className="hidden bg-muted lg:flex lg:flex-col lg:items-center lg:justify-center p-8">
-        <Image src="/Infinity Cloud Labs PNG.png" alt="Infinity Cloud Labs Logo" width="400" height="400" />
+      <div className="hidden lg:flex flex-col items-center justify-center gap-8 bg-gradient-to-br from-purple-600 to-cyan-500 p-8 text-white">
+        <Image
+            src="/Infinity Cloud Labs PNG.png"
+            alt="Infinity Cloud Labs Logo"
+            width={200}
+            height={200}
+            className="rounded-full"
+        />
+        <div className="text-center">
+            <h1 className="text-4xl font-bold tracking-tight">
+                Welcome to Your Financial Hub
+            </h1>
+            <p className="mt-4 max-w-lg text-lg text-white/80">
+                Track, manage, and forecast your finances with ease. Your complete financial picture, all in one place.
+            </p>
+        </div>
       </div>
-      <div className="flex items-center justify-center py-12">
+      <div className="flex items-center justify-center py-12 bg-background">
         <div className="mx-auto grid w-[350px] gap-6">
           <div className="grid gap-2 text-center">
             <h1 className="text-3xl font-bold">Login</h1>
