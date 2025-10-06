@@ -327,72 +327,6 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     return pastMonthsData;
   };
 
-  // Effect for Master Expenses
-  useEffect(() => {
-    if (!user || !firestore || !masterExpensesData || !expensesData) return;
-  
-    const syncMasterExpenses = async () => {
-      const batch = writeBatch(firestore);
-      const month = getMonth(selectedDate);
-      const year = getYear(selectedDate);
-  
-      const generatedExpenseIds = new Set<string>();
-  
-      // Create a set of transaction IDs from master expenses for the current month
-      masterExpensesData.forEach(me => {
-        me.transactions
-          .filter(t => getMonth(new Date(t.date)) === month && getYear(new Date(t.date)) === year)
-          .forEach(t => {
-            const expId = `exp-from-${t.id}`;
-            generatedExpenseIds.add(expId);
-  
-            const description = `${t.description}: ${me.name}`;
-            const expDocRef = doc(firestore, 'users', user.uid, 'expenses', expId);
-            
-            const status: ExpenseStatus = t.paidViaCard ? `Paid by ${t.paidViaCard}` : t.status;
-  
-            // Use set with merge:true which acts as an upsert
-            batch.set(expDocRef, {
-              id: expId,
-              masterExpenseId: me.id,
-              description: description,
-              amount: t.amount,
-              category: 'Master Expense',
-              dueDate: t.date,
-              status: status,
-              isRecurring: false,
-            }, { merge: true });
-          });
-      });
-  
-      // Find and delete orphaned expenses from master expenses
-      expensesData.forEach(exp => {
-        if (exp.masterExpenseId) { // It's an expense derived from a master expense
-          const expMonth = getMonth(new Date(exp.dueDate));
-          const expYear = getYear(new Date(exp.dueDate));
-  
-          // If it's for the current month but not in our generated set, it's an orphan
-          if (expMonth === month && expYear === year && !generatedExpenseIds.has(exp.id)) {
-            const oldExpDocRef = doc(firestore, 'users', user.uid, 'expenses', exp.id);
-            batch.delete(oldExpDocRef);
-          }
-        }
-      });
-  
-      try {
-        await batch.commit();
-      } catch (e) {
-        if (!(e instanceof Error && e.message.includes('firestore/permission-denied'))) {
-           console.error("Batch update for master expenses failed", e);
-        }
-      }
-    };
-  
-    syncMasterExpenses();
-  }, [masterExpensesData, selectedDate, user, firestore]);
-  
-
-
   // Effect for Credit Card Expenses
   useEffect(() => {
     // This effect is commented out to prevent infinite loops.
@@ -430,5 +364,3 @@ export function useFinances() {
   }
   return context;
 }
-
-    
