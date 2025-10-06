@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -9,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AppLogo } from "@/components/icons";
 import { LoaderCircle } from "lucide-react";
+import Image from "next/image";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("rajesh@example.com");
@@ -43,6 +45,9 @@ export default function LoginPage() {
       <div className="flex items-center justify-center py-12">
         <div className="mx-auto grid w-[350px] gap-6">
           <div className="grid gap-2 text-center">
+            <div className="flex justify-center">
+              <Image src="/Infinity Cloud Labs PNG.png" alt="Infinity Cloud Labs Logo" width="100" height="100" className="rounded-full" />
+            </div>
             <h1 className="text-3xl font-bold">Login</h1>
             <p className="text-balance text-muted-foreground">
               Enter your credentials to access your dashboard.
