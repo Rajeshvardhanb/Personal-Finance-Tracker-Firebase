@@ -4,14 +4,19 @@
 import { useFinances } from "@/hooks/use-finances";
 import { getMonth, getYear } from "date-fns";
 import SummaryCards from "./SummaryCards";
-import DashboardCharts from "./DashboardCharts";
 import RecentExpenses from "./RecentExpenses";
 import NotesWidget from "./NotesWidget";
 import SavingsForecast from "./SavingsForecast";
 import CreditCardSummary from "./CreditCardSummary";
 import PageHeader from "../PageHeader";
 import { useAuth } from "@/hooks/use-auth";
-import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "../ui/skeleton";
+import dynamic from "next/dynamic";
+
+const DashboardCharts = dynamic(() => import("./DashboardCharts"), {
+  ssr: false,
+  loading: () => <Skeleton className="h-[400px] w-full" />,
+});
 
 export default function DashboardClient() {
   const { data, selectedDate } = useFinances();
@@ -57,13 +62,6 @@ export default function DashboardClient() {
     <div className="grid gap-6">
       <PageHeader title="Dashboard" />
       
-      <Card>
-        <CardContent className="p-6">
-          <h2 className="text-2xl font-bold">Welcome, {user?.email}!</h2>
-          <p className="text-muted-foreground">Here's your financial overview for the selected month.</p>
-        </CardContent>
-      </Card>
-
       <SummaryCards
         totalIncome={totalIncome}
         totalExpenses={totalExpenses}
@@ -71,18 +69,18 @@ export default function DashboardClient() {
         unpaidExpenses={unpaidExpenses}
       />
 
-      <div className="grid gap-6 lg:grid-cols-5">
-        <div className="lg:col-span-3 grid gap-6">
+      <div className="grid gap-6 lg:grid-cols-2">
+        <CreditCardSummary creditCards={data.creditCards} selectedDate={selectedDate} />
+        <NotesWidget />
+      </div>
+
+      <div className="grid gap-6">
           <DashboardCharts 
             income={totalIncome} 
             expenses={totalExpenses} 
             creditCardSpending={monthlyCardSpending} 
             expenseData={monthlyExpenses}
           />
-        </div>
-        <div className="lg:col-span-2 grid gap-6 auto-rows-min">
-           <CreditCardSummary creditCards={data.creditCards} selectedDate={selectedDate} />
-        </div>
       </div>
 
        <div className="grid gap-6 lg:grid-cols-5">
@@ -91,7 +89,6 @@ export default function DashboardClient() {
         </div>
         <div className="lg:col-span-2 grid gap-6 auto-rows-min">
             <SavingsForecast />
-           <NotesWidget />
         </div>
       </div>
     </div>

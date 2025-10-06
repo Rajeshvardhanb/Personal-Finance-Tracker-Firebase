@@ -1,16 +1,25 @@
 
 "use client";
 
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Pie, PieChart, Cell, Legend } from "recharts";
+import { Bar, BarChart, XAxis, YAxis, CartesianGrid, Cell, ResponsiveContainer, LabelList } from "recharts";
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-  CardDescription
+  CardDescription,
 } from "@/components/ui/card";
 import { Expense } from "@/lib/types";
-import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from "@/components/ui/chart";
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from "@/components/ui/chart";
+import { formatCurrency } from "@/lib/utils";
+import { useMemo } from "react";
+import { ScrollArea } from "../ui/scroll-area";
+
 
 type DashboardChartsProps = {
   income: number;
@@ -19,55 +28,98 @@ type DashboardChartsProps = {
   expenseData: Expense[];
 };
 
-const COLORS = ["#16a34a", "#dc2626", "#ea580c", "#facc15", "#6d28d9", "#1d4ed8"];
-
 const barChartConfig = {
   value: { label: "Amount" },
   income: { label: "Income", color: "hsl(var(--chart-1))" },
   expenses: { label: "Expenses", color: "hsl(var(--chart-2))" },
-  credit: { label: "Credit Cards", color: "hsl(var(--chart-4))" },
+  creditCard: { label: "Credit Card", color: "hsl(var(--chart-3))" },
 } satisfies ChartConfig;
 
-export default function DashboardCharts({ income, expenses, creditCardSpending, expenseData }: DashboardChartsProps) {
+
+export default function DashboardCharts({
+  income,
+  expenses,
+  creditCardSpending,
+  expenseData,
+}: DashboardChartsProps) {
   const barChartData = [
     { name: "Income", value: income, fill: "var(--color-income)" },
     { name: "Expenses", value: expenses, fill: "var(--color-expenses)" },
-    { name: "Credit Cards", value: creditCardSpending, fill: "var(--color-credit)" },
+    { name: "Credit Card", value: creditCardSpending, fill: "var(--color-creditCard)"},
   ];
 
-  const expenseByCategory = expenseData.reduce((acc, expense) => {
-    // We want to show all expenses in the pie chart, not just paid ones
-    acc[expense.category] = (acc[expense.category] || 0) + expense.amount;
-    return acc;
-  }, {} as { [key: string]: number });
+  const { categoryChartData, expenseChartConfig } = useMemo(() => {
+    const expenseByCategory = expenseData.reduce((acc, expense) => {
+      acc[expense.category] = (acc[expense.category] || 0) + expense.amount;
+      return acc;
+    }, {} as { [key: string]: number });
 
-  const pieChartData = Object.entries(expenseByCategory).map(([name, value]) => ({ name, value }));
+    const chartData = Object.entries(expenseByCategory)
+      .map(([name, amount], index) => ({ name, amount, fill: `hsl(var(--chart-${(index % 5) + 1}))` }))
+      .sort((a, b) => b.amount - a.amount);
+      
+    const chartConfig = chartData.reduce((acc, item) => {
+      const key = item.name.replace(/[^a-zA-Z0-9]/g, '');
+      acc[key] = {
+        label: item.name,
+        color: item.fill
+      }
+      return acc;
+    }, {} as ChartConfig);
+
+    return { categoryChartData: chartData, expenseChartConfig: chartConfig };
+  }, [expenseData]);
+
+  const categoryBarChartHeight = Math.max(200, categoryChartData.length * 40);
   
-  const pieChartConfig = Object.fromEntries(
-    pieChartData.map(({ name }, index) => [
-      name,
-      { label: name, color: COLORS[index % COLORS.length] },
-    ])
-  ) satisfies ChartConfig;
+  const CustomLabel = (props: any) => {
+    const { x, y, width, height, value } = props;
+    const formattedValue = formatCurrency(value);
+    
+    if(props.position === 'top') { // Vertical chart
+      return (
+        <text x={x + width / 2} y={y} dy={-4} fill="hsl(var(--muted-foreground))" fontSize={12} textAnchor="middle">
+          {formattedValue}
+        </text>
+      );
+    }
+    
+    // Horizontal chart
+    return (
+      <text x={x + width} y={y + height / 2} dx={4} dy={4} fill="hsl(var(--muted-foreground))" fontSize={12} textAnchor="start">
+        {formattedValue}
+      </text>
+    );
+  };
+
 
   return (
     <Card className="shadow-sm hover:shadow-lg transition-shadow">
       <CardHeader>
         <CardTitle className="font-headline">Monthly Overview</CardTitle>
-        <CardDescription>A visual summary of your income vs. expenses.</CardDescription>
+        <CardDescription>
+          A visual summary of your income and expenses.
+        </CardDescription>
       </CardHeader>
-      <CardContent className="grid gap-6 sm:grid-cols-2">
-        <div className="h-[300px]">
+      <CardContent className="grid gap-8 grid-cols-1 sm:grid-cols-3">
+        <div className="h-[400px] sm:col-span-1">
           <ChartContainer config={barChartConfig} className="w-full h-full">
-            <BarChart accessibilityLayer data={barChartData}>
+            <BarChart
+              accessibilityLayer
+              data={barChartData}
+              margin={{ top: 30, right: 30, left: 20, bottom: 5 }}
+            >
+              <CartesianGrid vertical={false} />
               <XAxis
                 dataKey="name"
                 stroke="hsl(var(--muted-foreground))"
                 fontSize={12}
                 tickLine={false}
                 axisLine={false}
+                interval={0}
               />
               <YAxis
+                type="number"
                 stroke="hsl(var(--muted-foreground))"
                 fontSize={12}
                 tickLine={false}
@@ -75,31 +127,59 @@ export default function DashboardCharts({ income, expenses, creditCardSpending, 
                 tickFormatter={(value) => `₹${Number(value) / 1000}k`}
               />
               <ChartTooltip
-                cursor={false}
-                content={<ChartTooltipContent hideLabel />}
+                cursor={{ fill: 'hsl(var(--muted))' }}
+                content={<ChartTooltipContent hideLabel formatter={(value) => formatCurrency(Number(value))}/>}
               />
-              <Bar dataKey="value" radius={8} />
+              <Bar dataKey="value" radius={5}>
+                 {barChartData.map((entry) => (
+                  <Cell key={`cell-${entry.name}`} fill={entry.fill} />
+                ))}
+                 <LabelList dataKey="value" content={<CustomLabel position="top" />} />
+              </Bar>
             </BarChart>
           </ChartContainer>
         </div>
-        <div className="h-[300px] flex items-center justify-center">
-          <ChartContainer config={pieChartConfig} className="mx-auto aspect-square h-full">
-             <PieChart>
-                <ChartTooltip
-                  cursor={false}
-                  content={<ChartTooltipContent hideLabel />}
-                />
-                <Pie data={pieChartData} dataKey="value" nameKey="name" innerRadius={50} outerRadius={90} strokeWidth={2}>
-                   {pieChartData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <ChartLegend
-                  content={<ChartLegendContent nameKey="name" />}
-                  className="-translate-y-[10px] flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"
-                />
-             </PieChart>
-          </ChartContainer>
+        <div className="flex flex-col sm:col-span-2">
+           <h4 className="text-sm font-medium text-center mb-4">Expense Breakdown</h4>
+           <div className="relative h-[350px] w-full overflow-x-auto">
+            <div style={{ height: `${categoryBarChartHeight}px`, minWidth: '600px' }}>
+              <ChartContainer config={expenseChartConfig} className="w-full h-full">
+                <BarChart
+                  accessibilityLayer
+                  data={categoryChartData}
+                  layout="vertical"
+                  margin={{ left: 20, right: 100 }} // Increased right margin for labels
+                >
+                  <CartesianGrid horizontal={false} />
+                  <YAxis
+                    type="category"
+                    dataKey="name"
+                    tickLine={false}
+                    axisLine={false}
+                    stroke="hsl(var(--muted-foreground))"
+                    fontSize={12}
+                    interval={0}
+                    width={100}
+                    tick={{ dx: -5 }}
+                  />
+                  <XAxis type="number" hide />
+                  <ChartTooltip
+                    cursor={{ fill: 'hsl(var(--muted))' }}
+                    content={<ChartTooltipContent
+                      formatter={(value) => formatCurrency(Number(value))}
+                      hideLabel
+                    />}
+                  />
+                  <Bar dataKey="amount" layout="vertical" radius={5}>
+                    {categoryChartData.map((entry) => (
+                      <Cell key={`cell-${entry.name}`} fill={entry.fill} />
+                    ))}
+                    <LabelList dataKey="amount" content={<CustomLabel position="right" />} />
+                  </Bar>
+                </BarChart>
+              </ChartContainer>
+            </div>
+           </div>
         </div>
       </CardContent>
     </Card>

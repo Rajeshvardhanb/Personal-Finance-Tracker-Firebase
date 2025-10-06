@@ -16,7 +16,7 @@ const fontSans = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Infinity Cloud',
+  title: 'PERSONAL FINANCE TRACKER',
   description: 'A personal finance dashboard to track your income, expenses, and net worth.',
 };
 
