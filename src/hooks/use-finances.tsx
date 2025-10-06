@@ -186,7 +186,14 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     const card = creditCardsData.find(c => c.id === cardId);
     if (!card) return;
 
-    const newTransaction: CreditCardTransaction = { ...transaction, id: crypto.randomUUID() };
+    const newTransactionData: Partial<CreditCardTransaction> = { ...transaction, id: crypto.randomUUID() };
+
+    // Remove masterExpenseId if it's not provided or undefined
+    if (!transaction.masterExpenseId) {
+      delete newTransactionData.masterExpenseId;
+    }
+
+    const newTransaction = newTransactionData as CreditCardTransaction;
     
     const updatedCardTransactions = [...card.transactions, newTransaction];
     updateCreditCard({ ...card, transactions: updatedCardTransactions });
@@ -350,7 +357,13 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     if (!user) return;
     const card = data.creditCards.find(c => c.id === cardId);
     if (!card) return;
-    const updatedTransactions = card.transactions.map(t => t.id === transaction.id ? transaction : t);
+
+    const transactionData = { ...transaction };
+    if (!transactionData.masterExpenseId) {
+        delete (transactionData as Partial<CreditCardTransaction>).masterExpenseId;
+    }
+    
+    const updatedTransactions = card.transactions.map(t => t.id === transaction.id ? transactionData : t);
     updateCreditCard({ ...card, transactions: updatedTransactions });
   };
   
@@ -501,3 +514,5 @@ export function useFinances() {
   }
   return context;
 }
+
+    
