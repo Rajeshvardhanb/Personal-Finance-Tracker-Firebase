@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AppLogo, AppLogoIcon } from "@/components/icons";
 import { LoaderCircle } from "lucide-react";
 import Image from "next/image";
 
@@ -32,21 +31,14 @@ export default function LoginPage() {
 
   return (
     <div className="w-full lg:grid lg:min-h-screen lg:grid-cols-2 xl:min-h-screen">
-      <div className="hidden lg:flex flex-col items-center justify-center gap-8 bg-gradient-to-br from-purple-600 to-cyan-500 p-8 text-white">
+      <div className="hidden lg:flex items-center justify-center bg-[#020617] p-10">
         <Image
-            src="/Infinity Cloud Labs PNG.png"
-            alt="Infinity Cloud Labs Logo"
-            width={200}
-            height={200}
+          src="/Infinity Cloud Labs PNG.png"
+          alt="Infinity Cloud Labs Logo"
+          width={500}
+          height={500}
+          className="w-full max-w-md"
         />
-        <div className="text-center">
-            <h1 className="text-4xl font-bold tracking-tight">
-                Welcome to Your Financial Hub
-            </h1>
-            <p className="mt-4 max-w-lg text-lg text-white/80">
-                Track, manage, and forecast your finances with ease. Your complete financial picture, all in one place.
-            </p>
-        </div>
       </div>
       <div className="flex items-center justify-center py-12 bg-background">
         <div className="mx-auto grid w-[350px] gap-6">
