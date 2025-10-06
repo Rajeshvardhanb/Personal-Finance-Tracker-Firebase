@@ -50,8 +50,9 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
   const status = getStatus();
 
   const isPaidByCreditCard = typeof status === 'string' && status.toLowerCase().startsWith('paid by');
-
-  const showActions = type === 'expense' && 'masterExpenseId' in transaction && transaction.masterExpenseId ? false : true;
+  const isMasterExpenseSummary = type === 'expense' && 'masterExpenseId' in transaction && transaction.masterExpenseId ? true : false;
+  const showActions = !isMasterExpenseSummary;
+  const isToggleable = onToggleStatus && type === 'expense' && !isMasterExpenseSummary && !isPaidByCreditCard;
 
   return (
     <div className={cn(
@@ -77,21 +78,13 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
                 <>
                     <span className="text-muted-foreground">{format(new Date(getDate()), 'dd MMM yyyy')}</span>
                     {status && (
-                      onToggleStatus && !transaction.masterExpenseId && status === 'Paid' ? (
-                          <Badge 
-                              variant={status === 'Paid' ? 'default' : 'destructive'}
-                              className='cursor-pointer'
-                              onClick={onToggleStatus}
-                          >
-                              {status}
-                          </Badge>
-                      ) : (
-                          <Badge 
-                              variant={(status === 'Paid' || isPaidByCreditCard) ? 'default' : 'destructive'}
-                          >
-                              {status}
-                          </Badge>
-                      )
+                       <Badge 
+                            variant={(status === 'Paid' || isPaidByCreditCard) ? 'default' : 'destructive'}
+                            className={cn(isToggleable && 'cursor-pointer')}
+                            onClick={isToggleable ? onToggleStatus : undefined}
+                        >
+                            {status}
+                        </Badge>
                     )}
                 </>
             )}
