@@ -57,7 +57,7 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
   
   const status = getStatus();
 
-  const isPaidByCreditCard = typeof status === 'string' && status.startsWith('Paid by');
+  const isPaidByCreditCard = typeof status === 'string' && status.toLowerCase().startsWith('paid by');
 
   return (
     <div className={cn(
@@ -95,7 +95,7 @@ export default function TransactionCard({ transaction, type, onEdit, onDelete, o
                           <Badge 
                               variant={(status === 'Paid' || isPaidByCreditCard) ? 'default' : 'destructive'}
                           >
-                              {isPaidByCreditCard ? 'Paid by Card' : status}
+                              {status}
                           </Badge>
                       )
                     )}
