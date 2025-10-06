@@ -70,8 +70,33 @@ export default function LoginPage() {
 
             <div className="w-full my-4">
                  <svg viewBox="0 0 800 100" preserveAspectRatio="none" className="w-full h-auto">
-                    <path d="M0,50 C150,100 300,0 400,50 C500,100 650,0 800,50" fill="none" stroke="rgba(156, 163, 175, 0.5)" strokeWidth="1"/>
-                    <path d="M0,55 C120,110 280,5 400,55 C520,110 680,5 800,55" fill="none" stroke="rgba(156, 163, 175, 0.3)" strokeWidth="1"/>
+                    <defs>
+                      <linearGradient id="waveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" style={{stopColor: 'rgba(99, 102, 241, 0.5)'}} />
+                        <stop offset="100%" style={{stopColor: 'rgba(56, 189, 248, 0.5)'}} />
+                      </linearGradient>
+                    </defs>
+                    
+                    {Array.from({ length: 10 }).map((_, i) => (
+                        <path 
+                            key={`wave1-${i}`}
+                            d={`M0,${50 + i*2} C150,${100 + i*2} 350,${0 + i*2} 500,${50 + i*2} C650,${100 + i*2} 850,${0 + i*2} 1000,${50 + i*2}`} 
+                            fill="none" 
+                            stroke="url(#waveGradient)" 
+                            strokeWidth="0.5"
+                            style={{transform: `translateX(${-i * 10}px)`, opacity: 1 - i*0.05}}
+                        />
+                    ))}
+                    {Array.from({ length: 8 }).map((_, i) => (
+                        <path 
+                            key={`wave2-${i}`}
+                            d={`M-100,${55 - i*1.5} C100,${-10 - i*1.5} 300,${110 - i*1.5} 450,${55 - i*1.5} C600,${0 - i*1.5} 750,${110 - i*1.5} 900,${55 - i*1.5}`} 
+                            fill="none" 
+                            stroke="url(#waveGradient)"
+                            strokeWidth="0.5"
+                            style={{opacity: 0.5 - i*0.04}}
+                        />
+                    ))}
                 </svg>
             </div>
 
@@ -92,7 +117,7 @@ export default function LoginPage() {
             </p>
         </div>
       </div>
-      <div className="flex w-full lg:w-1/2 items-center justify-center p-8 bg-grid-pattern">
+      <div className="flex w-full lg:w-1/2 items-center justify-center p-8 bg-grid-pattern bg-background">
         <div className="w-full max-w-sm space-y-6 bg-white p-10 rounded-2xl shadow-xl">
           <div className="text-center">
             <h1 className="text-3xl font-bold text-gray-900">Sign In</h1>
@@ -149,3 +174,5 @@ export default function LoginPage() {
     </main>
   );
 }
+
+    
