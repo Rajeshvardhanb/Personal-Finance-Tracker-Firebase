@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback } from 'react';
@@ -124,34 +125,36 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     const ref = getCollectionRef('expenses');
     if (ref) updateDocumentNonBlocking(doc(ref, expense.id), expense);
   };
+  
   const deleteExpense = (id: string) => {
     if (!user || !expensesData || !creditCardsData) return;
-  
+
     const expenseToDelete = expensesData.find(e => e.id === id);
     if (!expenseToDelete) return;
-  
-    // Check if it's a credit card expense
+
     const paidByPrefix = "Paid by ";
     if (expenseToDelete.status.startsWith(paidByPrefix)) {
-      const cardName = expenseToDelete.status.substring(paidByPrefix.length);
-      const sourceCard = creditCardsData.find(c => c.name === cardName);
-  
-      if (sourceCard) {
-        // Find the matching transaction on the card to get its ID
-        const transactionToDelete = sourceCard.transactions.find(
-          t => t.description === expenseToDelete.description && t.amount === expenseToDelete.amount
-        );
-        
-        if (transactionToDelete) {
-          // Call deleteCreditCardTransaction to handle deletion from the card
-          deleteCreditCardTransaction(sourceCard.id, transactionToDelete.id);
+        const cardName = expenseToDelete.status.substring(paidByPrefix.length);
+        const sourceCard = creditCardsData.find(c => c.name === cardName);
+        if (sourceCard) {
+            const transactionToDelete = sourceCard.transactions.find(
+                t => t.description === expenseToDelete.description &&
+                     t.amount === expenseToDelete.amount &&
+                     new Date(t.date).getTime() === new Date(expenseToDelete.dueDate).getTime()
+            );
+            if (transactionToDelete) {
+                // This function handles deleting both the card transaction and the expense entry
+                deleteCreditCardTransaction(sourceCard.id, transactionToDelete.id);
+                return; // Stop here, as the other function handles the full deletion
+            }
         }
-      }
     }
-  
-    // Always delete the expense from the main expenses collection
+
+    // Only delete from the main collection if it's not a credit card expense
     const ref = getCollectionRef('expenses');
-    if (ref) deleteDocumentNonBlocking(doc(ref, id));
+    if (ref) {
+      deleteDocumentNonBlocking(doc(ref, id));
+    }
   };
   
   const addMasterExpense = (expense: Omit<MasterExpense, 'id' | 'transactions' | 'userId'>) => {
@@ -163,19 +166,8 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     if (ref) updateDocumentNonBlocking(doc(ref, expense.id), expense);
   };
   const deleteMasterExpense = async (id: string) => {
-    if (!user || !firestore) return;
-    const batch = writeBatch(firestore);
-    const masterExpenseDocRef = doc(firestore, 'users', user.uid, 'masterExpenses', id);
-    batch.delete(masterExpenseDocRef);
-
-    // Also delete any associated auto-generated expenses
-    const summaryExpensesToDelete = expenses.filter(e => e.masterExpenseId === id);
-    summaryExpensesToDelete.forEach(exp => {
-      const expDocRef = doc(firestore, 'users', user.uid, 'expenses', exp.id);
-      batch.delete(expDocRef);
-    });
-    
-    await batch.commit();
+    const ref = getCollectionRef('masterExpenses');
+    if (ref) deleteDocumentNonBlocking(doc(ref, id));
   };
 
   const addMasterExpenseTransaction = (masterExpenseId: string, transaction: Omit<MasterExpenseTransaction, 'id'>) => {
@@ -239,7 +231,7 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
     updateCreditCard({ ...card, transactions: updatedTransactions });
   };
   const deleteCreditCardTransaction = (cardId: string, transactionId: string) => {
-    if (!user) return;
+    if (!user || !expensesData) return;
     const card = data.creditCards.find(c => c.id === cardId);
     if (!card) return;
     const transactionToDelete = card.transactions.find(t => t.id === transactionId);
@@ -250,9 +242,10 @@ export function FinanceProvider({ children }: { children: ReactNode }) {
 
     // Then, find and delete the corresponding expense from the main expenses list
     if (transactionToDelete) {
-        const correspondingExpense = expenses.find(exp => 
+        const correspondingExpense = expensesData.find(exp => 
             exp.description === transactionToDelete.description &&
             exp.amount === transactionToDelete.amount &&
+            new Date(exp.dueDate).getTime() === new Date(transactionToDelete.date).getTime() &&
             exp.status === `Paid by ${card.name}`
         );
         if (correspondingExpense) {
@@ -398,5 +391,7 @@ export function useFinances() {
   }
   return context;
 }
+
+    
 
     
