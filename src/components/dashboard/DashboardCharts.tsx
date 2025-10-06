@@ -1,7 +1,7 @@
 
 "use client";
 
-import { Bar, BarChart, XAxis, YAxis, CartesianGrid, Pie, PieChart, Legend, RadialBar, RadialBarChart } from "recharts";
+import { Bar, BarChart, XAxis, YAxis, CartesianGrid, Pie, PieChart, Legend, RadialBar, RadialBarChart, Cell } from "recharts";
 import {
   Card,
   CardContent,
@@ -15,11 +15,8 @@ import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-  ChartLegend,
-  ChartLegendContent,
 } from "@/components/ui/chart";
 import { formatCurrency } from "@/lib/utils";
-import { ScrollArea } from "../ui/scroll-area";
 import { useMemo } from "react";
 
 
@@ -61,19 +58,23 @@ export default function DashboardCharts({
     }, {} as { [key: string]: number });
   
     const chartData = Object.entries(expenseByCategory)
-      .map(([name, amount], index) => ({ name, amount, fill: `var(--color-${name.replace(/ /g, '')})` }))
+      .map(([name, amount], index) => ({ name, amount, fill: `var(--color-chart-${(index % 5) + 1})` }))
       .sort((a, b) => b.amount - a.amount);
       
-    const chartConfig = chartData.reduce((acc, item, index) => {
-      acc[item.name.replace(/ /g, '')] = {
+    const chartConfig = chartData.reduce((acc, item) => {
+      // Create a key that's safe for CSS variables
+      const key = item.name.replace(/ /g, '');
+      acc[key] = {
         label: item.name,
-        color: `hsl(var(--chart-${(index % 5) + 1}))`
+        color: item.fill // Use the direct fill color
       }
       return acc;
     }, {} as ChartConfig);
 
     return { categoryChartData: chartData, expenseChartConfig: chartConfig };
   }, [expenseData]);
+
+  const COLORS = Array.from({length: 5}, (_, i) => `hsl(var(--chart-${i + 1}))`);
 
   return (
     <Card className="shadow-sm hover:shadow-lg transition-shadow">
@@ -84,7 +85,7 @@ export default function DashboardCharts({
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-6 sm:grid-cols-2">
-        <div className="h-[300px]">
+        <div className="h-[400px]">
           <ChartContainer config={barChartConfig} className="w-full h-full">
             <BarChart accessibilityLayer data={barChartData}>
               <XAxis
@@ -109,25 +110,59 @@ export default function DashboardCharts({
             </BarChart>
           </ChartContainer>
         </div>
-        <div className="h-[300px]">
+        <div className="h-[400px]">
           <ChartContainer config={expenseChartConfig} className="w-full h-full">
-             <RadialBarChart 
-                data={categoryChartData} 
-                innerRadius="20%"
-                outerRadius="100%"
-                startAngle={90}
-                endAngle={-270}
-             >
+             <PieChart>
                 <ChartTooltip 
                     cursor={false} 
                     content={<ChartTooltipContent 
                         formatter={(value, name) => [formatCurrency(Number(value)), name]}
-                        labelKey="name"
+                        nameKey="name"
                         hideIndicator
                     />} 
                 />
-                <RadialBar dataKey="amount" background />
-            </RadialBarChart>
+                <Pie 
+                  data={categoryChartData} 
+                  dataKey="amount" 
+                  nameKey="name" 
+                  cx="50%" 
+                  cy="50%" 
+                  outerRadius={150} 
+                  labelLine={false}
+                  label={({
+                    cx,
+                    cy,
+                    midAngle,
+                    innerRadius,
+                    outerRadius,
+                    percent,
+                    index,
+                  }) => {
+                    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+                    const x = cx + radius * Math.cos(-midAngle * (Math.PI / 180));
+                    const y = cy + radius * Math.sin(-midAngle * (Math.PI / 180));
+
+                    if ((percent * 100) < 5) return null; // Don't render small labels
+
+                    return (
+                      <text
+                        x={x}
+                        y={y}
+                        fill="white"
+                        textAnchor={x > cx ? 'start' : 'end'}
+                        dominantBaseline="central"
+                        className="text-xs font-bold"
+                      >
+                        {`${(percent * 100).toFixed(0)}%`}
+                      </text>
+                    );
+                  }}
+                >
+                   {categoryChartData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+            </PieChart>
           </ChartContainer>
         </div>
       </CardContent>
