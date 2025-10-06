@@ -59,11 +59,11 @@ export default function DashboardCharts({
     }, {} as { [key: string]: number });
 
     const chartData = Object.entries(expenseByCategory)
-      .map(([name, amount], index) => ({ name, amount, fill: `hsl(var(--chart-${(index % 5) + 2}))` }))
-      .sort((a, b) => a.amount - b.amount); // Sort ascending for horizontal chart
+      .map(([name, amount], index) => ({ name, amount, fill: `hsl(var(--chart-${(index % 5) + 1}))` }))
+      .sort((a, b) => b.amount - a.amount); // Sort descending for horizontal chart
       
     const chartConfig = chartData.reduce((acc, item) => {
-      const key = item.name.replace(/ /g, '');
+      const key = item.name.replace(/\s+/g, '');
       acc[key] = {
         label: item.name,
         color: item.fill
