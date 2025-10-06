@@ -13,12 +13,12 @@ import Image from "next/image";
 
 const quotes = [
   {
-    quote: "Financial peace isn't the acquisition of stuff. It's learning to live on less than you make, so you can give money back and have money to invest.",
-    author: "Dave Ramsey"
-  },
-  {
     quote: "An investment in knowledge pays the best interest.",
     author: "Benjamin Franklin"
+  },
+  {
+    quote: "Financial peace isn't the acquisition of stuff. It's learning to live on less than you make, so you can give money back and have money to invest.",
+    author: "Dave Ramsey"
   },
   {
     quote: "The goal isn't more money. The goal is living life on your own terms.",
@@ -58,7 +58,7 @@ export default function LoginPage() {
 
   return (
     <main className="flex min-h-screen w-full bg-white">
-      <div className="hidden lg:flex w-1/2 relative flex-col justify-center bg-[#f0f2f5] p-12 overflow-hidden">
+      <div className="hidden lg:flex w-1/2 relative flex-col justify-start bg-[#020617] p-12 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <svg viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice" className="w-full h-full">
             <defs>
@@ -67,43 +67,27 @@ export default function LoginPage() {
                 <stop offset="100%" style={{stopColor: 'rgba(56, 189, 248, 0.6)'}} />
               </linearGradient>
             </defs>
-            <path d="M0 300 Q 200 420, 400 300 T 800 300 V 600 H 0 Z" fill="url(#waveGradientDarker)" opacity="0.2"/>
-            <path d="M0 310 Q 200 190, 400 310 T 800 310 V 600 H 0 Z" fill="url(#waveGradientDarker)" opacity="0.2"/>
-            <path d="M0 290 Q 200 430, 400 290 T 800 290 V 600 H 0 Z" fill="url(#waveGradientDarker)" opacity="0.1"/>
+            <path d="M0 300 Q 200 420, 400 300 T 800 300 V 600 H 0 Z" fill="url(#waveGradientDarker)" opacity="0.3"/>
+            <path d="M0 310 Q 200 190, 400 310 T 800 310 V 600 H 0 Z" fill="url(#waveGradientDarker)" opacity="0.3"/>
+            <path d="M0 290 Q 200 430, 400 290 T 800 290 V 600 H 0 Z" fill="url(#waveGradientDarker)" opacity="0.2"/>
             
-            <path d="M0 300 Q 100 250, 200 300 T 400 300 T 600 300 T 800 300" fill="none" stroke="url(#waveGradientDarker)" strokeWidth="0.7" opacity="0.4"/>
-            <path d="M0 310 Q 100 360, 200 310 T 400 310 T 600 310 T 800 310" fill="none" stroke="url(#waveGradientDarker)" strokeWidth="0.7" opacity="0.5"/>
-            <path d="M0 290 Q 100 240, 200 290 T 400 290 T 600 290 T 800 290" fill="none" stroke="url(#waveGradientDarker)" strokeWidth="0.7" opacity="0.45"/>
-            <path d="M0 280 Q 100 330, 200 280 T 400 280 T 600 280 T 800 280" fill="none" stroke="url(#waveGradientDarker)" strokeWidth="0.7" opacity="0.3"/>
-            <path d="M0 320 Q 100 270, 200 320 T 400 320 T 600 320 T 800 320" fill="none" stroke="url(#waveGradientDarker)" strokeWidth="0.7" opacity="0.35"/>
+            <path d="M0 300 Q 100 250, 200 300 T 400 300 T 600 300 T 800 300" fill="none" stroke="url(#waveGradientDarker)" strokeWidth="0.7" opacity="0.5"/>
+            <path d="M0 310 Q 100 360, 200 310 T 400 310 T 600 310 T 800 310" fill="none" stroke="url(#waveGradientDarker)" strokeWidth="0.7" opacity="0.6"/>
+            <path d="M0 290 Q 100 240, 200 290 T 400 290 T 600 290 T 800 290" fill="none" stroke="url(#waveGradientDarker)" strokeWidth="0.7" opacity="0.55"/>
+            <path d="M0 280 Q 100 330, 200 280 T 400 280 T 600 280 T 800 280" fill="none" stroke="url(#waveGradientDarker)" strokeWidth="0.7" opacity="0.4"/>
+            <path d="M0 320 Q 100 270, 200 320 T 400 320 T 600 320 T 800 320" fill="none" stroke="url(#waveGradientDarker)" strokeWidth="0.7" opacity="0.45"/>
 
-            <path d="M-100 150 Q 100 350, 300 150 T 700 150 T 900 150" fill="none" stroke="url(#waveGradientDarker)" strokeWidth="0.7" opacity="0.3"/>
-            <path d="M-100 450 Q 100 250, 300 450 T 700 450 T 900 450" fill="none" stroke="url(#waveGradientDarker)" strokeWidth="0.7" opacity="0.3"/>
+            <path d="M-100 150 Q 100 350, 300 150 T 700 150 T 900 150" fill="none" stroke="url(#waveGradientDarker)" strokeWidth="0.7" opacity="0.4"/>
+            <path d="M-100 450 Q 100 250, 300 450 T 700 450 T 900 450" fill="none" stroke="url(#waveGradientDarker)" strokeWidth="0.7" opacity="0.4"/>
           </svg>
         </div>
-        <div className="relative z-10 flex flex-col items-center justify-center text-center max-w-md mx-auto">
+        <div className="relative z-10 flex flex-col items-center justify-start text-center w-full h-full pt-8">
             <Image
                 src="/Infinity Cloud Labs PNG.png"
                 alt="Infinity Cloud Labs Logo"
-                width={250}
-                height={125}
-                className="mb-8"
+                width={400}
+                height={200}
             />
-            <h1 className="text-3xl font-bold tracking-tight text-gray-800">
-                Your Personal Finance Tracker
-            </h1>
-            <p className="mt-2 text-sm text-gray-500">
-                Designed By Rajesh
-            </p>
-             <div className="relative z-10 mt-16 max-w-md mx-auto text-center">
-                <Quote className="mx-auto h-8 w-8 text-gray-400" />
-                <p className="mt-4 text-lg italic text-gray-600">
-                    "{quotes[currentQuoteIndex].quote}"
-                </p>
-                <p className="mt-4 font-semibold text-gray-500">
-                    - {quotes[currentQuoteIndex].author}
-                </p>
-            </div>
         </div>
       </div>
       <div className="flex w-full lg:w-1/2 items-center justify-center p-8 bg-background bg-grid-pattern">
