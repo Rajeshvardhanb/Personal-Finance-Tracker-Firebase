@@ -75,7 +75,7 @@ export default function DashboardCharts({
       <CardHeader>
         <CardTitle className="font-headline">Monthly Overview</CardTitle>
         <CardDescription>
-          A visual summary of your income, expenses, and category spending.
+          A visual summary of your income and expenses.
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-8 sm:grid-cols-2">
