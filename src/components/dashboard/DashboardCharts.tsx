@@ -1,7 +1,7 @@
 
 "use client";
 
-import { Bar, BarChart, XAxis, YAxis, CartesianGrid, Cell, ResponsiveContainer } from "recharts";
+import { Bar, BarChart, XAxis, YAxis, CartesianGrid, Cell, ResponsiveContainer, LabelList } from "recharts";
 import {
   Card,
   CardContent,
@@ -90,7 +90,7 @@ export default function DashboardCharts({
             <BarChart
               accessibilityLayer
               data={barChartData}
-              margin={{ top: 20, right: 20, left: 20, bottom: 5 }}
+              margin={{ top: 30, right: 20, left: 20, bottom: 5 }}
             >
               <CartesianGrid vertical={false} />
               <XAxis
@@ -113,6 +113,13 @@ export default function DashboardCharts({
                 content={<ChartTooltipContent hideLabel formatter={(value) => formatCurrency(Number(value))}/>}
               />
               <Bar dataKey="value" radius={5}>
+                <LabelList 
+                  dataKey="value" 
+                  position="top" 
+                  offset={10}
+                  formatter={(value: number) => formatCurrency(value)} 
+                  className="fill-foreground font-medium text-xs"
+                />
                  {barChartData.map((entry) => (
                   <Cell key={`cell-${entry.name}`} fill={entry.fill} />
                 ))}
@@ -128,7 +135,7 @@ export default function DashboardCharts({
                   accessibilityLayer
                   data={categoryChartData}
                   layout="vertical"
-                  margin={{ left: 20, right: 40 }}
+                  margin={{ left: 20, right: 50 }}
                 >
                   <YAxis
                     type="category"
@@ -150,6 +157,13 @@ export default function DashboardCharts({
                     />}
                   />
                   <Bar dataKey="amount" layout="vertical" radius={5}>
+                     <LabelList 
+                        dataKey="amount" 
+                        position="right" 
+                        offset={8}
+                        formatter={(value: number) => formatCurrency(value)} 
+                        className="fill-foreground font-medium text-xs"
+                    />
                      {categoryChartData.map((entry) => (
                       <Cell key={`cell-${entry.name}`} fill={entry.fill} />
                     ))}
