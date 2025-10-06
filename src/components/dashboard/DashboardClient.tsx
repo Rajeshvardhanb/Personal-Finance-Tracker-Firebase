@@ -12,6 +12,7 @@ import PageHeader from "../PageHeader";
 import { useAuth } from "@/hooks/use-auth";
 import { Skeleton } from "../ui/skeleton";
 import dynamic from "next/dynamic";
+import { Card, CardDescription } from "../ui/card";
 
 const DashboardCharts = dynamic(() => import("./DashboardCharts"), {
   ssr: false,
@@ -58,10 +59,19 @@ export default function DashboardClient() {
 
   const totalExpenses = paidExpenses + unpaidExpenses;
 
+  const userName = user?.email?.split('@')[0];
+  const capitalizedUserName = userName ? userName.charAt(0).toUpperCase() + userName.slice(1) : 'User';
+
+
   return (
     <div className="grid gap-6">
       <PageHeader title="Dashboard" />
       
+       <Card className="p-6">
+        <h2 className="text-2xl font-bold">Welcome back, {capitalizedUserName}!</h2>
+        <CardDescription>Here's a summary of your finances for the selected month.</CardDescription>
+      </Card>
+
       <SummaryCards
         totalIncome={totalIncome}
         totalExpenses={totalExpenses}
