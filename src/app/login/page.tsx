@@ -14,14 +14,26 @@ import Image from "next/image";
 function Waveform() {
   return (
     <svg
-        className="w-full my-12"
-        viewBox="0 0 1440 120"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
+      className="w-full"
+      viewBox="0 0 1440 120"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
     >
-        <path d="M0 86L60 80C120 74 240 62 360 63.7C480 65.3 600 80.3 720 86C840 91.7 960 88.3 1080 74.3C1200 60.3 1320 35.3 1380 23L1440 10.7V120H0V86Z" fill="hsl(var(--primary))" fillOpacity={0.2} />
-        <path d="M0 58L60 63.7C120 69.3 240 80.3 360 86.3C480 92.3 600 93.3 720 85.3C840 77.3 960 60.3 1080 50.3C1200 40.3 1320 37.3 1380 35.8L1440 34.3V120H0V58Z" fill="hsl(var(--accent))" fillOpacity={0.3} />
-        <path d="M0 10.7L60 16.3C120 22 240 33 360 38.7C480 44.3 600 44.3 720 52.3C840 60.3 960 76.3 1080 83.3C1200 90.3 1320 88.3 1380 87.3L1440 86.3V120H0V10.7Z" fill="hsl(var(--primary))" fillOpacity={0.4}/>
+      <path
+        d="M0 86L60 80C120 74 240 62 360 63.7C480 65.3 600 80.3 720 86C840 91.7 960 88.3 1080 74.3C1200 60.3 1320 35.3 1380 23L1440 10.7V120H0V86Z"
+        fill="hsl(var(--primary))"
+        fillOpacity={0.2}
+      />
+      <path
+        d="M0 58L60 63.7C120 69.3 240 80.3 360 86.3C480 92.3 600 93.3 720 85.3C840 77.3 960 60.3 1080 50.3C1200 40.3 1320 37.3 1380 35.8L1440 34.3V120H0V58Z"
+        fill="hsl(var(--accent))"
+        fillOpacity={0.3}
+      />
+      <path
+        d="M0 10.7L60 16.3C120 22 240 33 360 38.7C480 44.3 600 44.3 720 52.3C840 60.3 960 76.3 1080 83.3C1200 90.3 1320 88.3 1380 87.3L1440 86.3V120H0V10.7Z"
+        fill="hsl(var(--primary))"
+        fillOpacity={0.4}
+      />
     </svg>
   );
 }
@@ -57,9 +69,9 @@ export default function LoginPage() {
   return (
     <main className="grid min-h-screen w-full grid-cols-1 lg:grid-cols-2">
       {/* Left Panel - Branding */}
-      <div className="relative hidden lg:flex flex-col items-center justify-start bg-[#f8f9fa] p-12 text-center overflow-hidden pt-24">
+      <div className="relative hidden lg:flex flex-col items-center justify-between bg-[#f8f9fa] p-12 text-center overflow-hidden">
         
-        <div className="relative z-10 flex flex-col items-center justify-center space-y-8">
+        <div className="relative z-10 flex flex-col items-center justify-start space-y-8 pt-12">
             <Image src="/Infinity Cloud Labs PNG.png" alt="Infinity Cloud Labs Logo" width={400} height={100} className="mx-auto" />
             <div className="space-y-6">
                 <div>
@@ -69,11 +81,7 @@ export default function LoginPage() {
             </div>
         </div>
 
-        <div className="w-full my-12">
-            <Waveform />
-        </div>
-
-        <div className="relative max-w-md mx-auto text-gray-700 italic border-l-4 border-transparent pl-8 mt-8">
+        <div className="relative z-10 max-w-md mx-auto text-gray-700 italic border-l-4 border-transparent pl-8 mb-12">
             <div className="absolute top-0 left-0">
                 <QuoteIcon />
             </div>
@@ -81,6 +89,10 @@ export default function LoginPage() {
             "Financial peace isn't the acquisition of stuff. It's learning to live on less than you make, so you can give money back and have money to invest."
             </p>
             <footer className="mt-4 text-sm text-right text-gray-500 not-italic">- Dave Ramsey</footer>
+        </div>
+
+         <div className="absolute bottom-0 left-0 right-0">
+            <Waveform />
         </div>
       </div>
 
