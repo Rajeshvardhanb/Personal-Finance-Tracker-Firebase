@@ -7,6 +7,7 @@ import AppSidebar from '@/components/AppSidebar';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/use-auth';
 import { usePathname } from 'next/navigation';
+import InactivityTimeout from './InactivityTimeout';
 
 export default function AppBody({ children }: { children: React.ReactNode }) {
   const { state } = useSidebar();
@@ -36,6 +37,7 @@ export default function AppBody({ children }: { children: React.ReactNode }) {
           {children}
         </main>
       </div>
+      <InactivityTimeout />
     </div>
   )
 }
