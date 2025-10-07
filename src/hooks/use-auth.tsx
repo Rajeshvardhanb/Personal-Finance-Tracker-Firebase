@@ -16,12 +16,45 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const INACTIVITY_TIMEOUT = 2 * 60 * 1000; // 2 minutes
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { auth, isUserLoading } = useFirebase();
   const [user, setUser] = useState<User | null>(auth.currentUser);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+
+  const logout = useCallback(async () => {
+    await signOut(auth);
+    router.push('/login');
+  }, [auth, router]);
+
+  useEffect(() => {
+    let activityTimer: NodeJS.Timeout;
+
+    const resetTimer = () => {
+      clearTimeout(activityTimer);
+      activityTimer = setTimeout(() => {
+        if (auth.currentUser) {
+          logout();
+        }
+      }, INACTIVITY_TIMEOUT);
+    };
+
+    const events = ['mousemove', 'keydown', 'click', 'scroll'];
+
+    if (user) {
+      events.forEach((event) => window.addEventListener(event, resetTimer));
+      resetTimer(); // Start the timer on login
+    }
+
+    return () => {
+      clearTimeout(activityTimer);
+      events.forEach((event) => window.removeEventListener(event, resetTimer));
+    };
+  }, [user, auth.currentUser, logout]);
+
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((firebaseUser) => {
@@ -51,12 +84,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return { success: false, error: "Invalid credentials. Please contact Rajesh for access." };
     }
   }, [auth]);
-
-
-  const logout = useCallback(async () => {
-    await signOut(auth);
-    router.push('/login');
-  }, [auth, router]);
 
   return (
     <AuthContext.Provider value={{ user, login, logout, isLoading: isUserLoading, isAuthenticating }}>
