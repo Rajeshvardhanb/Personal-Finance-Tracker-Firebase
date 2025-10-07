@@ -14,27 +14,30 @@ import Image from "next/image";
 function Waveform() {
   return (
     <svg
-      className="absolute inset-0 h-full w-full"
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 1440 820"
-      preserveAspectRatio="none"
+        className="w-full"
+        viewBox="0 0 1440 120"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
     >
-      <defs>
-        <radialGradient id="grad1" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-            <stop offset="0%" style={{stopColor: 'hsla(217, 91%, 60%, 0.15)', stopOpacity: 1}} />
-            <stop offset="100%" style={{stopColor: 'hsla(217, 91%, 60%, 0)', stopOpacity: 1}} />
-        </radialGradient>
-        <radialGradient id="grad2" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-            <stop offset="0%" style={{stopColor: 'hsla(190, 95%, 50%, 0.15)', stopOpacity: 1}} />
-            <stop offset="100%" style={{stopColor: 'hsla(190, 95%, 50%, 0)', stopOpacity: 1}} />
-        </radialGradient>
-      </defs>
-      <circle cx="300" cy="200" r="400" fill="url(#grad1)" />
-      <circle cx="1100" cy="600" r="450" fill="url(#grad2)" />
-      <circle cx="700" cy="450" r="350" fill="url(#grad1)" opacity="0.7" />
+        <path
+            d="M1440 48.8105C1088.33 48.8105 1039.46 -6.3216 733.333 5.31215C427.209 16.9459 299.333 105.311 0 48.8105V120H1440V48.8105Z"
+            fill="hsl(var(--primary))"
+            fillOpacity="0.3"
+        />
+        <path
+            d="M1440 73.621C1158.4 73.621 1068.25 21.8413 733.333 39.865C404.5 57.5 311.2 120 0 120V120H1440V73.621Z"
+            fill="hsl(var(--accent))"
+            fillOpacity="0.4"
+        />
+        <path
+            d="M1440 94C1158.4 94 1068.25 42.2203 733.333 60.244C404.5 77.879 311.2 140.379 0 140.379V140.379H1440V94Z"
+            fill="hsl(var(--primary))"
+            fillOpacity="0.6"
+        />
     </svg>
   );
 }
+
 
 function QuoteIcon() {
     return (
@@ -66,25 +69,30 @@ export default function LoginPage() {
   return (
     <main className="grid min-h-screen w-full grid-cols-1 lg:grid-cols-2">
       {/* Left Panel - Branding */}
-      <div className="relative hidden lg:flex flex-col items-center justify-center bg-[#f8f9fa] p-12 text-center overflow-hidden">
-        <Waveform />
-        <div className="relative z-10 flex flex-col items-center justify-center h-full space-y-8">
+      <div className="relative hidden lg:flex flex-col items-center justify-start bg-[#f8f9fa] p-12 text-center overflow-hidden pt-24">
+        
+        <div className="relative z-10 flex flex-col items-center justify-center space-y-8">
             <Image src="/Infinity Cloud Labs PNG.png" alt="Infinity Cloud Labs Logo" width={400} height={100} className="mx-auto" />
             <div className="space-y-6">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight text-foreground">Your Personal Finance Tracker</h1>
                     <p className="mt-2 text-sm text-muted-foreground">Designed By Rajesh</p>
                 </div>
-                <div className="relative max-w-md mx-auto text-gray-700 italic border-l-4 border-transparent pl-8">
-                    <div className="absolute top-0 left-0">
-                        <QuoteIcon />
-                    </div>
-                    <p className="pt-4 text-lg leading-relaxed">
-                    "Financial peace isn't the acquisition of stuff. It's learning to live on less than you make, so you can give money back and have money to invest."
-                    </p>
-                    <footer className="mt-4 text-sm text-right text-gray-500 not-italic">- Dave Ramsey</footer>
-                </div>
             </div>
+        </div>
+
+        <div className="w-full my-12">
+            <Waveform />
+        </div>
+
+        <div className="relative max-w-md mx-auto text-gray-700 italic border-l-4 border-transparent pl-8 mt-8">
+            <div className="absolute top-0 left-0">
+                <QuoteIcon />
+            </div>
+            <p className="pt-4 text-lg leading-relaxed">
+            "Financial peace isn't the acquisition of stuff. It's learning to live on less than you make, so you can give money back and have money to invest."
+            </p>
+            <footer className="mt-4 text-sm text-right text-gray-500 not-italic">- Dave Ramsey</footer>
         </div>
       </div>
 
