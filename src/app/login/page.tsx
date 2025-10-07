@@ -67,7 +67,7 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="grid min-h-screen w-full grid-cols-1 lg:grid-cols-2">
+    <main className="relative grid min-h-screen w-full grid-cols-1 lg:grid-cols-2">
       {/* Left Panel - Branding */}
       <div className="relative hidden lg:flex flex-col items-center justify-between bg-[#f8f9fa] p-12 text-center overflow-hidden">
         
@@ -89,10 +89,6 @@ export default function LoginPage() {
             "Financial peace isn't the acquisition of stuff. It's learning to live on less than you make, so you can give money back and have money to invest."
             </p>
             <footer className="mt-4 text-sm text-right text-gray-500 not-italic">- Dave Ramsey</footer>
-        </div>
-
-         <div className="absolute bottom-0 left-0 right-0">
-            <Waveform />
         </div>
       </div>
 
@@ -156,6 +152,10 @@ export default function LoginPage() {
             </form>
           </div>
         </div>
+      </div>
+      
+      <div className="absolute bottom-0 left-0 right-0 z-0">
+          <Waveform />
       </div>
     </main>
   );
