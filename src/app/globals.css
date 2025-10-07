@@ -5,7 +5,7 @@
 
 @layer base {
   :root {
-    --background: 220 20% 97%; /* Lighter gray for overall background */
+    --background: 220 40% 96.1%; /* Slightly darker gray for the main app bg */
     --foreground: 224 71.4% 4.1%;
 
     --card: 0 0% 100%;

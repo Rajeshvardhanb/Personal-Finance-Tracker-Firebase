@@ -82,7 +82,7 @@ export default function LoginPage() {
       </div>
 
       {/* Right Panel - Login Form */}
-      <div className="flex items-center justify-center bg-background/95 bg-grid-pattern p-8">
+      <div className="flex items-center justify-center bg-slate-100 bg-grid-pattern p-8">
         <div className="w-full max-w-sm">
           <div className="rounded-2xl bg-card p-8 shadow-2xl">
             <div className="text-left mb-8">
