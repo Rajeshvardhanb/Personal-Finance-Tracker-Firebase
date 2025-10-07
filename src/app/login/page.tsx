@@ -69,7 +69,7 @@ export default function LoginPage() {
   return (
     <main className="relative grid min-h-screen w-full grid-cols-1 lg:grid-cols-2">
       {/* Left Panel - Branding */}
-      <div className="relative hidden lg:flex flex-col items-center justify-between bg-[#f8f9fa] p-12 text-center overflow-hidden">
+      <div className="relative hidden lg:flex flex-col items-center justify-start bg-[#f8f9fa] p-12 text-center overflow-hidden">
         
         <div className="relative z-10 flex flex-col items-center justify-start space-y-8 pt-12">
             <Image src="/Infinity Cloud Labs PNG.png" alt="Infinity Cloud Labs Logo" width={400} height={100} className="mx-auto" />
@@ -81,7 +81,7 @@ export default function LoginPage() {
             </div>
         </div>
 
-        <div className="relative z-10 max-w-md mx-auto text-gray-700 italic border-l-4 border-transparent pl-8 mb-12">
+        <div className="relative z-10 max-w-md mx-auto text-gray-700 italic border-l-4 border-transparent pl-8 mt-20">
             <div className="absolute top-0 left-0">
                 <QuoteIcon />
             </div>
