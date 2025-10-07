@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -19,25 +20,18 @@ function Waveform() {
       preserveAspectRatio="none"
     >
       <defs>
-        <linearGradient id="waveGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style={{ stopColor: 'hsla(217, 91%, 60%, 0.2)' }} />
-          <stop offset="100%" style={{ stopColor: 'hsla(190, 95%, 50%, 0.2)'}} />
-        </linearGradient>
-         <linearGradient id="waveGradient2" x1="100%" y1="100%" x2="0%" y2="0%">
-          <stop offset="0%" style={{ stopColor: 'hsla(217, 91%, 60%, 0.1)' }} />
-          <stop offset="100%" style={{ stopColor: 'hsla(190, 95%, 50%, 0.1)'}} />
-        </linearGradient>
+        <radialGradient id="grad1" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+            <stop offset="0%" style={{stopColor: 'hsla(217, 91%, 60%, 0.15)', stopOpacity: 1}} />
+            <stop offset="100%" style={{stopColor: 'hsla(217, 91%, 60%, 0)', stopOpacity: 1}} />
+        </radialGradient>
+        <radialGradient id="grad2" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+            <stop offset="0%" style={{stopColor: 'hsla(190, 95%, 50%, 0.15)', stopOpacity: 1}} />
+            <stop offset="100%" style={{stopColor: 'hsla(190, 95%, 50%, 0)', stopOpacity: 1}} />
+        </radialGradient>
       </defs>
-      {/* Wave 1 - Top Left */}
-      <path
-        fill="url(#waveGradient)"
-        d="M0,160 C320,320,420,120,840,220 S1440,480,1440,320 V0 H0 Z"
-      ></path>
-       {/* Wave 2 - Bottom Right */}
-      <path
-        fill="url(#waveGradient2)"
-        d="M1440,640 C1120,480,1020,720,600,620 S0,360,0,520 V820 H1440 Z"
-      ></path>
+      <circle cx="300" cy="200" r="300" fill="url(#grad1)" />
+      <circle cx="1100" cy="600" r="350" fill="url(#grad2)" />
+      <circle cx="700" cy="450" r="250" fill="url(#grad1)" opacity="0.7" />
     </svg>
   );
 }
@@ -72,10 +66,10 @@ export default function LoginPage() {
   return (
     <main className="grid min-h-screen w-full grid-cols-1 lg:grid-cols-2">
       {/* Left Panel - Branding */}
-      <div className="hidden lg:flex flex-col items-center justify-center bg-[#f8f9fa] p-12 text-center relative overflow-hidden">
+      <div className="relative hidden lg:flex flex-col items-center justify-center bg-[#f8f9fa] p-12 text-center overflow-hidden">
         <Waveform />
-        <div className="relative z-10 flex flex-col items-center justify-center h-full space-y-6">
-            <Image src="/Infinity Cloud Labs PNG.png" alt="Infinity Cloud Labs Logo" width={150} height={40} className="mx-auto mb-4" />
+        <div className="relative z-10 flex flex-col items-center justify-center h-full space-y-8">
+            <Image src="/Infinity Cloud Labs PNG.png" alt="Infinity Cloud Labs Logo" width={300} height={80} className="mx-auto" />
             <div className="space-y-6">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight text-foreground">Your Personal Finance Tracker</h1>
@@ -158,4 +152,3 @@ export default function LoginPage() {
     </main>
   );
 }
-    
