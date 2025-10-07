@@ -12,26 +12,26 @@ import Image from "next/image";
 
 function Waveform() {
   const wavePaths = [
-    "M0 40 Q 50 20, 100 40 T 200 40 T 300 40 T 400 40",
-    "M0 42 Q 50 22, 100 42 T 200 42 T 300 42 T 400 42",
-    "M0 44 Q 50 25, 100 44 T 200 44 T 300 44 T 400 44",
-    "M0 46 Q 50 28, 100 46 T 200 46 T 300 46 T 400 46",
-    "M0 48 Q 50 32, 100 48 T 200 48 T 300 48 T 400 48",
-    "M0 50 Q 50 36, 100 50 T 200 50 T 300 50 T 400 50",
-    "M0 52 Q 50 40, 100 52 T 200 52 T 300 52 T 400 52",
-    "M0 54 Q 50 45, 100 54 T 200 54 T 300 54 T 400 54",
-    "M0 56 Q 50 50, 100 56 T 200 56 T 300 56 T 400 56",
-    "M0 58 Q 50 55, 100 58 T 200 58 T 300 58 T 400 58",
-    "M0 60 Q 50 60, 100 60 T 200 60 T 300 60 T 400 60",
-    "M0 38 Q 50 18, 100 38 T 200 38 T 300 38 T 400 38",
-    "M0 36 Q 50 15, 100 36 T 200 36 T 300 36 T 400 36",
-    "M0 34 Q 50 12, 100 34 T 200 34 T 300 34 T 400 34",
+    "M0 40 Q 100 20, 200 40 T 400 40 T 600 40 T 800 40",
+    "M0 42 Q 100 22, 200 42 T 400 42 T 600 42 T 800 42",
+    "M0 44 Q 100 25, 200 44 T 400 44 T 600 44 T 800 44",
+    "M0 46 Q 100 28, 200 46 T 400 46 T 600 46 T 800 46",
+    "M0 48 Q 100 32, 200 48 T 400 48 T 600 48 T 800 48",
+    "M0 50 Q 100 36, 200 50 T 400 50 T 600 50 T 800 50",
+    "M0 52 Q 100 40, 200 52 T 400 52 T 600 52 T 800 52",
+    "M0 54 Q 100 45, 200 54 T 400 54 T 600 54 T 800 54",
+    "M0 56 Q 100 50, 200 56 T 400 56 T 600 56 T 800 56",
+    "M0 58 Q 100 55, 200 58 T 400 58 T 600 58 T 800 58",
+    "M0 60 Q 100 60, 200 60 T 400 60 T 600 60 T 800 60",
+    "M0 38 Q 100 18, 200 38 T 400 38 T 600 38 T 800 38",
+    "M0 36 Q 100 15, 200 36 T 400 36 T 600 36 T 800 36",
+    "M0 34 Q 100 12, 200 34 T 400 34 T 600 34 T 800 34",
   ];
 
   return (
-    <svg width="400" height="100" viewBox="0 0 400 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="100%" height="100" viewBox="0 0 800 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full">
       <defs>
-        <linearGradient id="waveGradient" x1="0" y1="0" x2="400" y2="0" gradientUnits="userSpaceOnUse">
+        <linearGradient id="waveGradient" x1="0" y1="0" x2="800" y2="0" gradientUnits="userSpaceOnUse">
           <stop stopColor="#a8b5e0" />
           <stop offset="1" stopColor="#b4a8e0" />
         </linearGradient>
@@ -81,7 +81,7 @@ export default function LoginPage() {
     <main className="grid min-h-screen w-full grid-cols-1 lg:grid-cols-2">
       {/* Left Panel - Branding */}
       <div className="hidden lg:flex flex-col items-center justify-center space-y-6 bg-[#f8f9fa] p-12 text-center">
-        <div className="space-y-4">
+        <div className="space-y-4 w-full">
           <Image src="/Infinity Cloud Labs PNG.png" alt="Infinity Cloud Labs Logo" width={150} height={40} className="mx-auto" />
           <Waveform />
         </div>
