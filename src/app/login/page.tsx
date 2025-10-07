@@ -12,44 +12,42 @@ import { LoaderCircle } from "lucide-react";
 import Image from "next/image";
 
 function Waveform() {
-  const wavePaths = [
-    "M0 40 Q 100 20, 200 40 T 400 40 T 600 40 T 800 40",
-    "M0 42 Q 100 22, 200 42 T 400 42 T 600 42 T 800 42",
-    "M0 44 Q 100 25, 200 44 T 400 44 T 600 44 T 800 44",
-    "M0 46 Q 100 28, 200 46 T 400 46 T 600 46 T 800 46",
-    "M0 48 Q 100 32, 200 48 T 400 48 T 600 48 T 800 48",
-    "M0 50 Q 100 36, 200 50 T 400 50 T 600 50 T 800 50",
-    "M0 52 Q 100 40, 200 52 T 400 52 T 600 52 T 800 52",
-    "M0 54 Q 100 45, 200 54 T 400 54 T 600 54 T 800 54",
-    "M0 56 Q 100 50, 200 56 T 400 56 T 600 56 T 800 56",
-    "M0 58 Q 100 55, 200 58 T 400 58 T 600 58 T 800 58",
-    "M0 60 Q 100 60, 200 60 T 400 60 T 600 60 T 800 60",
-    "M0 38 Q 100 18, 200 38 T 400 38 T 600 38 T 800 38",
-    "M0 36 Q 100 15, 200 36 T 400 36 T 600 36 T 800 36",
-    "M0 34 Q 100 12, 200 34 T 400 34 T 600 34 T 800 34",
-  ];
-
   return (
-    <svg width="100%" height="100%" viewBox="0 0 800 100" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      className="absolute bottom-0 left-0 w-full h-auto"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 1440 320"
+    >
       <defs>
-        <linearGradient id="waveGradient" x1="0" y1="0" x2="800" y2="0" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#a8b5e0" />
-          <stop offset="1" stopColor="#b4a8e0" />
+        <linearGradient id="waveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style={{ stopColor: 'hsla(217, 91%, 60%, 0.3)' }} />
+          <stop offset="100%" style={{ stopColor: 'hsla(190, 95%, 50%, 0.3)'}} />
+        </linearGradient>
+        <linearGradient id="waveGradient2" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style={{ stopColor: 'hsla(217, 91%, 60%, 0.2)' }} />
+          <stop offset="100%" style={{ stopColor: 'hsla(190, 95%, 50%, 0.2)'}} />
+        </linearGradient>
+         <linearGradient id="waveGradient3" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style={{ stopColor: 'hsla(217, 91%, 60%, 0.1)' }} />
+          <stop offset="100%" style={{ stopColor: 'hsla(190, 95%, 50%, 0.1)'}} />
         </linearGradient>
       </defs>
-      {wavePaths.map((path, index) => (
-        <path 
-          key={index}
-          d={path}
-          stroke="url(#waveGradient)" 
-          strokeWidth="0.75" 
-          fill="none" 
-          strokeOpacity={0.4} 
-        />
-      ))}
+      <path
+        fill="url(#waveGradient3)"
+        d="M0,160L48,170.7C96,181,192,203,288,208C384,213,480,203,576,170.7C672,139,768,85,864,80C960,75,1056,117,1152,138.7C1248,160,1344,160,1392,160L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+      ></path>
+      <path
+        fill="url(#waveGradient2)"
+        d="M0,224L48,213.3C96,203,192,181,288,192C384,203,480,245,576,250.7C672,256,768,224,864,197.3C960,171,1056,149,1152,154.7C1248,160,1344,192,1392,208L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+      ></path>
+      <path
+        fill="url(#waveGradient)"
+        d="M0,256L48,240C96,224,192,192,288,176C384,160,480,160,576,181.3C672,203,768,245,864,250.7C960,256,1056,224,1152,202.7C1248,181,1344,171,1392,165.3L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+      ></path>
     </svg>
   );
 }
+
 
 function QuoteIcon() {
     return (
@@ -82,9 +80,7 @@ export default function LoginPage() {
     <main className="grid min-h-screen w-full grid-cols-1 lg:grid-cols-2">
       {/* Left Panel - Branding */}
       <div className="hidden lg:flex flex-col items-center justify-center bg-[#f8f9fa] p-12 text-center relative overflow-hidden">
-        <div className="absolute inset-0">
-          <Waveform />
-        </div>
+        <Waveform />
         <div className="relative z-10 flex flex-col items-center justify-center h-full space-y-6">
             <Image src="/Infinity Cloud Labs PNG.png" alt="Infinity Cloud Labs Logo" width={150} height={40} className="mx-auto mb-4" />
             <div className="space-y-6">
@@ -169,5 +165,6 @@ export default function LoginPage() {
     </main>
   );
 }
+    
 
     
