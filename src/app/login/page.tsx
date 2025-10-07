@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -14,40 +13,34 @@ import Image from "next/image";
 function Waveform() {
   return (
     <svg
-      className="absolute bottom-0 left-0 w-full h-auto"
+      className="absolute inset-0 h-full w-full"
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 1440 320"
+      viewBox="0 0 1440 820"
+      preserveAspectRatio="none"
     >
       <defs>
-        <linearGradient id="waveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" style={{ stopColor: 'hsla(217, 91%, 60%, 0.3)' }} />
-          <stop offset="100%" style={{ stopColor: 'hsla(190, 95%, 50%, 0.3)'}} />
-        </linearGradient>
-        <linearGradient id="waveGradient2" x1="0%" y1="0%" x2="100%" y2="0%">
+        <linearGradient id="waveGradient" x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" style={{ stopColor: 'hsla(217, 91%, 60%, 0.2)' }} />
           <stop offset="100%" style={{ stopColor: 'hsla(190, 95%, 50%, 0.2)'}} />
         </linearGradient>
-         <linearGradient id="waveGradient3" x1="0%" y1="0%" x2="100%" y2="0%">
+         <linearGradient id="waveGradient2" x1="100%" y1="100%" x2="0%" y2="0%">
           <stop offset="0%" style={{ stopColor: 'hsla(217, 91%, 60%, 0.1)' }} />
           <stop offset="100%" style={{ stopColor: 'hsla(190, 95%, 50%, 0.1)'}} />
         </linearGradient>
       </defs>
-      <path
-        fill="url(#waveGradient3)"
-        d="M0,160L48,170.7C96,181,192,203,288,208C384,213,480,203,576,170.7C672,139,768,85,864,80C960,75,1056,117,1152,138.7C1248,160,1344,160,1392,160L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-      ></path>
-      <path
-        fill="url(#waveGradient2)"
-        d="M0,224L48,213.3C96,203,192,181,288,192C384,203,480,245,576,250.7C672,256,768,224,864,197.3C960,171,1056,149,1152,154.7C1248,160,1344,192,1392,208L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-      ></path>
+      {/* Wave 1 - Top Left */}
       <path
         fill="url(#waveGradient)"
-        d="M0,256L48,240C96,224,192,192,288,176C384,160,480,160,576,181.3C672,203,768,245,864,250.7C960,256,1056,224,1152,202.7C1248,181,1344,171,1392,165.3L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+        d="M0,160 C320,320,420,120,840,220 S1440,480,1440,320 V0 H0 Z"
+      ></path>
+       {/* Wave 2 - Bottom Right */}
+      <path
+        fill="url(#waveGradient2)"
+        d="M1440,640 C1120,480,1020,720,600,620 S0,360,0,520 V820 H1440 Z"
       ></path>
     </svg>
   );
 }
-
 
 function QuoteIcon() {
     return (
@@ -165,6 +158,4 @@ export default function LoginPage() {
     </main>
   );
 }
-    
-
     
