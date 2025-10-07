@@ -119,7 +119,7 @@ export default function LoginPage() {
   return (
     <main className="relative grid min-h-screen w-full grid-cols-1 lg:grid-cols-2">
       {/* Left Panel - Branding */}
-      <div className="relative hidden lg:flex flex-col items-center justify-start bg-[#f8f9fa] p-12 text-center overflow-hidden pt-0">
+      <div className="relative flex flex-col items-center justify-start bg-[#f8f9fa] p-12 text-center overflow-hidden pt-0">
         
         <div className="relative z-10 flex flex-col items-center justify-start space-y-8 pt-0">
             <Image src="/Infinity Cloud Labs PNG.png" alt="Infinity Cloud Labs Logo" width={400} height={100} className="mx-auto" />
