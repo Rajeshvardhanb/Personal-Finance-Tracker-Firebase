@@ -59,97 +59,53 @@ export default function LoginPage() {
   return (
     <main className="flex min-h-screen w-full bg-white">
       <div className="hidden lg:flex w-1/2 relative flex-col justify-center items-center bg-[#f0f2f5] p-12 overflow-hidden text-slate-800">
-         <div className="absolute inset-0 z-0">
-            <svg
-                viewBox="0 0 1000 1000"
-                preserveAspectRatio="xMidYMid slice"
-                className="w-full h-full"
-                >
-                <defs>
-                    <linearGradient
-                    id="waveGradient"
-                    x1="0%"
-                    y1="0%"
-                    x2="100%"
-                    y2="0%"
-                    >
-                    <stop offset="0%" style={{ stopColor: "rgba(56, 189, 248, 0.3)" }} />
-                    <stop offset="100%" style={{ stopColor: "rgba(99, 102, 241, 0.3)" }} />
-                    </linearGradient>
-                </defs>
-                <path
-                    d="M-100 500 Q 150 350, 400 500 T 900 500 T 1100 500"
-                    fill="none"
-                    stroke="url(#waveGradient)"
-                    strokeWidth="1.5"
-                    opacity="0.8"
-                />
-                <path
-                    d="M-100 520 Q 150 670, 400 520 T 900 520 T 1100 520"
-                    fill="none"
-                    stroke="url(#waveGradient)"
-                    strokeWidth="1.5"
-                    opacity="0.8"
-                />
-                 <path
-                    d="M-150 480 Q 200 330, 450 480 T 950 480 T 1150 480"
-                    fill="none"
-                    stroke="url(#waveGradient)"
-                    strokeWidth="1"
-                    opacity="0.7"
-                />
-                <path
-                    d="M-150 540 Q 200 690, 450 540 T 950 540 T 1150 540"
-                    fill="none"
-                    stroke="url(#waveGradient)"
-                    strokeWidth="1"
-                    opacity="0.7"
-                />
-                 <path
-                    d="M-200 460 Q 250 310, 500 460 T 1000 460 T 1200 460"
-                    fill="none"
-                    stroke="url(#waveGradient)"
-                    strokeWidth="0.75"
-                    opacity="0.6"
-                />
-                <path
-                    d="M-200 560 Q 250 710, 500 560 T 1000 560 T 1200 560"
-                    fill="none"
-                    stroke="url(#waveGradient)"
-                    strokeWidth="0.75"
-                    opacity="0.6"
-                />
-                <path
-                    d="M-250 440 Q 300 290, 550 440 T 1050 440 T 1250 440"
-                    fill="none"
-                    stroke="url(#waveGradient)"
-                    strokeWidth="0.5"
-                    opacity="0.5"
-                />
-                <path
-                    d="M-250 580 Q 300 730, 550 580 T 1050 580 T 1250 580"
-                    fill="none"
-                    stroke="url(#waveGradient)"
-                    strokeWidth="0.5"
-                    opacity="0.5"
-                />
-            </svg>
-        </div>
-        <div className="relative z-10 flex flex-col items-center justify-center text-center w-full h-full gap-8">
-            <div className="space-y-4">
+        <div className="relative z-10 flex flex-col items-center justify-center text-center w-full max-w-lg h-full">
+            <div className="absolute top-16 space-y-4">
                 <Image
                     src="/Infinity Cloud Labs PNG.png"
                     alt="Infinity Cloud Labs Logo"
-                    width={180}
-                    height={90}
+                    width={250}
+                    height={125}
                     className="mx-auto"
                 />
-                <div className="space-y-2">
+            </div>
+            
+            <div className="absolute inset-0 z-0 flex items-center justify-center">
+                <div className="w-[600px] h-[600px] opacity-70">
+                    <svg
+                        viewBox="0 0 1000 1000"
+                        preserveAspectRatio="xMidYMid slice"
+                        className="w-full h-full"
+                    >
+                        <defs>
+                            <linearGradient
+                            id="waveGradient"
+                            x1="0%"
+                            y1="0%"
+                            x2="100%"
+                            y2="0%"
+                            >
+                            <stop offset="0%" style={{ stopColor: "rgba(56, 189, 248, 0.2)" }} />
+                            <stop offset="100%" style={{ stopColor: "rgba(99, 102, 241, 0.2)" }} />
+                            </linearGradient>
+                        </defs>
+                        <path d="M-100 500 Q 150 350, 400 500 T 900 500 T 1100 500" fill="none" stroke="url(#waveGradient)" strokeWidth="1.5" />
+                        <path d="M-100 520 Q 150 670, 400 520 T 900 520 T 1100 520" fill="none" stroke="url(#waveGradient)" strokeWidth="1.5" />
+                        <path d="M-150 480 Q 200 330, 450 480 T 950 480 T 1150 480" fill="none" stroke="url(#waveGradient)" strokeWidth="1" />
+                        <path d="M-150 540 Q 200 690, 450 540 T 950 540 T 1150 540" fill="none" stroke="url(#waveGradient)" strokeWidth="1" />
+                        <path d="M-200 460 Q 250 310, 500 460 T 1000 460 T 1200 460" fill="none" stroke="url(#waveGradient)" strokeWidth="0.75" />
+                        <path d="M-200 560 Q 250 710, 500 560 T 1000 560 T 1200 560" fill="none" stroke="url(#waveGradient)" strokeWidth="0.75" />
+                        <path d="M-250 440 Q 300 290, 550 440 T 1050 440 T 1250 440" fill="none" stroke="url(#waveGradient)" strokeWidth="0.5" />
+                        <path d="M-250 580 Q 300 730, 550 580 T 1050 580 T 1250 580" fill="none" stroke="url(#waveGradient)" strokeWidth="0.5" />
+                    </svg>
+                </div>
+            </div>
+
+            <div className="absolute bottom-16 w-full max-w-lg">
+                <div className="space-y-2 mb-8">
                     <h1 className="text-4xl font-bold tracking-tight">Your Personal Finance Tracker</h1>
                     <p className="text-lg text-slate-600">Designed By Rajesh</p>
                 </div>
-            </div>
-             <div className="w-full max-w-lg pt-8">
                  <svg width="40" height="32" viewBox="0 0 40 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="mx-auto mb-4 text-slate-300">
                     <path d="M0 19.3143C0 12.0857 2.28571 6.85714 6.85714 3.62857C11.4286 0.4 16.4286 0 20 2.28571L16.4286 9.51429C14.7143 8.37143 13.4286 8.37143 12.5714 9.51429C11.7143 10.6571 11.7143 11.8 12.5714 12.9429C13.4286 14.0857 14.2857 14.6571 15.1429 14.6571H16L12.5714 22.8571H6.85714C2.28571 22.8571 0 21.7143 0 19.3143ZM20 19.3143C20 12.0857 22.2857 6.85714 26.8571 3.62857C31.4286 0.4 36.4286 0 40 2.28571L36.4286 9.51429C34.7143 8.37143 33.4286 8.37143 32.5714 9.51429C31.7143 10.6571 31.7143 11.8 32.5714 12.9429C33.4286 14.0857 34.2857 14.6571 35.1429 14.6571H36L32.5714 22.8571H26.8571C22.2857 22.8571 20 21.7143 20 19.3143Z" fill="currentColor"/>
                 </svg>

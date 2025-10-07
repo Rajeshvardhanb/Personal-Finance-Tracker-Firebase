@@ -5,7 +5,7 @@
 
 @layer base {
   :root {
-    --background: 240 33% 97%;
+    --background: 220 20% 97%; /* Lighter gray for overall background */
     --foreground: 224 71.4% 4.1%;
 
     --card: 0 0% 100%;
@@ -20,7 +20,7 @@
     --secondary: 220 13% 18%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 215 28% 90%;
+    --muted: 220 15% 90%; /* Gray for input fields */
     --muted-foreground: 215 20% 55%;
 
     --accent: 190 95% 50%; /* Cyan */
@@ -29,8 +29,8 @@
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 20% 98%;
 
-    --border: 215 20% 85%;
-    --input: 215 20% 85%;
+    --border: 220 15% 85%;
+    --input: 220 15% 85%;
     --ring: 217 91% 60%;
 
     --chart-1: 217 91% 60%; /* Blue */
@@ -91,10 +91,8 @@
 @layer utilities {
   .bg-grid-pattern {
     background-image:
-      radial-gradient(circle at center, hsl(var(--border) / 0.5) 0.5px, transparent 0.5px),
-      linear-gradient(to right, transparent 0%, hsl(var(--background)) 100%),
-      linear-gradient(to bottom, transparent 0%, hsl(var(--background)) 100%);
-    background-size: 1.5rem 1.5rem, 100% 100%, 100% 100%;
-    background-position: center, center, center;
+      radial-gradient(circle at center, hsl(var(--border) / 0.5) 0.5px, transparent 0.5px);
+    background-size: 1.5rem 1.5rem;
+    background-position: center;
   }
 }
