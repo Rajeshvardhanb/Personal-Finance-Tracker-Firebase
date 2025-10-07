@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from "react";
@@ -8,24 +7,35 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { LoaderCircle, Quote } from "lucide-react";
+import { LoaderCircle } from "lucide-react";
 import Image from "next/image";
 
 function Waveform() {
   return (
-    <svg width="300" height="60" viewBox="0 0 300 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="400" height="80" viewBox="0 0 400 80" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <linearGradient id="waveGradient" x1="0" y1="0" x2="300" y2="0" gradientUnits="userSpaceOnUse">
+        <linearGradient id="waveGradient" x1="0" y1="0" x2="400" y2="0" gradientUnits="userSpaceOnUse">
           <stop stopColor="#60a5fa" />
           <stop offset="1" stopColor="#5eead4" />
         </linearGradient>
       </defs>
-      <path d="M0 30 Q 37.5 10, 75 30 T 150 30 T 225 30 T 300 30" stroke="url(#waveGradient)" strokeWidth="2" fill="none" strokeOpacity="0.5" />
-      <path d="M0 30 Q 37.5 40, 75 30 T 150 30 T 225 30 T 300 30" stroke="url(#waveGradient)" strokeWidth="2" fill="none" strokeOpacity="0.5" />
-      <path d="M0 30 Q 37.5 20, 75 30 T 150 30 T 225 30 T 300 30" stroke="url(#waveGradient)" strokeWidth="2" fill="none" strokeOpacity="0.2" />
-      <path d="M0 30 Q 37.5 50, 75 30 T 150 30 T 225 30 T 300 30" stroke="url(#waveGradient)" strokeWidth="2" fill="none" strokeOpacity="0.2" />
+      {/* Base wave */}
+      <path d="M0 40 Q 50 20, 100 40 T 200 40 T 300 40 T 400 40" stroke="url(#waveGradient)" strokeWidth="1.5" fill="none" strokeOpacity="0.6" />
+      {/* Secondary waves for complexity */}
+      <path d="M0 40 Q 50 50, 100 40 T 200 40 T 300 40 T 400 40" stroke="url(#waveGradient)" strokeWidth="1" fill="none" strokeOpacity="0.4" />
+      <path d="M0 40 Q 50 30, 100 40 T 200 40 T 300 40 T 400 40" stroke="url(#waveGradient)" strokeWidth="1" fill="none" strokeOpacity="0.3" />
+      <path d="M0 40 Q 50 60, 100 40 T 200 40 T 300 40 T 400 40" stroke="url(#waveGradient)" strokeWidth="0.5" fill="none" strokeOpacity="0.2" />
     </svg>
   );
+}
+
+function QuoteIcon() {
+    return (
+      <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M13.3334 25.0002C15.1667 25.0002 16.6667 23.5002 16.6667 21.6668C16.6667 19.8335 15.1667 18.3335 13.3334 18.3335C11.5001 18.3335 10.0001 19.8335 10.0001 21.6668C10.0001 22.5418 10.3247 23.3502 10.8751 23.9585L6.87508 28.3335C7.94175 29.2585 9.30841 29.8502 10.7501 30.0002V33.3335H5.00008C4.54175 33.3335 4.16675 32.9585 4.16675 32.5002V25.8335C4.16675 18.3335 10.0001 13.3335 16.6667 13.3335V16.6668C14.3334 16.6668 12.3334 17.5835 10.8751 19.0418C12.0001 18.5835 13.5001 19.5002 13.3334 25.0002Z" fill="#E0E0E0"/>
+        <path d="M30.8333 18.3335C29 18.3335 27.5 19.8335 27.5 21.6668C27.5 23.5002 29 25.0002 30.8333 25.0002C32.6666 25.0002 34.1666 23.5002 34.1666 21.6668C34.1666 19.8335 32.6666 18.3335 30.8333 18.3335ZM28.375 19.0418C29.8333 17.5835 31.8333 16.6668 34.1666 16.6668V13.3335C27.5 13.3335 21.6666 18.3335 21.6666 25.8335V32.5002C21.6666 32.9585 22.0416 33.3335 22.5 33.3335H28.25V30.0002C26.7916 29.8502 25.425 29.2585 24.3583 28.3335L28.3583 23.9585C27.8083 23.3502 27.5 22.5418 27.5 21.6668C27.5 19.5002 29.5 18.5835 30.625 19.0418L28.375 19.0418Z" fill="#E0E0E0"/>
+      </svg>
+    )
 }
 
 export default function LoginPage() {
@@ -49,26 +59,30 @@ export default function LoginPage() {
   return (
     <main className="grid min-h-screen w-full grid-cols-1 lg:grid-cols-2">
       {/* Left Panel - Branding */}
-      <div className="hidden lg:flex flex-col items-center justify-center space-y-12 bg-[#f8f9fa] p-12 text-center">
-        <div className="space-y-6">
-          <Image src="/Infinity%20Cloud%20Labs%20PNG.png" alt="Infinity Cloud Labs Logo" width={150} height={40} className="mx-auto" />
+      <div className="hidden lg:flex flex-col items-center justify-center space-y-6 bg-[#f8f9fa] p-12 text-center">
+        <div className="space-y-4">
+          <Image src="/Infinity Cloud Labs PNG.png" alt="Infinity Cloud Labs Logo" width={150} height={40} className="mx-auto" />
           <Waveform />
         </div>
-        <div className="space-y-8">
+        <div className="space-y-6">
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-foreground">Your Personal Finance Tracker</h1>
             <p className="mt-2 text-sm text-muted-foreground">Designed By Rajesh</p>
           </div>
-          <blockquote className="relative max-w-md mx-auto text-lg text-gray-700 italic border-l-4 border-gray-300 pl-6">
-            <Quote className="absolute top-0 left-0 h-8 w-8 -translate-x-4 -translate-y-4 text-gray-300" />
-            "Financial peace isn't the acquisition of stuff. It's learning to live on less than you make, so you can give money back and have money to invest."
-            <footer className="mt-4 text-sm text-gray-500 not-italic">- Dave Ramsey</footer>
-          </blockquote>
+          <div className="relative max-w-md mx-auto text-gray-700 italic border-l-4 border-transparent pl-8">
+            <div className="absolute top-0 left-0">
+                <QuoteIcon />
+            </div>
+            <p className="pt-4 text-lg leading-relaxed">
+              "Financial peace isn't the acquisition of stuff. It's learning to live on less than you make, so you can give money back and have money to invest."
+            </p>
+            <footer className="mt-4 text-sm text-right text-gray-500 not-italic">- Dave Ramsey</footer>
+          </div>
         </div>
       </div>
 
       {/* Right Panel - Login Form */}
-      <div className="flex items-center justify-center bg-background bg-grid-pattern p-8">
+      <div className="flex items-center justify-center bg-background/95 bg-grid-pattern p-8">
         <div className="w-full max-w-sm">
           <div className="rounded-2xl bg-card p-8 shadow-2xl">
             <div className="text-left mb-8">
