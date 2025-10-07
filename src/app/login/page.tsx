@@ -14,26 +14,14 @@ import Image from "next/image";
 function Waveform() {
   return (
     <svg
-        className="w-full"
+        className="w-full my-12"
         viewBox="0 0 1440 120"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
     >
-        <path
-            d="M1440 48.8105C1088.33 48.8105 1039.46 -6.3216 733.333 5.31215C427.209 16.9459 299.333 105.311 0 48.8105V120H1440V48.8105Z"
-            fill="hsl(var(--primary))"
-            fillOpacity="0.3"
-        />
-        <path
-            d="M1440 73.621C1158.4 73.621 1068.25 21.8413 733.333 39.865C404.5 57.5 311.2 120 0 120V120H1440V73.621Z"
-            fill="hsl(var(--accent))"
-            fillOpacity="0.4"
-        />
-        <path
-            d="M1440 94C1158.4 94 1068.25 42.2203 733.333 60.244C404.5 77.879 311.2 140.379 0 140.379V140.379H1440V94Z"
-            fill="hsl(var(--primary))"
-            fillOpacity="0.6"
-        />
+        <path d="M0 86L60 80C120 74 240 62 360 63.7C480 65.3 600 80.3 720 86C840 91.7 960 88.3 1080 74.3C1200 60.3 1320 35.3 1380 23L1440 10.7V120H0V86Z" fill="hsl(var(--primary))" fillOpacity={0.2} />
+        <path d="M0 58L60 63.7C120 69.3 240 80.3 360 86.3C480 92.3 600 93.3 720 85.3C840 77.3 960 60.3 1080 50.3C1200 40.3 1320 37.3 1380 35.8L1440 34.3V120H0V58Z" fill="hsl(var(--accent))" fillOpacity={0.3} />
+        <path d="M0 10.7L60 16.3C120 22 240 33 360 38.7C480 44.3 600 44.3 720 52.3C840 60.3 960 76.3 1080 83.3C1200 90.3 1320 88.3 1380 87.3L1440 86.3V120H0V10.7Z" fill="hsl(var(--primary))" fillOpacity={0.4}/>
     </svg>
   );
 }
