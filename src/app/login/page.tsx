@@ -51,7 +51,7 @@ export default function LoginPage() {
       {/* Left Panel - Branding */}
       <div className="hidden lg:flex flex-col items-center justify-center space-y-12 bg-[#f8f9fa] p-12 text-center">
         <div className="space-y-6">
-          <Image src="/logo.png" alt="Infinity Cloud Labs Logo" width={150} height={40} className="mx-auto" />
+          <Image src="/Infinity%20Cloud%20Labs%20PNG.png" alt="Infinity Cloud Labs Logo" width={150} height={40} className="mx-auto" />
           <Waveform />
         </div>
         <div className="space-y-8">
