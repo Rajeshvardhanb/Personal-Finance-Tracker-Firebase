@@ -9,7 +9,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { LoaderCircle } from "lucide-react";
-import Image from "next/image";
 import { AppLogo } from "@/components/icons";
 
 export default function LoginPage() {
@@ -31,38 +30,32 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="flex min-h-screen w-full items-center justify-center bg-background">
-      <Image
-        src="https://picsum.photos/seed/finance-bg/1920/1080"
-        alt="Background"
-        layout="fill"
-        objectFit="cover"
-        className="absolute inset-0 z-0 opacity-40"
-        data-ai-hint="cityscape finance"
-      />
-       <div className="absolute inset-0 z-10 bg-background/50 backdrop-blur-sm"></div>
+    <main className="grid min-h-screen w-full grid-cols-1 md:grid-cols-2">
+      {/* Left Panel - Branding */}
+      <div className="hidden flex-col items-center justify-center gap-6 bg-secondary text-primary-foreground md:flex">
+        <AppLogo />
+        <p className="text-lg text-muted-foreground">Clarity in Your Finances.</p>
+      </div>
 
-      <div className="relative z-20 w-full max-w-md space-y-6 rounded-2xl border border-white/20 bg-white/10 p-8 shadow-2xl backdrop-blur-lg">
-          <div className="flex justify-center">
-            <AppLogo />
-          </div>
-
-          <div className="text-center">
-            <h1 className="text-3xl font-bold text-foreground">Welcome Back</h1>
-            <p className="text-muted-foreground">
-              Sign in to access your financial dashboard.
+      {/* Right Panel - Login Form */}
+      <div className="flex items-center justify-center bg-background p-8">
+        <div className="w-full max-w-sm space-y-8">
+          <div className="text-left">
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">Sign In</h1>
+            <p className="mt-2 text-muted-foreground">
+              Welcome back! Please sign in to your account.
             </p>
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-4">
+          <form onSubmit={handleLogin} className="space-y-6">
             {error && (
               <Alert variant="destructive">
                 <AlertTitle>Login Failed</AlertTitle>
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
-            <div className="space-y-1">
-              <Label htmlFor="email" className="text-foreground/80">Email</Label>
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -70,11 +63,15 @@ export default function LoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="border-white/30 bg-white/20 text-foreground placeholder:text-foreground/60 focus:bg-white/30"
               />
             </div>
-            <div className="space-y-1">
-              <Label htmlFor="password" className="text-foreground/80">Password</Label>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">Password</Label>
+                <a href="#" className="text-sm text-primary hover:underline">
+                  Forgot Password?
+                </a>
+              </div>
               <Input
                 id="password"
                 type="password"
@@ -82,24 +79,19 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="border-white/30 bg-white/20 text-foreground placeholder:text-foreground/60 focus:bg-white/30"
               />
             </div>
             <Button
               type="submit"
-              className="w-full text-white shadow-lg transition-all hover:bg-primary/90"
+              className="w-full"
               disabled={isAuthenticating}
             >
               {isAuthenticating && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
               Sign In
             </Button>
           </form>
-          <div className="text-center text-sm">
-            <a href="#" className="text-primary-foreground/70 hover:text-primary-foreground hover:underline">
-              Forgot Password?
-            </a>
-          </div>
         </div>
+      </div>
     </main>
   );
 }
