@@ -1,5 +1,6 @@
 
 import type { SVGProps } from "react";
+import { cn } from "@/lib/utils";
 
 export function AppLogoIcon(props: SVGProps<SVGSVGElement>) {
   return (

@@ -23,6 +23,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
 
+  const logout = useCallback(async () => {
+    await signOut(auth);
+    router.push('/login');
+  }, [auth, router]);
+
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((firebaseUser) => {
       setUser(firebaseUser);
@@ -51,12 +56,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return { success: false, error: "Invalid credentials. Please contact Rajesh for access." };
     }
   }, [auth]);
-
-
-  const logout = useCallback(async () => {
-    await signOut(auth);
-    router.push('/login');
-  }, [auth, router]);
 
   return (
     <AuthContext.Provider value={{ user, login, logout, isLoading: isUserLoading, isAuthenticating }}>
