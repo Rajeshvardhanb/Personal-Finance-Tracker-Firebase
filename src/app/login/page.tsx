@@ -11,20 +11,41 @@ import { LoaderCircle } from "lucide-react";
 import Image from "next/image";
 
 function Waveform() {
+  const wavePaths = [
+    "M0 40 Q 50 20, 100 40 T 200 40 T 300 40 T 400 40",
+    "M0 42 Q 50 22, 100 42 T 200 42 T 300 42 T 400 42",
+    "M0 44 Q 50 25, 100 44 T 200 44 T 300 44 T 400 44",
+    "M0 46 Q 50 28, 100 46 T 200 46 T 300 46 T 400 46",
+    "M0 48 Q 50 32, 100 48 T 200 48 T 300 48 T 400 48",
+    "M0 50 Q 50 36, 100 50 T 200 50 T 300 50 T 400 50",
+    "M0 52 Q 50 40, 100 52 T 200 52 T 300 52 T 400 52",
+    "M0 54 Q 50 45, 100 54 T 200 54 T 300 54 T 400 54",
+    "M0 56 Q 50 50, 100 56 T 200 56 T 300 56 T 400 56",
+    "M0 58 Q 50 55, 100 58 T 200 58 T 300 58 T 400 58",
+    "M0 60 Q 50 60, 100 60 T 200 60 T 300 60 T 400 60",
+    "M0 38 Q 50 18, 100 38 T 200 38 T 300 38 T 400 38",
+    "M0 36 Q 50 15, 100 36 T 200 36 T 300 36 T 400 36",
+    "M0 34 Q 50 12, 100 34 T 200 34 T 300 34 T 400 34",
+  ];
+
   return (
-    <svg width="400" height="80" viewBox="0 0 400 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="400" height="100" viewBox="0 0 400 100" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="waveGradient" x1="0" y1="0" x2="400" y2="0" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#60a5fa" />
-          <stop offset="1" stopColor="#5eead4" />
+          <stop stopColor="#a8b5e0" />
+          <stop offset="1" stopColor="#b4a8e0" />
         </linearGradient>
       </defs>
-      {/* Base wave */}
-      <path d="M0 40 Q 50 20, 100 40 T 200 40 T 300 40 T 400 40" stroke="url(#waveGradient)" strokeWidth="1.5" fill="none" strokeOpacity="0.6" />
-      {/* Secondary waves for complexity */}
-      <path d="M0 40 Q 50 50, 100 40 T 200 40 T 300 40 T 400 40" stroke="url(#waveGradient)" strokeWidth="1" fill="none" strokeOpacity="0.4" />
-      <path d="M0 40 Q 50 30, 100 40 T 200 40 T 300 40 T 400 40" stroke="url(#waveGradient)" strokeWidth="1" fill="none" strokeOpacity="0.3" />
-      <path d="M0 40 Q 50 60, 100 40 T 200 40 T 300 40 T 400 40" stroke="url(#waveGradient)" strokeWidth="0.5" fill="none" strokeOpacity="0.2" />
+      {wavePaths.map((path, index) => (
+        <path 
+          key={index}
+          d={path}
+          stroke="url(#waveGradient)" 
+          strokeWidth="0.75" 
+          fill="none" 
+          strokeOpacity={0.4} 
+        />
+      ))}
     </svg>
   );
 }
