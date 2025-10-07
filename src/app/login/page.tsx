@@ -29,9 +29,9 @@ function Waveform() {
             <stop offset="100%" style={{stopColor: 'hsla(190, 95%, 50%, 0)', stopOpacity: 1}} />
         </radialGradient>
       </defs>
-      <circle cx="300" cy="200" r="300" fill="url(#grad1)" />
-      <circle cx="1100" cy="600" r="350" fill="url(#grad2)" />
-      <circle cx="700" cy="450" r="250" fill="url(#grad1)" opacity="0.7" />
+      <circle cx="300" cy="200" r="400" fill="url(#grad1)" />
+      <circle cx="1100" cy="600" r="450" fill="url(#grad2)" />
+      <circle cx="700" cy="450" r="350" fill="url(#grad1)" opacity="0.7" />
     </svg>
   );
 }
@@ -69,7 +69,7 @@ export default function LoginPage() {
       <div className="relative hidden lg:flex flex-col items-center justify-center bg-[#f8f9fa] p-12 text-center overflow-hidden">
         <Waveform />
         <div className="relative z-10 flex flex-col items-center justify-center h-full space-y-8">
-            <Image src="/Infinity Cloud Labs PNG.png" alt="Infinity Cloud Labs Logo" width={300} height={80} className="mx-auto" />
+            <Image src="/Infinity Cloud Labs PNG.png" alt="Infinity Cloud Labs Logo" width={400} height={100} className="mx-auto" />
             <div className="space-y-6">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight text-foreground">Your Personal Finance Tracker</h1>
