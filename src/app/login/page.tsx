@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -29,7 +30,7 @@ function Waveform() {
   ];
 
   return (
-    <svg width="100%" height="100" viewBox="0 0 800 100" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full">
+    <svg width="100%" height="100%" viewBox="0 0 800 100" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="waveGradient" x1="0" y1="0" x2="800" y2="0" gradientUnits="userSpaceOnUse">
           <stop stopColor="#a8b5e0" />
@@ -80,25 +81,27 @@ export default function LoginPage() {
   return (
     <main className="grid min-h-screen w-full grid-cols-1 lg:grid-cols-2">
       {/* Left Panel - Branding */}
-      <div className="hidden lg:flex flex-col items-center justify-center space-y-6 bg-[#f8f9fa] p-12 text-center">
-        <div className="space-y-4 w-full">
-          <Image src="/Infinity Cloud Labs PNG.png" alt="Infinity Cloud Labs Logo" width={150} height={40} className="mx-auto" />
+      <div className="hidden lg:flex flex-col items-center justify-center bg-[#f8f9fa] p-12 text-center relative overflow-hidden">
+        <div className="absolute inset-0">
           <Waveform />
         </div>
-        <div className="space-y-6">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight text-foreground">Your Personal Finance Tracker</h1>
-            <p className="mt-2 text-sm text-muted-foreground">Designed By Rajesh</p>
-          </div>
-          <div className="relative max-w-md mx-auto text-gray-700 italic border-l-4 border-transparent pl-8">
-            <div className="absolute top-0 left-0">
-                <QuoteIcon />
+        <div className="relative z-10 flex flex-col items-center justify-center h-full space-y-6">
+            <Image src="/Infinity Cloud Labs PNG.png" alt="Infinity Cloud Labs Logo" width={150} height={40} className="mx-auto mb-4" />
+            <div className="space-y-6">
+                <div>
+                    <h1 className="text-3xl font-bold tracking-tight text-foreground">Your Personal Finance Tracker</h1>
+                    <p className="mt-2 text-sm text-muted-foreground">Designed By Rajesh</p>
+                </div>
+                <div className="relative max-w-md mx-auto text-gray-700 italic border-l-4 border-transparent pl-8">
+                    <div className="absolute top-0 left-0">
+                        <QuoteIcon />
+                    </div>
+                    <p className="pt-4 text-lg leading-relaxed">
+                    "Financial peace isn't the acquisition of stuff. It's learning to live on less than you make, so you can give money back and have money to invest."
+                    </p>
+                    <footer className="mt-4 text-sm text-right text-gray-500 not-italic">- Dave Ramsey</footer>
+                </div>
             </div>
-            <p className="pt-4 text-lg leading-relaxed">
-              "Financial peace isn't the acquisition of stuff. It's learning to live on less than you make, so you can give money back and have money to invest."
-            </p>
-            <footer className="mt-4 text-sm text-right text-gray-500 not-italic">- Dave Ramsey</footer>
-          </div>
         </div>
       </div>
 
@@ -166,3 +169,5 @@ export default function LoginPage() {
     </main>
   );
 }
+
+    
