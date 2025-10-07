@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,50 @@ import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { LoaderCircle } from "lucide-react";
 import Image from "next/image";
+
+const financialQuotes = [
+  {
+    quote: "Financial peace isn't the acquisition of stuff. It's learning to live on less than you make, so you can give money back and have money to invest.",
+    author: "Dave Ramsey",
+  },
+  {
+    quote: "The stock market is a device for transferring money from the impatient to the patient.",
+    author: "Warren Buffett",
+  },
+  {
+    quote: "An investment in knowledge pays the best interest.",
+    author: "Benjamin Franklin",
+  },
+  {
+    quote: "It's not how much money you make, but how much money you keep, how hard it works for you, and how many generations you keep it for.",
+    author: "Robert Kiyosaki",
+  },
+  {
+    quote: "The goal isn't more money. The goal is living life on your terms.",
+    author: "Chris Brogan",
+  },
+  {
+    quote: "Do not save what is left after spending, but spend what is left after saving.",
+    author: "Warren Buffett",
+  },
+  {
+    quote: "A budget is telling your money where to go instead of wondering where it went.",
+    author: "John C. Maxwell",
+  },
+  {
+    quote: "You must gain control over your money or the lack of it will forever control you.",
+    author: "Dave Ramsey",
+  },
+  {
+    quote: "Beware of little expenses. A small leak will sink a great ship.",
+    author: "Benjamin Franklin",
+  },
+  {
+    quote: "Rich people invest in time, poor people invest in money.",
+    author: "Warren Buffett",
+  },
+];
+
 
 function Waveform() {
   return (
@@ -54,6 +98,12 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const { login, isAuthenticating } = useAuth();
   const router = useRouter();
+  const [quote, setQuote] = useState(financialQuotes[0]);
+
+  useEffect(() => {
+    // Select a random quote on the client side to avoid hydration mismatch
+    setQuote(financialQuotes[Math.floor(Math.random() * financialQuotes.length)]);
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,7 +119,7 @@ export default function LoginPage() {
   return (
     <main className="relative grid min-h-screen w-full grid-cols-1 lg:grid-cols-2">
       {/* Left Panel - Branding */}
-      <div className="relative hidden lg:flex flex-col items-center justify-start bg-[#f8f9fa] p-12 text-center overflow-hidden">
+      <div className="relative hidden lg:flex flex-col items-center justify-start bg-[#f8f9fa] p-12 text-center overflow-hidden pt-0">
         
         <div className="relative z-10 flex flex-col items-center justify-start space-y-8 pt-0">
             <Image src="/Infinity Cloud Labs PNG.png" alt="Infinity Cloud Labs Logo" width={400} height={100} className="mx-auto" />
@@ -86,9 +136,9 @@ export default function LoginPage() {
                 <QuoteIcon />
             </div>
             <p className="pt-4 text-lg leading-relaxed">
-            "Financial peace isn't the acquisition of stuff. It's learning to live on less than you make, so you can give money back and have money to invest."
+              "{quote.quote}"
             </p>
-            <footer className="mt-4 text-sm text-right text-gray-500 not-italic">- Dave Ramsey</footer>
+            <footer className="mt-4 text-sm text-right text-gray-500 not-italic">- {quote.author}</footer>
         </div>
       </div>
 
